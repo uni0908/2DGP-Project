@@ -2,6 +2,7 @@
 
 import pico2d
 import game_world
+from bullet import Bullet
 
 
 class Player:
@@ -12,6 +13,9 @@ class Player:
     GRAVITY = 1800.0  # 임시 값: 초당 픽셀/초
     INITIAL_DOODLES = 10
     INITIAL_ERASERS = 10
+    MAX_HP = 5
+    FIRE_INTERVAL = 0.15
+    team = 'player'
 
     def __init__(self, x, ground_y, world_width):
         self.x = x
@@ -24,6 +28,13 @@ class Player:
         self.grounded = True
         self.doodle_count = self.INITIAL_DOODLES
         self.eraser_count = self.INITIAL_ERASERS
+        self.hp = self.MAX_HP
+        self.fire_timer = 0.0
+
+    def take_damage(self, amount):
+        self.hp = max(0, self.hp - amount)
+        if self.hp == 0:
+            self.clear_input()
 
     def handle_event(self, event):
         if event.type == pico2d.SDL_KEYDOWN:
@@ -46,6 +57,8 @@ class Player:
                 self.x + self.WIDTH / 2, self.y + self.HEIGHT / 2)
 
     def update(self, dt):
+        if self.hp <= 0:
+            return
         direction = (pico2d.SDLK_RIGHT in self.pressed_keys) - (
             pico2d.SDLK_LEFT in self.pressed_keys
         )
@@ -58,6 +71,12 @@ class Player:
             step = min(remaining, 1 / 120)
             self._move(step, direction, terrain)
             remaining -= step
+        self.fire_timer = max(0, self.fire_timer - max(0, dt))
+        if pico2d.SDLK_z in self.pressed_keys and self.fire_timer <= 0:
+            x = self.x + self.facing * (self.WIDTH / 2 + Bullet.WIDTH / 2)
+            game_world.add_object(Bullet(x, self.y, self.facing, self.team,
+                                         self.world_width), game_world.PROJECTILES)
+            self.fire_timer = self.FIRE_INTERVAL
 
     def _move(self, dt, direction, terrain):
         old_left, bottom, old_right, top = self.get_bb()

@@ -3,16 +3,24 @@
 import math
 
 import pico2d
+import game_world
 
 
 class Doodle:
     WIDTH = 88
     HEIGHT = 32
     SPAWN_GAP = 12
+    MAX_HP = 3
 
     def __init__(self, x, y):
         self.x = x
         self.y = y
+        self.hp = self.MAX_HP
+
+    def take_damage(self, amount):
+        self.hp = max(0, self.hp - amount)
+        if self.hp == 0:
+            game_world.remove_object(self)
 
     def get_bb(self):
         return (self.x - self.WIDTH / 2, self.y - self.HEIGHT / 2,
