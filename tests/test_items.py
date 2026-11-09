@@ -11,6 +11,8 @@ from eraser import Eraser
 class ItemTests(unittest.TestCase):
     def setUp(self):
         play_mode.enter()
+        # 자원·지우개 단위 검사는 자동 사격하는 적과 분리한다.
+        game_world.remove_object(play_mode.enemy)
 
     def tearDown(self):
         play_mode.exit()

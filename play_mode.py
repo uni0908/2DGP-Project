@@ -7,26 +7,34 @@ import game_world
 from player import Player
 from doodle import Doodle, overlaps
 from eraser import Eraser
+from enemy import TestEnemy
 
 WINDOW_WIDTH = 960
 WINDOW_HEIGHT = 540
 GROUND_Y = 80
 player = None
 font = None
+enemy = None
+game_over = False
 
 
 def enter():
-    global player
+    global player, enemy, game_over
     game_world.clear()
     player = Player(120, GROUND_Y, WINDOW_WIDTH)
     game_world.add_object(player, game_world.ACTORS)
+    enemy = TestEnemy(WINDOW_WIDTH, WINDOW_HEIGHT, GROUND_Y)
+    game_world.add_object(enemy, game_world.ACTORS)
+    game_over = False
 
 
 def exit():
-    global player, font
+    global player, font, enemy, game_over
     game_world.clear()
     player = None
     font = None
+    enemy = None
+    game_over = False
 
 
 def handle_events():
@@ -35,6 +43,10 @@ def handle_events():
             return False
         if event.type == pico2d.SDL_KEYDOWN and event.key == pico2d.SDLK_ESCAPE:
             return False
+        if game_over:
+            if event.type == pico2d.SDL_KEYDOWN and event.key == pico2d.SDLK_r:
+                enter()
+            continue
         if (event.type == pico2d.SDL_WINDOWEVENT
                 and event.event == pico2d.SDL_WINDOWEVENT_FOCUS_LOST):
             player.clear_input()
@@ -49,7 +61,7 @@ def handle_events():
 
 
 def spawn_doodle():
-    if player.doodle_count <= 0:
+    if game_over or player.hp <= 0 or player.doodle_count <= 0:
         return None
     distance = player.WIDTH / 2 + Doodle.SPAWN_GAP + Doodle.WIDTH / 2
     doodle = Doodle(player.x + player.facing * distance, player.y)
@@ -61,6 +73,8 @@ def spawn_doodle():
     occupied = (player.get_bb(),) + tuple(
         obj.get_bb() for obj in game_world.objects(game_world.TERRAIN)
     )
+    occupied += tuple(obj.get_bb() for obj in game_world.objects(game_world.ACTORS)
+                      if obj is not player)
     if any(overlaps(bounds, other) for other in occupied):
         return None
     game_world.add_object(doodle, game_world.TERRAIN)
@@ -69,11 +83,23 @@ def spawn_doodle():
 
 
 def update(dt):
-    game_world.update(dt)
+    global game_over
+    if game_over:
+        return
+    # 투사체가 움직이는 대상의 이전/현재 위치 사이를 건너뛰지 않게 분할한다.
+    remaining = max(0, dt)
+    while remaining > 0:
+        step = min(remaining, 1 / 120)
+        game_world.update(step)
+        remaining -= step
+        if player.hp <= 0:
+            game_over = True
+            player.clear_input()
+            break
 
 
 def throw_eraser():
-    if player.eraser_count <= 0:
+    if game_over or player.hp <= 0 or player.eraser_count <= 0:
         return None
     # 플레이어 중심 높이에서 발사해 바로 앞 낙서부터 충돌을 판정한다.
     eraser = Eraser(player.x, player.y, player.facing, WINDOW_WIDTH)
@@ -91,8 +117,14 @@ def draw():
     pico2d.draw_rectangle(0, 0, WINDOW_WIDTH - 1, GROUND_Y)
     game_world.draw()
     font.draw(20, WINDOW_HEIGHT - 30,
-              f'[D] 낙서: {player.doodle_count}   [E] 지우개: {player.eraser_count}',
+              f'체력: {player.hp}/5   [D] 낙서: {player.doodle_count}   [E] 지우개: {player.eraser_count}',
               (30, 30, 30))
-    font.draw(20, WINDOW_HEIGHT - 58, '방향키: 이동   Space: 점프   Esc: 종료',
+    font.draw(20, WINDOW_HEIGHT - 58, '방향키: 이동   Space: 점프   Z: 연사   Esc: 종료',
               (30, 30, 30))
+    if game_over:
+        font.draw(WINDOW_WIDTH / 2 - 160, WINDOW_HEIGHT / 2,
+                  '게임 오버! R: 재시작 / Esc: 종료', (180, 30, 30))
+    elif enemy.hp <= 0:
+        font.draw(WINDOW_WIDTH / 2 - 120, WINDOW_HEIGHT - 90,
+                  '테스트 적 처치 완료', (30, 80, 30))
     pico2d.update_canvas()

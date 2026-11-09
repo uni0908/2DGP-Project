@@ -7,6 +7,8 @@ import game_world
 from bullet import Bullet
 from doodle import Doodle
 from player import Player
+from enemy import TestEnemy
+from eraser import Eraser
 
 
 class CombatTests(unittest.TestCase):
@@ -76,3 +78,54 @@ class CombatTests(unittest.TestCase):
         bullet = self.bullet(800, 500, 1, 'player')
         bullet.update(1)
         self.assertFalse(bullet.active)
+
+    def test_enemy_size_vertical_bounds_and_continuous_fire(self):
+        enemy = TestEnemy(960, 540, 80)
+        self.assertEqual((enemy.WIDTH, enemy.HEIGHT), (Player.WIDTH * 4, Player.HEIGHT * 4))
+        x = enemy.x
+        heights = []
+        for _ in range(300):
+            enemy.update(.02)
+            heights.append(enemy.y)
+            self.assertEqual(enemy.x, x)
+            self.assertGreaterEqual(enemy.y, enemy.min_y)
+            self.assertLessEqual(enemy.y, enemy.max_y)
+        self.assertGreater(max(heights) - min(heights), 100)
+        self.assertGreater(len(game_world.objects(game_world.PROJECTILES)), 30)
+
+    def test_player_bullet_damages_enemy_but_eraser_does_not(self):
+        enemy = TestEnemy(960, 540, 80)
+        game_world.add_object(enemy, game_world.ACTORS)
+        eraser = Eraser(700, enemy.y, 1, 960)
+        game_world.add_object(eraser, game_world.PROJECTILES)
+        eraser.update(.4)
+        self.assertEqual(enemy.hp, enemy.MAX_HP)
+        self.assertIn(enemy, game_world.objects(game_world.ACTORS))
+        self.bullet(700, enemy.y, 1, 'player').update(.4)
+        self.assertEqual(enemy.hp, enemy.MAX_HP - 1)
+        enemy.take_damage(enemy.hp)
+        self.assertNotIn(enemy, game_world.objects(game_world.ACTORS))
+
+    def test_game_over_freezes_world_and_restart_resets_state(self):
+        import play_mode
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        play_mode.enter()
+        try:
+            play_mode.player.take_damage(5)
+            play_mode.update(.02)
+            self.assertTrue(play_mode.game_over)
+            old_y = play_mode.enemy.y
+            play_mode.update(1)
+            self.assertEqual(play_mode.enemy.y, old_y)
+            self.assertIsNone(play_mode.spawn_doodle())
+            self.assertIsNone(play_mode.throw_eraser())
+            events = [SimpleNamespace(type=pico2d.SDL_KEYDOWN, key=pico2d.SDLK_r)]
+            with patch.object(pico2d, 'get_events', return_value=events):
+                self.assertTrue(play_mode.handle_events())
+            self.assertFalse(play_mode.game_over)
+            self.assertEqual(play_mode.player.hp, 5)
+            self.assertEqual(play_mode.enemy.hp, TestEnemy.MAX_HP)
+            self.assertFalse(game_world.objects(game_world.PROJECTILES))
+        finally:
+            play_mode.exit()
