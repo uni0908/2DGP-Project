@@ -7,7 +7,7 @@ from bullet import Bullet
 
 class TestEnemy:
     WIDTH = 144
-    HEIGHT = 224
+    HEIGHT = 112
     MAX_HP = 30
     FIRE_INTERVAL = 0.12
     MOVE_SPEED = 90.0

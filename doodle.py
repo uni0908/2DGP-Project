@@ -10,7 +10,7 @@ class Doodle:
     WIDTH = 88
     HEIGHT = 32
     SPAWN_GAP = 12
-    MAX_HP = 3
+    MAX_HP = 20
 
     def __init__(self, x, y):
         self.x = x

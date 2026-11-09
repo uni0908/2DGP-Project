@@ -52,10 +52,12 @@ class CombatTests(unittest.TestCase):
             with self.subTest(team=team):
                 doodle = Doodle(250, 108)
                 game_world.add_object(doodle, game_world.TERRAIN)
-                for _ in range(3):
+                for index in range(20):
                     bullet = self.bullet(x, 108, direction, team)
                     bullet.update(1)
                     self.assertFalse(bullet.active)
+                    if index < 19:
+                        self.assertIn(doodle, game_world.objects(game_world.TERRAIN))
                 self.assertNotIn(doodle, game_world.objects(game_world.TERRAIN))
                 self.assertEqual(self.player.hp, 5)
 
@@ -63,7 +65,7 @@ class CombatTests(unittest.TestCase):
         doodle = Doodle(300, 160)
         game_world.add_object(doodle, game_world.TERRAIN)
         self.player.x, self.player.y = 300, 204
-        for _ in range(3):
+        for _ in range(20):
             self.bullet(450, 160).update(1)
         self.player.update(.05)
         self.assertLess(self.player.y, 204)
@@ -74,14 +76,14 @@ class CombatTests(unittest.TestCase):
         game_world.add_object(doodle, game_world.TERRAIN)
         self.bullet(500, 108).update(2)
         self.assertEqual(self.player.hp, 5)
-        self.assertEqual(doodle.hp, 2)
+        self.assertEqual(doodle.hp, 19)
         bullet = self.bullet(800, 500, 1, 'player')
         bullet.update(1)
         self.assertFalse(bullet.active)
 
     def test_enemy_size_vertical_bounds_and_continuous_fire(self):
         enemy = TestEnemy(960, 540, 80)
-        self.assertEqual((enemy.WIDTH, enemy.HEIGHT), (Player.WIDTH * 4, Player.HEIGHT * 4))
+        self.assertEqual((enemy.WIDTH, enemy.HEIGHT), (Player.WIDTH * 4, Player.HEIGHT * 2))
         x = enemy.x
         heights = []
         for _ in range(300):
