@@ -1,6 +1,7 @@
 """플레이 화면의 입력, 업데이트, 그리기."""
 
 import pico2d
+import game_world
 from player import Player
 
 WINDOW_WIDTH = 960
@@ -11,11 +12,14 @@ player = None
 
 def enter():
     global player
+    game_world.clear()
     player = Player(120, GROUND_Y, WINDOW_WIDTH)
+    game_world.add_object(player, game_world.ACTORS)
 
 
 def exit():
     global player
+    game_world.clear()
     player = None
 
 
@@ -33,11 +37,11 @@ def handle_events():
 
 
 def update(dt):
-    player.update(dt)
+    game_world.update(dt)
 
 
 def draw():
     pico2d.clear_canvas()
     pico2d.draw_rectangle(0, 0, WINDOW_WIDTH - 1, GROUND_Y)
-    player.draw()
+    game_world.draw()
     pico2d.update_canvas()
