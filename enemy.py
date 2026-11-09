@@ -9,7 +9,7 @@ class TestEnemy:
     WIDTH = 144
     HEIGHT = 112
     MAX_HP = 30
-    FIRE_INTERVAL = 0.12
+    FIRE_INTERVAL = 0.35
     MOVE_SPEED = 90.0
     team = 'enemy'
 

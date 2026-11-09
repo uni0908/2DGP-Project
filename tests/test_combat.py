@@ -32,6 +32,7 @@ class CombatTests(unittest.TestCase):
             hp = self.player.hp
             bullet.update(.5)
             self.assertEqual(self.player.hp, hp)
+            self.player.update(1.01)
         self.assertEqual(self.player.hp, 0)
         self.player.take_damage(1)
         self.assertEqual(self.player.hp, 0)
@@ -93,7 +94,22 @@ class CombatTests(unittest.TestCase):
             self.assertGreaterEqual(enemy.y, enemy.min_y)
             self.assertLessEqual(enemy.y, enemy.max_y)
         self.assertGreater(max(heights) - min(heights), 100)
-        self.assertGreater(len(game_world.objects(game_world.PROJECTILES)), 30)
+        self.assertGreaterEqual(len(game_world.objects(game_world.PROJECTILES)), 16)
+        self.assertLessEqual(len(game_world.objects(game_world.PROJECTILES)), 18)
+
+    def test_invincibility_blocks_followup_hit_then_expires(self):
+        self.bullet(200, 108).update(.5)
+        self.assertEqual(self.player.hp, 4)
+        followup = self.bullet(200, 108)
+        followup.update(.5)
+        self.assertEqual(self.player.hp, 4)
+        self.assertFalse(followup.active)
+        self.player.update(.9)
+        self.bullet(200, 108).update(.5)
+        self.assertEqual(self.player.hp, 4)
+        self.player.update(.11)
+        self.bullet(200, 108).update(.5)
+        self.assertEqual(self.player.hp, 3)
 
     def test_player_bullet_damages_enemy_but_eraser_does_not(self):
         enemy = TestEnemy(960, 540, 80)

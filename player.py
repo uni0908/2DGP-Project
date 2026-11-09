@@ -18,6 +18,7 @@ class Player:
     INITIAL_ERASERS = 10
     MAX_HP = 5
     FIRE_INTERVAL = 0.15
+    INVINCIBILITY_TIME = 1.0
     team = 'player'
 
     def __init__(self, x, ground_y, world_width):
@@ -33,11 +34,15 @@ class Player:
         self.eraser_count = self.INITIAL_ERASERS
         self.hp = self.MAX_HP
         self.fire_timer = 0.0
+        self.invincibility_timer = 0.0
         self.height = self.HEIGHT
         self.crouching = False
 
     def take_damage(self, amount):
+        if self.hp <= 0 or self.invincibility_timer > 0 or amount <= 0:
+            return
         self.hp = max(0, self.hp - amount)
+        self.invincibility_timer = self.INVINCIBILITY_TIME
         if self.hp == 0:
             self.clear_input()
 
@@ -79,6 +84,7 @@ class Player:
     def update(self, dt):
         if self.hp <= 0:
             return
+        self.invincibility_timer = max(0.0, self.invincibility_timer - max(0, dt))
         if pico2d.SDLK_DOWN in self.pressed_keys:
             if self.grounded:
                 self._set_crouching(True)
@@ -138,6 +144,8 @@ class Player:
         self.y = next_y
 
     def draw(self):
+        if self.invincibility_timer > 0 and int(self.invincibility_timer * 10) % 2 == 0:
+            return
         left = self.x - self.WIDTH / 2
         bottom = self.y - self.height / 2
         pico2d.draw_rectangle(left, bottom, left + self.WIDTH,

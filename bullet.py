@@ -14,7 +14,7 @@ class Bullet:
         self.x, self.y = x, y
         self.direction = direction
         self.team = team
-        self.speed = 650 if team == 'player' else 360
+        self.speed = 650 if team == 'player' else 240
         self.world_width = world_width
         self.active = True
 
