@@ -3,6 +3,7 @@
 import pico2d
 import game_world
 from player import Player
+from doodle import Doodle, overlaps
 
 WINDOW_WIDTH = 960
 WINDOW_HEIGHT = 540
@@ -32,8 +33,28 @@ def handle_events():
         if (event.type == pico2d.SDL_WINDOWEVENT
                 and event.event == pico2d.SDL_WINDOWEVENT_FOCUS_LOST):
             player.clear_input()
+        if (event.type == pico2d.SDL_KEYDOWN and event.key == pico2d.SDLK_d
+                and event.key not in player.pressed_keys):
+            spawn_doodle()
         player.handle_event(event)
     return True
+
+
+def spawn_doodle():
+    distance = player.WIDTH / 2 + Doodle.SPAWN_GAP + Doodle.WIDTH / 2
+    doodle = Doodle(player.x + player.facing * distance, player.y)
+    bounds = doodle.get_bb()
+    # 경계에서 위치를 강제로 보정하지 않고 생성을 거절한다.
+    if (bounds[0] < 0 or bounds[2] > WINDOW_WIDTH
+            or bounds[1] < GROUND_Y or bounds[3] > WINDOW_HEIGHT):
+        return None
+    occupied = (player.get_bb(),) + tuple(
+        obj.get_bb() for obj in game_world.objects(game_world.TERRAIN)
+    )
+    if any(overlaps(bounds, other) for other in occupied):
+        return None
+    game_world.add_object(doodle, game_world.TERRAIN)
+    return doodle
 
 
 def update(dt):

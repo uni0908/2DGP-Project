@@ -36,6 +36,10 @@ class Player:
             self.velocity_y = self.JUMP_SPEED
             self.grounded = False
 
+    def get_bb(self):
+        return (self.x - self.WIDTH / 2, self.y - self.HEIGHT / 2,
+                self.x + self.WIDTH / 2, self.y + self.HEIGHT / 2)
+
     def update(self, dt):
         direction = (pico2d.SDLK_RIGHT in self.pressed_keys) - (
             pico2d.SDLK_LEFT in self.pressed_keys

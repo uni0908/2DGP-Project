@@ -1,0 +1,40 @@
+"""생성 위치에 고정되는 낙서 지형. 현재 그림은 임시 선 표현이다."""
+
+import math
+
+import pico2d
+
+
+class Doodle:
+    WIDTH = 88
+    HEIGHT = 32
+    SPAWN_GAP = 12
+
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def get_bb(self):
+        return (self.x - self.WIDTH / 2, self.y - self.HEIGHT / 2,
+                self.x + self.WIDTH / 2, self.y + self.HEIGHT / 2)
+
+    def update(self, dt):
+        pass  # 낙서는 중력 없이 생성 위치를 유지한다.
+
+    def draw(self):
+        # 결정적인 궤적을 사용해 프레임마다 무늬가 바뀌지 않도록 한다.
+        for phase in (0, 1.7, 3.4):
+            previous = None
+            for i in range(65):
+                angle = i * math.tau / 64
+                x = self.x + (self.WIDTH / 2 - 2) * math.cos(angle)
+                y = self.y + (self.HEIGHT / 2 - 2) * math.sin(5 * angle + phase)
+                if previous is not None:
+                    pico2d.draw_line(*previous, x, y, 70, 70, 70)
+                previous = (x, y)
+        pico2d.draw_rectangle(*self.get_bb(), 100, 100, 100)
+
+
+def overlaps(a, b):
+    """면적이 있는 겹침만 판정한다. 가장자리 접촉은 허용한다."""
+    return a[0] < b[2] and a[2] > b[0] and a[1] < b[3] and a[3] > b[1]
