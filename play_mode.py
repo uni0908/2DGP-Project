@@ -103,7 +103,9 @@ def throw_eraser():
     if game_over or player.hp <= 0 or player.eraser_count <= 0:
         return None
     # 플레이어 중심 높이에서 발사해 바로 앞 낙서부터 충돌을 판정한다.
-    eraser = Eraser(player.x, player.y, player.facing, WINDOW_WIDTH)
+    downward = pico2d.SDLK_DOWN in player.pressed_keys
+    eraser = Eraser(player.x, player.y, player.facing, WINDOW_WIDTH,
+                    downward=downward, ground_y=GROUND_Y)
     game_world.add_object(eraser, game_world.PROJECTILES)
     player.eraser_count -= 1
     return eraser
@@ -122,6 +124,7 @@ def draw():
               (30, 30, 30))
     font.draw(20, WINDOW_HEIGHT - 58, '좌우: 이동  아래: 웅크리기  Space: 점프  A: 연사  Esc: 종료',
               (30, 30, 30))
+    font.draw(20, WINDOW_HEIGHT - 84, '아래 + D: 발밑으로 지우개 투척', (30, 30, 30))
     if game_over:
         font.draw(WINDOW_WIDTH / 2 - 160, WINDOW_HEIGHT / 2,
                   '게임 오버! R: 재시작 / Esc: 종료', (180, 30, 30))

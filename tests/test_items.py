@@ -98,3 +98,41 @@ class ItemTests(unittest.TestCase):
             play_mode.throw_eraser()
         game_world.update(2)
         self.assertFalse(game_world.objects(game_world.PROJECTILES))
+
+    def test_down_throw_removes_support_and_player_falls(self):
+        import pico2d
+        platform = Doodle(300, 160)
+        lower = Doodle(300, 110)
+        for obj in (lower, platform):
+            game_world.add_object(obj, game_world.TERRAIN)
+        player = play_mode.player
+        player.x, player.y = 300, 204
+        player.pressed_keys.add(pico2d.SDLK_DOWN)
+        player.update(.01)
+        eraser = play_mode.throw_eraser()
+        self.assertTrue(eraser.downward)
+        self.assertEqual(player.eraser_count, player.INITIAL_ERASERS - 1)
+        eraser.update(.5)
+        self.assertNotIn(platform, game_world.objects(game_world.TERRAIN))
+        self.assertIn(lower, game_world.objects(game_world.TERRAIN))
+        player.update(.02)
+        self.assertFalse(player.grounded)
+        self.assertLess(player.get_bb()[1], 176)
+
+    def test_down_miss_expires_at_ground_and_does_not_erase_side(self):
+        import pico2d
+        platform = Doodle(300, 110)
+        game_world.add_object(platform, game_world.TERRAIN)
+        play_mode.player.pressed_keys.add(pico2d.SDLK_DOWN)
+        eraser = play_mode.throw_eraser()
+        eraser.update(1)
+        self.assertIn(platform, game_world.objects(game_world.TERRAIN))
+        self.assertFalse(game_world.objects(game_world.PROJECTILES))
+        self.assertEqual(eraser.y, play_mode.GROUND_Y)
+
+    def test_down_throw_unavailable_at_zero(self):
+        import pico2d
+        play_mode.player.pressed_keys.add(pico2d.SDLK_DOWN)
+        play_mode.player.eraser_count = 0
+        self.assertIsNone(play_mode.throw_eraser())
+        self.assertEqual(play_mode.player.eraser_count, 0)
