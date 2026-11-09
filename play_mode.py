@@ -1,5 +1,7 @@
 """플레이 화면의 입력, 업데이트, 그리기."""
 
+from pathlib import Path
+
 import pico2d
 import game_world
 from player import Player
@@ -10,6 +12,7 @@ WINDOW_WIDTH = 960
 WINDOW_HEIGHT = 540
 GROUND_Y = 80
 player = None
+font = None
 
 
 def enter():
@@ -20,9 +23,10 @@ def enter():
 
 
 def exit():
-    global player
+    global player, font
     game_world.clear()
     player = None
+    font = None
 
 
 def handle_events():
@@ -79,7 +83,16 @@ def throw_eraser():
 
 
 def draw():
+    global font
+    if font is None:
+        font_path = Path(pico2d.__file__).parent / 'data' / 'ConsolaMalgun.ttf'
+        font = pico2d.load_font(str(font_path), 20)
     pico2d.clear_canvas()
     pico2d.draw_rectangle(0, 0, WINDOW_WIDTH - 1, GROUND_Y)
     game_world.draw()
+    font.draw(20, WINDOW_HEIGHT - 30,
+              f'[D] 낙서: {player.doodle_count}   [E] 지우개: {player.eraser_count}',
+              (30, 30, 30))
+    font.draw(20, WINDOW_HEIGHT - 58, '방향키: 이동   Space: 점프   Esc: 종료',
+              (30, 30, 30))
     pico2d.update_canvas()
