@@ -2,7 +2,8 @@
 
 TERRAIN = 0
 ACTORS = 1
-_layers = [[], []]
+PROJECTILES = 2
+_layers = [[], [], []]
 
 
 def add_object(obj, layer):
@@ -11,6 +12,13 @@ def add_object(obj, layer):
 
 def objects(layer):
     return tuple(_layers[layer])
+
+
+def remove_object(obj):
+    for layer in _layers:
+        if obj in layer:
+            layer.remove(obj)
+            return
 
 
 def clear():
