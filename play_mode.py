@@ -64,7 +64,8 @@ def spawn_doodle():
     if game_over or player.hp <= 0 or player.doodle_count <= 0:
         return None
     distance = player.WIDTH / 2 + Doodle.SPAWN_GAP + Doodle.WIDTH / 2
-    doodle = Doodle(player.x + player.facing * distance, player.y)
+    doodle = Doodle(player.x + player.facing * distance,
+                    max(player.y, GROUND_Y + Doodle.HEIGHT / 2))
     bounds = doodle.get_bb()
     # 경계에서 위치를 강제로 보정하지 않고 생성을 거절한다.
     if (bounds[0] < 0 or bounds[2] > WINDOW_WIDTH
@@ -119,7 +120,7 @@ def draw():
     font.draw(20, WINDOW_HEIGHT - 30,
               f'체력: {player.hp}/5   [S] 낙서: {player.doodle_count}   [D] 지우개: {player.eraser_count}',
               (30, 30, 30))
-    font.draw(20, WINDOW_HEIGHT - 58, '방향키: 이동   Space: 점프   A: 연사   Esc: 종료',
+    font.draw(20, WINDOW_HEIGHT - 58, '좌우: 이동  아래: 웅크리기  Space: 점프  A: 연사  Esc: 종료',
               (30, 30, 30))
     if game_over:
         font.draw(WINDOW_WIDTH / 2 - 160, WINDOW_HEIGHT / 2,

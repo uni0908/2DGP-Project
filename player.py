@@ -3,11 +3,14 @@
 import pico2d
 import game_world
 from bullet import Bullet
+from doodle import overlaps
 
 
 class Player:
     WIDTH = 36
     HEIGHT = 56
+    CROUCH_HEIGHT = 28
+    CROUCH_SPEED = 130.0
     MOVE_SPEED = 260.0  # 임시 값: 초당 픽셀
     JUMP_SPEED = 620.0  # 임시 값: 초당 픽셀
     GRAVITY = 1800.0  # 임시 값: 초당 픽셀/초
@@ -30,6 +33,8 @@ class Player:
         self.eraser_count = self.INITIAL_ERASERS
         self.hp = self.MAX_HP
         self.fire_timer = 0.0
+        self.height = self.HEIGHT
+        self.crouching = False
 
     def take_damage(self, amount):
         self.hp = max(0, self.hp - amount)
@@ -38,6 +43,8 @@ class Player:
 
     def handle_event(self, event):
         if event.type == pico2d.SDL_KEYDOWN:
+            if event.key == pico2d.SDLK_DOWN and self.grounded:
+                self._set_crouching(True)
             if event.key == pico2d.SDLK_SPACE and event.key not in self.pressed_keys:
                 self.jump()
             self.pressed_keys.add(event.key)
@@ -48,17 +55,35 @@ class Player:
         self.pressed_keys.clear()
 
     def jump(self):
-        if self.grounded:
+        if self.grounded and not self.crouching:
             self.velocity_y = self.JUMP_SPEED
             self.grounded = False
 
     def get_bb(self):
-        return (self.x - self.WIDTH / 2, self.y - self.HEIGHT / 2,
-                self.x + self.WIDTH / 2, self.y + self.HEIGHT / 2)
+        return (self.x - self.WIDTH / 2, self.y - self.height / 2,
+                self.x + self.WIDTH / 2, self.y + self.height / 2)
+
+    def _set_crouching(self, crouching):
+        bottom = self.y - self.height / 2
+        height = self.CROUCH_HEIGHT if crouching else self.HEIGHT
+        if not crouching:
+            standing_box = (self.x - self.WIDTH / 2, bottom,
+                            self.x + self.WIDTH / 2, bottom + height)
+            if any(overlaps(standing_box, obj.get_bb())
+                   for obj in game_world.objects(game_world.TERRAIN)):
+                return  # 머리 위 공간이 확보될 때까지 웅크린 상태 유지
+        self.height = height
+        self.y = bottom + height / 2
+        self.crouching = crouching
 
     def update(self, dt):
         if self.hp <= 0:
             return
+        if pico2d.SDLK_DOWN in self.pressed_keys:
+            if self.grounded:
+                self._set_crouching(True)
+        elif self.crouching:
+            self._set_crouching(False)
         direction = (pico2d.SDLK_RIGHT in self.pressed_keys) - (
             pico2d.SDLK_LEFT in self.pressed_keys
         )
@@ -80,7 +105,8 @@ class Player:
 
     def _move(self, dt, direction, terrain):
         old_left, bottom, old_right, top = self.get_bb()
-        next_x = self.x + direction * self.MOVE_SPEED * dt
+        speed = self.CROUCH_SPEED if self.crouching else self.MOVE_SPEED
+        next_x = self.x + direction * speed * dt
         for obj in terrain:
             left, low, right, high = obj.get_bb()
             if bottom < high and top > low:
@@ -101,21 +127,21 @@ class Player:
             return
         next_y = self.y + self.velocity_y * dt - 0.5 * self.GRAVITY * dt * dt
         self.velocity_y -= self.GRAVITY * dt
-        next_bottom = next_y - self.HEIGHT / 2
+        next_bottom = next_y - self.height / 2
         # 아래에서 올라가는 동안에는 윗면/아랫면 충돌을 적용하지 않는다.
         crossed = [height for height in surfaces
                    if next_bottom <= height <= bottom and self.velocity_y <= 0]
         if crossed:
-            next_y = max(crossed) + self.HEIGHT / 2
+            next_y = max(crossed) + self.height / 2
             self.velocity_y = 0.0
             self.grounded = True
         self.y = next_y
 
     def draw(self):
         left = self.x - self.WIDTH / 2
-        bottom = self.y - self.HEIGHT / 2
+        bottom = self.y - self.height / 2
         pico2d.draw_rectangle(left, bottom, left + self.WIDTH,
-                              bottom + self.HEIGHT, 40, 40, 40)
+                              bottom + self.height, 40, 40, 40)
         eye_x = self.x + self.facing * 9
         pico2d.draw_rectangle(eye_x - 2, self.y + 8, eye_x + 2,
                               self.y + 12, 40, 40, 40)
