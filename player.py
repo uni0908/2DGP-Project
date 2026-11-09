@@ -10,6 +10,8 @@ class Player:
     MOVE_SPEED = 260.0  # 임시 값: 초당 픽셀
     JUMP_SPEED = 620.0  # 임시 값: 초당 픽셀
     GRAVITY = 1800.0  # 임시 값: 초당 픽셀/초
+    INITIAL_DOODLES = 10
+    INITIAL_ERASERS = 10
 
     def __init__(self, x, ground_y, world_width):
         self.x = x
@@ -20,6 +22,8 @@ class Player:
         self.pressed_keys = set()
         self.velocity_y = 0.0
         self.grounded = True
+        self.doodle_count = self.INITIAL_DOODLES
+        self.eraser_count = self.INITIAL_ERASERS
 
     def handle_event(self, event):
         if event.type == pico2d.SDL_KEYDOWN:

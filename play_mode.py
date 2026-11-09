@@ -41,6 +41,8 @@ def handle_events():
 
 
 def spawn_doodle():
+    if player.doodle_count <= 0:
+        return None
     distance = player.WIDTH / 2 + Doodle.SPAWN_GAP + Doodle.WIDTH / 2
     doodle = Doodle(player.x + player.facing * distance, player.y)
     bounds = doodle.get_bb()
@@ -54,6 +56,7 @@ def spawn_doodle():
     if any(overlaps(bounds, other) for other in occupied):
         return None
     game_world.add_object(doodle, game_world.TERRAIN)
+    player.doodle_count -= 1
     return doodle
 
 
