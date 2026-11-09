@@ -115,8 +115,8 @@ class TerrainTests(unittest.TestCase):
 
     def test_spawn_key_ignores_repeat_and_focus_loss_clears_input(self):
         play_mode.enter()
-        events = [SimpleNamespace(type=pico2d.SDL_KEYDOWN, key=pico2d.SDLK_d),
-                  SimpleNamespace(type=pico2d.SDL_KEYDOWN, key=pico2d.SDLK_d),
+        events = [SimpleNamespace(type=pico2d.SDL_KEYDOWN, key=pico2d.SDLK_s),
+                  SimpleNamespace(type=pico2d.SDL_KEYDOWN, key=pico2d.SDLK_s),
                   SimpleNamespace(type=pico2d.SDL_WINDOWEVENT,
                                   event=pico2d.SDL_WINDOWEVENT_FOCUS_LOST)]
         from unittest.mock import patch

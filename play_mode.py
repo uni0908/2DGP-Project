@@ -50,10 +50,10 @@ def handle_events():
         if (event.type == pico2d.SDL_WINDOWEVENT
                 and event.event == pico2d.SDL_WINDOWEVENT_FOCUS_LOST):
             player.clear_input()
-        if (event.type == pico2d.SDL_KEYDOWN and event.key == pico2d.SDLK_d
+        if (event.type == pico2d.SDL_KEYDOWN and event.key == pico2d.SDLK_s
                 and event.key not in player.pressed_keys):
             spawn_doodle()
-        if (event.type == pico2d.SDL_KEYDOWN and event.key == pico2d.SDLK_e
+        if (event.type == pico2d.SDL_KEYDOWN and event.key == pico2d.SDLK_d
                 and event.key not in player.pressed_keys):
             throw_eraser()
         player.handle_event(event)
@@ -117,9 +117,9 @@ def draw():
     pico2d.draw_rectangle(0, 0, WINDOW_WIDTH - 1, GROUND_Y)
     game_world.draw()
     font.draw(20, WINDOW_HEIGHT - 30,
-              f'체력: {player.hp}/5   [D] 낙서: {player.doodle_count}   [E] 지우개: {player.eraser_count}',
+              f'체력: {player.hp}/5   [S] 낙서: {player.doodle_count}   [D] 지우개: {player.eraser_count}',
               (30, 30, 30))
-    font.draw(20, WINDOW_HEIGHT - 58, '방향키: 이동   Space: 점프   Z: 연사   Esc: 종료',
+    font.draw(20, WINDOW_HEIGHT - 58, '방향키: 이동   Space: 점프   A: 연사   Esc: 종료',
               (30, 30, 30))
     if game_over:
         font.draw(WINDOW_WIDTH / 2 - 160, WINDOW_HEIGHT / 2,

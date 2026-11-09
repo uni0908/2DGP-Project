@@ -38,7 +38,7 @@ class CombatTests(unittest.TestCase):
 
     def test_player_fire_does_not_consume_resources_or_hit_self(self):
         resources = (self.player.doodle_count, self.player.eraser_count)
-        self.player.pressed_keys.add(pico2d.SDLK_z)
+        self.player.pressed_keys.add(pico2d.SDLK_a)
         self.player.update(.01)
         self.assertEqual(len(game_world.objects(game_world.PROJECTILES)), 1)
         self.player.update(.01)

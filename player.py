@@ -72,7 +72,7 @@ class Player:
             self._move(step, direction, terrain)
             remaining -= step
         self.fire_timer = max(0, self.fire_timer - max(0, dt))
-        if pico2d.SDLK_z in self.pressed_keys and self.fire_timer <= 0:
+        if pico2d.SDLK_a in self.pressed_keys and self.fire_timer <= 0:
             x = self.x + self.facing * (self.WIDTH / 2 + Bullet.WIDTH / 2)
             game_world.add_object(Bullet(x, self.y, self.facing, self.team,
                                          self.world_width), game_world.PROJECTILES)
