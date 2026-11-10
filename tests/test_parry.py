@@ -64,6 +64,26 @@ class ParryTests(unittest.TestCase):
         self.assertTrue(far.active); self.assertTrue(high.active)
         self.assertEqual(self.player.doodle_count,10)
         self.assertEqual(self.player.eraser_count,10)
+    def test_jump_from_below_then_repress_before_body_contact(self):
+        bullet = self.incoming(x=140, y=185)
+        self.press()
+        self.assertTrue(bullet.active)
+        game_world.update(.04)
+        self.assertLess(self.player.get_bb()[3], bullet.get_bb()[1])
+        self.assertEqual(self.player.hp, 5)
+        self.release()
+        self.press()
+        self.assertFalse(bullet.active)
+        self.assertEqual(self.player.doodle_count, 11)
+        self.assertEqual(self.player.velocity_y, self.player.JUMP_SPEED)
+    def test_jump_from_below_without_repress_still_takes_damage(self):
+        bullet = self.incoming(x=140, y=185)
+        self.press()
+        for _ in range(10):
+            game_world.update(.008)
+        self.assertFalse(bullet.active)
+        self.assertEqual(self.player.hp, 4)
+        self.assertEqual(self.player.doodle_count, 10)
     def test_doodle_blocks_colored_bullet_and_crouch_blocks_parry(self):
         platform=Doodle(200,108); game_world.add_object(platform,game_world.TERRAIN)
         self.incoming(x=300).update(1)

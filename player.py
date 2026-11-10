@@ -19,7 +19,9 @@ class Player:
     MAX_HP = 5
     FIRE_INTERVAL = 0.15
     INVINCIBILITY_TIME = 1.0
-    PARRY_MARGIN = 12
+    PARRY_SIDE_MARGIN = 16
+    PARRY_TOP_MARGIN = 24
+    PARRY_BOTTOM_MARGIN = 12
     PARRY_REWARD = 1
     team = 'player'
 
@@ -67,8 +69,8 @@ class Player:
 
     def get_parry_bb(self):
         left, bottom, right, top = self.get_bb()
-        return (left - self.PARRY_MARGIN, bottom - self.PARRY_MARGIN,
-                right + self.PARRY_MARGIN, top + self.PARRY_MARGIN)
+        return (left - self.PARRY_SIDE_MARGIN, bottom - self.PARRY_BOTTOM_MARGIN,
+                right + self.PARRY_SIDE_MARGIN, top + self.PARRY_TOP_MARGIN)
 
     def attempt_parry(self):
         # 미래의 접촉을 기다리지 않고 입력된 바로 그 순간의 위치만 검사한다.
