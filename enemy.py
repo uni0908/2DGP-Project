@@ -1,4 +1,4 @@
-"""오른쪽에 고정된 채 상하 왕복하며 연사하는 테스트 적."""
+"""패링 연습을 위해 위치를 고정한 테스트 적."""
 
 import pico2d
 import game_world
@@ -9,8 +9,8 @@ class TestEnemy:
     WIDTH = 144
     HEIGHT = 112
     MAX_HP = 30
-    FIRE_INTERVAL = 0.35
-    MOVE_SPEED = 90.0
+    FIRE_INTERVAL = 1.2
+    ATTACK_SEQUENCE = (None, 'doodle', 'eraser')
     team = 'enemy'
 
     def __init__(self, world_width, world_height, ground_y):
@@ -19,7 +19,8 @@ class TestEnemy:
         self.min_y = ground_y + self.HEIGHT / 2
         self.max_y = world_height - self.HEIGHT / 2 - 100
         self.y = self.min_y
-        self.phase = 0.0
+        self.shot_index = 0
+        self.shot_y = ground_y + 90
         self.hp = self.MAX_HP
         self.fire_timer = 0.0
 
@@ -35,15 +36,13 @@ class TestEnemy:
     def update(self, dt):
         if self.hp <= 0:
             return
-        span = self.max_y - self.min_y
-        self.phase = (self.phase + self.MOVE_SPEED * max(0, dt)) % (2 * span)
-        self.y = self.min_y + span - abs(span - self.phase)
         self.fire_timer -= max(0, dt)
         if self.fire_timer <= 0:
-            # 낮은 총구를 사용해 바닥의 플레이어에게도 탄이 도달하게 한다.
             x = self.x - self.WIDTH / 2 - Bullet.WIDTH / 2
-            y = self.y - self.HEIGHT / 2 + 28
-            game_world.add_object(Bullet(x, y, -1, self.team, self.world_width),
+            reward = self.ATTACK_SEQUENCE[self.shot_index % len(self.ATTACK_SEQUENCE)]
+            self.shot_index += 1
+            game_world.add_object(Bullet(x, self.shot_y, -1, self.team,
+                                         self.world_width, parry_reward=reward),
                                   game_world.PROJECTILES)
             self.fire_timer = self.FIRE_INTERVAL
 

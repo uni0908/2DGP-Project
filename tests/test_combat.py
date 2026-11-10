@@ -82,7 +82,7 @@ class CombatTests(unittest.TestCase):
         bullet.update(1)
         self.assertFalse(bullet.active)
 
-    def test_enemy_size_vertical_bounds_and_continuous_fire(self):
+    def test_enemy_is_fixed_and_fires_three_types_in_order(self):
         enemy = TestEnemy(960, 540, 80)
         self.assertEqual((enemy.WIDTH, enemy.HEIGHT), (Player.WIDTH * 4, Player.HEIGHT * 2))
         x = enemy.x
@@ -93,9 +93,12 @@ class CombatTests(unittest.TestCase):
             self.assertEqual(enemy.x, x)
             self.assertGreaterEqual(enemy.y, enemy.min_y)
             self.assertLessEqual(enemy.y, enemy.max_y)
-        self.assertGreater(max(heights) - min(heights), 100)
-        self.assertGreaterEqual(len(game_world.objects(game_world.PROJECTILES)), 16)
-        self.assertLessEqual(len(game_world.objects(game_world.PROJECTILES)), 18)
+        self.assertEqual(max(heights), min(heights))
+        shots = game_world.objects(game_world.PROJECTILES)
+        self.assertEqual(len(shots), 5)
+        self.assertEqual([shot.parry_reward for shot in shots],
+                         [None, 'doodle', 'eraser', None, 'doodle'])
+        self.assertTrue(all(shot.y == 170 for shot in shots))
 
     def test_invincibility_blocks_followup_hit_then_expires(self):
         self.bullet(200, 108).update(.5)

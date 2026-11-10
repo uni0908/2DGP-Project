@@ -10,13 +10,16 @@ class Bullet:
     HEIGHT = 6
     DAMAGE = 1
 
-    def __init__(self, x, y, direction, team, world_width):
+    def __init__(self, x, y, direction, team, world_width, parry_reward=None):
         self.x, self.y = x, y
         self.direction = direction
         self.team = team
         self.speed = 650 if team == 'player' else 240
         self.world_width = world_width
         self.active = True
+        self.parry_reward = parry_reward if team == 'enemy' else None
+        if self.parry_reward is not None:
+            self.WIDTH, self.HEIGHT = 20, 14
 
     def update(self, dt):
         if not self.active:
@@ -30,6 +33,9 @@ class Bullet:
                        and getattr(obj, 'hp', 0) > 0)
         for obj in targets:
             left, bottom, right, top = obj.get_bb()
+            if (self.parry_reward is not None and hasattr(obj, 'get_parry_bb')
+                    and obj.parry_timer > 0):
+                left, bottom, right, top = obj.get_parry_bb()
             if self.y + self.HEIGHT / 2 < bottom or self.y - self.HEIGHT / 2 > top:
                 continue
             low, high = left - self.WIDTH / 2, right + self.WIDTH / 2
@@ -38,7 +44,8 @@ class Bullet:
                 hits.append((distance, obj))
         if hits:
             target = min(hits, key=lambda hit: hit[0])[1]
-            target.take_damage(self.DAMAGE)
+            if not (hasattr(target, 'try_parry') and target.try_parry(self)):
+                target.take_damage(self.DAMAGE)
             self.active = False
             game_world.remove_object(self)
             return
@@ -49,6 +56,10 @@ class Bullet:
 
     def draw(self):
         color = (40, 100, 220) if self.team == 'player' else (220, 70, 40)
+        if self.parry_reward == 'doodle':
+            color = (240, 70, 160)
+        elif self.parry_reward == 'eraser':
+            color = (30, 180, 240)
         pico2d.draw_rectangle(self.x - self.WIDTH / 2, self.y - self.HEIGHT / 2,
                               self.x + self.WIDTH / 2, self.y + self.HEIGHT / 2,
                               *color, filled=True)
