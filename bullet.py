@@ -21,6 +21,10 @@ class Bullet:
         if self.parry_reward is not None:
             self.WIDTH, self.HEIGHT = 20, 14
 
+    def get_bb(self):
+        return (self.x - self.WIDTH / 2, self.y - self.HEIGHT / 2,
+                self.x + self.WIDTH / 2, self.y + self.HEIGHT / 2)
+
     def update(self, dt):
         if not self.active:
             return
@@ -33,9 +37,6 @@ class Bullet:
                        and getattr(obj, 'hp', 0) > 0)
         for obj in targets:
             left, bottom, right, top = obj.get_bb()
-            if (self.parry_reward is not None and hasattr(obj, 'get_parry_bb')
-                    and obj.parry_timer > 0):
-                left, bottom, right, top = obj.get_parry_bb()
             if self.y + self.HEIGHT / 2 < bottom or self.y - self.HEIGHT / 2 > top:
                 continue
             low, high = left - self.WIDTH / 2, right + self.WIDTH / 2
@@ -44,8 +45,7 @@ class Bullet:
                 hits.append((distance, obj))
         if hits:
             target = min(hits, key=lambda hit: hit[0])[1]
-            if not (hasattr(target, 'try_parry') and target.try_parry(self)):
-                target.take_damage(self.DAMAGE)
+            target.take_damage(self.DAMAGE)
             self.active = False
             game_world.remove_object(self)
             return

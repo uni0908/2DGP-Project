@@ -19,7 +19,6 @@ class Player:
     MAX_HP = 5
     FIRE_INTERVAL = 0.15
     INVINCIBILITY_TIME = 1.0
-    PARRY_WINDOW = 0.22
     PARRY_MARGIN = 12
     PARRY_REWARD = 1
     team = 'player'
@@ -40,7 +39,6 @@ class Player:
         self.invincibility_timer = 0.0
         self.height = self.HEIGHT
         self.crouching = False
-        self.parry_timer = 0.0
         self.parry_feedback_timer = 0.0
         self.last_parry_reward = None
 
@@ -59,31 +57,42 @@ class Player:
             if event.key == pico2d.SDLK_SPACE and event.key not in self.pressed_keys:
                 if self.hp > 0 and not self.crouching:
                     self.jump()
-                    self.parry_timer = self.PARRY_WINDOW
+                    self.attempt_parry()
             self.pressed_keys.add(event.key)
         elif event.type == pico2d.SDL_KEYUP:
             self.pressed_keys.discard(event.key)
 
     def clear_input(self):
         self.pressed_keys.clear()
-        self.parry_timer = 0.0
 
     def get_parry_bb(self):
         left, bottom, right, top = self.get_bb()
         return (left - self.PARRY_MARGIN, bottom - self.PARRY_MARGIN,
                 right + self.PARRY_MARGIN, top + self.PARRY_MARGIN)
 
+    def attempt_parry(self):
+        # 미래의 접촉을 기다리지 않고 입력된 바로 그 순간의 위치만 검사한다.
+        candidates = [obj for obj in game_world.objects(game_world.PROJECTILES)
+                      if isinstance(obj, Bullet) and obj.active and obj.team == 'enemy'
+                      and obj.parry_reward in ('doodle', 'eraser')
+                      and overlaps(self.get_parry_bb(), obj.get_bb())]
+        candidates.sort(key=lambda obj: (obj.x - self.x) ** 2 + (obj.y - self.y) ** 2)
+        if candidates:
+            self.try_parry(candidates[0])
+
     def try_parry(self, bullet):
-        if (self.hp <= 0 or self.crouching or self.parry_timer <= 0
+        if (self.hp <= 0 or self.crouching
                 or not bullet.active or bullet.team != 'enemy'
-                or bullet.parry_reward not in ('doodle', 'eraser')):
+                or bullet.parry_reward not in ('doodle', 'eraser')
+                or not overlaps(self.get_parry_bb(), bullet.get_bb())):
             return False
         if bullet.parry_reward == 'doodle':
             self.doodle_count += self.PARRY_REWARD
         else:
             self.eraser_count += self.PARRY_REWARD
         # 입력 한 번에 한 발만 패링하며 연속 성공하려면 다시 눌러야 한다.
-        self.parry_timer = 0.0
+        bullet.active = False
+        game_world.remove_object(bullet)
         self.velocity_y = self.JUMP_SPEED
         self.grounded = False
         self.last_parry_reward = bullet.parry_reward
@@ -116,7 +125,6 @@ class Player:
         if self.hp <= 0:
             return
         self.invincibility_timer = max(0.0, self.invincibility_timer - max(0, dt))
-        self.parry_timer = max(0.0, self.parry_timer - max(0, dt))
         self.parry_feedback_timer = max(0.0, self.parry_feedback_timer - max(0, dt))
         if pico2d.SDLK_DOWN in self.pressed_keys:
             if self.grounded:
@@ -177,7 +185,7 @@ class Player:
         self.y = next_y
 
     def draw(self):
-        if self.parry_timer > 0:
+        if self.parry_feedback_timer > 0.65:
             pico2d.draw_rectangle(*self.get_parry_bb(), 240, 70, 160)
         if self.invincibility_timer > 0 and int(self.invincibility_timer * 10) % 2 == 0:
             return
