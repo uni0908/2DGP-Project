@@ -19,6 +19,9 @@ class Player:
     MAX_HP = 5
     FIRE_INTERVAL = 0.15
     INVINCIBILITY_TIME = 1.0
+    PARRY_WINDOW = 0.22
+    PARRY_MARGIN = 12
+    PARRY_REWARD = 1
     team = 'player'
 
     def __init__(self, x, ground_y, world_width):
@@ -37,6 +40,9 @@ class Player:
         self.invincibility_timer = 0.0
         self.height = self.HEIGHT
         self.crouching = False
+        self.parry_timer = 0.0
+        self.parry_feedback_timer = 0.0
+        self.last_parry_reward = None
 
     def take_damage(self, amount):
         if self.hp <= 0 or self.invincibility_timer > 0 or amount <= 0:
@@ -51,13 +57,38 @@ class Player:
             if event.key == pico2d.SDLK_DOWN and self.grounded:
                 self._set_crouching(True)
             if event.key == pico2d.SDLK_SPACE and event.key not in self.pressed_keys:
-                self.jump()
+                if self.hp > 0 and not self.crouching:
+                    self.jump()
+                    self.parry_timer = self.PARRY_WINDOW
             self.pressed_keys.add(event.key)
         elif event.type == pico2d.SDL_KEYUP:
             self.pressed_keys.discard(event.key)
 
     def clear_input(self):
         self.pressed_keys.clear()
+        self.parry_timer = 0.0
+
+    def get_parry_bb(self):
+        left, bottom, right, top = self.get_bb()
+        return (left - self.PARRY_MARGIN, bottom - self.PARRY_MARGIN,
+                right + self.PARRY_MARGIN, top + self.PARRY_MARGIN)
+
+    def try_parry(self, bullet):
+        if (self.hp <= 0 or self.crouching or self.parry_timer <= 0
+                or not bullet.active or bullet.team != 'enemy'
+                or bullet.parry_reward not in ('doodle', 'eraser')):
+            return False
+        if bullet.parry_reward == 'doodle':
+            self.doodle_count += self.PARRY_REWARD
+        else:
+            self.eraser_count += self.PARRY_REWARD
+        # 입력 한 번에 한 발만 패링하며 연속 성공하려면 다시 눌러야 한다.
+        self.parry_timer = 0.0
+        self.velocity_y = self.JUMP_SPEED
+        self.grounded = False
+        self.last_parry_reward = bullet.parry_reward
+        self.parry_feedback_timer = 0.8
+        return True
 
     def jump(self):
         if self.grounded and not self.crouching:
@@ -85,6 +116,8 @@ class Player:
         if self.hp <= 0:
             return
         self.invincibility_timer = max(0.0, self.invincibility_timer - max(0, dt))
+        self.parry_timer = max(0.0, self.parry_timer - max(0, dt))
+        self.parry_feedback_timer = max(0.0, self.parry_feedback_timer - max(0, dt))
         if pico2d.SDLK_DOWN in self.pressed_keys:
             if self.grounded:
                 self._set_crouching(True)
@@ -144,6 +177,8 @@ class Player:
         self.y = next_y
 
     def draw(self):
+        if self.parry_timer > 0:
+            pico2d.draw_rectangle(*self.get_parry_bb(), 240, 70, 160)
         if self.invincibility_timer > 0 and int(self.invincibility_timer * 10) % 2 == 0:
             return
         left = self.x - self.WIDTH / 2

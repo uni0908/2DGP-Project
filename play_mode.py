@@ -125,6 +125,11 @@ def draw():
     font.draw(20, WINDOW_HEIGHT - 58, '좌우: 이동  아래: 웅크리기  Space: 점프  A: 연사  Esc: 종료',
               (30, 30, 30))
     font.draw(20, WINDOW_HEIGHT - 84, '아래 + D: 발밑으로 지우개 투척', (30, 30, 30))
+    font.draw(20, 45, 'Space: 점프/패링  |  분홍: 낙서 +1  하늘: 지우개 +1  일반탄: 패링 불가',
+              (30, 30, 30))
+    if player.parry_feedback_timer > 0:
+        reward_name = '낙서' if player.last_parry_reward == 'doodle' else '지우개'
+        font.draw(20, 20, f'패링 성공! {reward_name} +1', (150, 30, 120))
     if game_over:
         font.draw(WINDOW_WIDTH / 2 - 160, WINDOW_HEIGHT / 2,
                   '게임 오버! R: 재시작 / Esc: 종료', (180, 30, 30))
