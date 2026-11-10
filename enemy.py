@@ -18,9 +18,9 @@ class TestEnemy:
         self.x = world_width - self.WIDTH / 2 - 24
         self.min_y = ground_y + self.HEIGHT / 2
         self.max_y = world_height - self.HEIGHT / 2 - 100
-        self.y = self.min_y
+        self.y = ground_y + 150
         self.shot_index = 0
-        self.shot_y = ground_y + 90
+        self.shot_y = self.y
         self.hp = self.MAX_HP
         self.fire_timer = 0.0
 

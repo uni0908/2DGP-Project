@@ -84,6 +84,27 @@ class ParryTests(unittest.TestCase):
         self.assertFalse(bullet.active)
         self.assertEqual(self.player.hp, 4)
         self.assertEqual(self.player.doodle_count, 10)
+    def test_training_height_allows_repress_after_jump(self):
+        from enemy import TestEnemy
+        enemy = TestEnemy(960, 540, 80)
+        self.assertEqual(enemy.shot_y, 230)
+        bullet = self.incoming(x=155, y=enemy.shot_y)
+        self.press()
+        for _ in range(18):
+            game_world.update(.008)
+        self.assertEqual(self.player.hp, 5)
+        self.assertTrue(bullet.active)
+        self.release()
+        self.press()
+        self.assertFalse(bullet.active)
+        self.assertEqual(self.player.doodle_count, 11)
+    def test_training_height_without_repress_still_hits(self):
+        bullet = self.incoming(x=168, y=230)
+        self.press()
+        for _ in range(30):
+            game_world.update(.008)
+        self.assertEqual(self.player.hp, 4)
+        self.assertFalse(bullet.active)
     def test_doodle_blocks_colored_bullet_and_crouch_blocks_parry(self):
         platform=Doodle(200,108); game_world.add_object(platform,game_world.TERRAIN)
         self.incoming(x=300).update(1)
