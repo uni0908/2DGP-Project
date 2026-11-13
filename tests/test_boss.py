@@ -22,7 +22,7 @@ class BossTests(unittest.TestCase):
         bullet = Bullet(120, y, 1, 'player', 960)
         bullet.update(2)
 
-    def test_phases_repeat_and_only_attack_fires(self):
+    def test_phases_repeat_and_rest_clears_low_bullets_before_upper_fire(self):
         self.boss.update(1)
         self.assertEqual(self.boss.state, 'warning')
         self.assertFalse(game_world.objects(game_world.PROJECTILES))
@@ -32,11 +32,51 @@ class BossTests(unittest.TestCase):
         self.boss.update(self.boss.PHASE_DURATIONS['attack'])
         self.assertEqual(self.boss.state, 'rest')
         self.assertEqual(self.boss.burst_shots, 6)
-        self.assertEqual(len(game_world.objects(game_world.PROJECTILES)), 36)
+        self.assertEqual(len(game_world.objects(game_world.PROJECTILES)), 12)
         self.boss.update(.5)
-        self.assertEqual(len(game_world.objects(game_world.PROJECTILES)), 36)
+        self.assertEqual(len(game_world.objects(game_world.PROJECTILES)), 12)
         self.boss.update(3.5)
         self.assertEqual(self.boss.state, 'warning')
+
+    def test_rest_upper_barrage_has_warning_then_repeats_without_low_shots(self):
+        self.boss.state = 'attack'
+        self.boss.advance_phase()
+        self.boss.update(.64)
+        self.assertFalse(game_world.objects(game_world.PROJECTILES))
+        self.boss.update(.02)
+        self.assertEqual(self.boss.rest_shots, 1)
+        shots = game_world.objects(game_world.PROJECTILES)
+        self.assertEqual(len(shots), 11)
+        self.assertTrue(all(shot.y >= 152 and shot.parry_reward is None for shot in shots))
+        self.boss.update(.6)
+        self.assertEqual(self.boss.rest_shots, 2)
+
+    def test_upper_rest_bullets_miss_floor_but_hit_platform_height(self):
+        from player import Player
+        for center_y, expected_hp in ((108, 5), (152, 4), (216, 4)):
+            with self.subTest(center_y=center_y):
+                game_world.clear()
+                player = Player(120, 80, 960)
+                player.y = center_y
+                game_world.add_object(player, game_world.ACTORS)
+                self.boss.fire_rest_volley()
+                for shot in game_world.objects(game_world.PROJECTILES):
+                    shot.update(3)
+                self.assertEqual(player.hp, expected_hp)
+
+    def test_rest_transition_preserves_own_shots_and_erasers(self):
+        friendly = Bullet(400, 108, 1, 'player', 960)
+        eraser = Eraser(200, 108, 1, 960)
+        game_world.add_object(friendly, game_world.PROJECTILES)
+        game_world.add_object(eraser, game_world.PROJECTILES)
+        self.boss.fire_volley()
+        self.boss.state = 'attack'
+        self.boss.advance_phase()
+        self.assertIn(friendly, game_world.objects(game_world.PROJECTILES))
+        self.assertIn(eraser, game_world.objects(game_world.PROJECTILES))
+        hostile = [obj for obj in game_world.objects(game_world.PROJECTILES)
+                   if isinstance(obj, Bullet) and obj.team == 'enemy']
+        self.assertTrue(all(obj.y >= 152 for obj in hostile))
 
     def test_whole_body_takes_damage_during_every_phase(self):
         expected_hp = 30

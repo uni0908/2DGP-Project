@@ -140,7 +140,7 @@ def draw():
         state_labels = {
             'warning': '패턴 1 예고: 낙서를 2~3층 쌓아 넓은 탄막에 대비하세요',
             'attack': f'일반 탄막 {enemy.burst_shots}/{enemy.VOLLEYS_PER_BURST}: 한 층 위로도 날아옵니다',
-            'rest': '기 모으는 중: 낮아진 보스를 향해 낙서를 치우고 반격하세요',
+            'rest': '상단 탄막! 아래로 내려와 낙서를 지우고 낮은 보스를 공격하세요',
         }
         remaining = max(0, enemy.PHASE_DURATIONS[enemy.state] - enemy.state_time)
         font.draw(20, WINDOW_HEIGHT - 112,
