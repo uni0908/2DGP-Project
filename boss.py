@@ -1,4 +1,6 @@
-"""1번 보스 패턴: 예고 → 정해진 수의 탄막 → 휴식 → 반복."""
+"""1번 보스 패턴: 다층 탄막 → 낮아진 자세의 상단 랜덤 사격 → 반복."""
+
+import random
 
 import pico2d
 import game_world
@@ -11,30 +13,24 @@ class Boss(TestEnemy):
     REST_HEIGHT = TestEnemy.HEIGHT / 2
     FIRE_INTERVAL = 0.45
     VOLLEYS_PER_BURST = 6
-    PHASE_DURATIONS = {'warning': 1.2, 'attack': FIRE_INTERVAL * VOLLEYS_PER_BURST,
-                       'rest': 4.0}
+    PHASE_DURATIONS = {'attack': FIRE_INTERVAL * VOLLEYS_PER_BURST, 'rest': 4.0}
     BULLET_SPEED = 200.0
-    REST_BARRAGE_HEIGHTS = tuple(range(72, 233, 16))
-    REST_FIRE_INTERVAL = 0.6
-    REST_WARNING_TIME = 0.65
+    REST_MIN_HEIGHT = 72
+    REST_MAX_HEIGHT = 152
+    REST_INTERVAL_RANGE = (0.08, 0.14)
     REST_BULLET_SPEED = 300.0
 
-    def __init__(self, world_width, world_height, ground_y):
+    def __init__(self, world_width, world_height, ground_y, rng=None):
         super().__init__(world_width, world_height, ground_y)
         self.ground_y = ground_y
         self.y = ground_y + self.HEIGHT / 2
-        self.state = 'warning'
+        self.state = 'attack'
         self.state_time = 0.0
         self.fire_timer = 0.0
         self.volley_index = 0
         self.burst_shots = 0
         self.rest_shots = 0
-
-    def take_damage(self, amount):
-        if self.hp > 0:
-            super().take_damage(amount)
-            if self.hp == 0:
-                self.clear_enemy_bullets()
+        self.rng = rng if rng is not None else random.Random()
 
     @property
     def body_height(self):
@@ -44,35 +40,23 @@ class Boss(TestEnemy):
         return (self.x - self.WIDTH / 2, self.ground_y,
                 self.x + self.WIDTH / 2, self.ground_y + self.body_height)
 
-    def clear_enemy_bullets(self):
-        for obj in game_world.objects(game_world.PROJECTILES):
-            if isinstance(obj, Bullet) and obj.team == self.team:
-                obj.active = False
-                game_world.remove_object(obj)
-
     def advance_phase(self):
-        self.state = {'warning': 'attack', 'attack': 'rest', 'rest': 'warning'}[self.state]
+        self.state = 'rest' if self.state == 'attack' else 'attack'
         self.y = self.ground_y + self.body_height / 2
         self.state_time = 0.0
         self.fire_timer = 0.0
         if self.state == 'attack':
             self.burst_shots = 0
         elif self.state == 'rest':
-            self.fire_timer = self.REST_WARNING_TIME
             self.rest_shots = 0
-            # 지상에서 반격할 공간을 확보하되 상단의 기존 탄은 유지한다.
-            for obj in game_world.objects(game_world.PROJECTILES):
-                if (isinstance(obj, Bullet) and obj.team == self.team
-                        and obj.y - obj.HEIGHT / 2 <= self.ground_y + 56):
-                    obj.active = False
-                    game_world.remove_object(obj)
 
     def fire_volley(self):
         self.fire_rows(self.BARRAGE_HEIGHTS, self.BULLET_SPEED)
         self.volley_index += 1
 
     def fire_rest_volley(self):
-        self.fire_rows(self.REST_BARRAGE_HEIGHTS, self.REST_BULLET_SPEED)
+        height = self.rng.uniform(self.REST_MIN_HEIGHT, self.REST_MAX_HEIGHT)
+        self.fire_rows((height,), self.REST_BULLET_SPEED)
         self.rest_shots += 1
 
     def fire_rows(self, heights, speed):
@@ -101,7 +85,7 @@ class Boss(TestEnemy):
                 self.fire_timer -= step
                 while self.fire_timer <= 0:
                     self.fire_rest_volley()
-                    self.fire_timer += self.REST_FIRE_INTERVAL
+                    self.fire_timer += self.rng.uniform(*self.REST_INTERVAL_RANGE)
             self.state_time += step
             remaining -= step
             if self.state_time >= duration:
@@ -121,12 +105,3 @@ class Boss(TestEnemy):
             inset = 5 + int(self.state_time * 8) % 8
             pico2d.draw_rectangle(left - inset, bottom, right + inset, top + inset,
                                   160, 110, 210)
-            if self.state_time < self.REST_WARNING_TIME:
-                for height in self.REST_BARRAGE_HEIGHTS:
-                    pico2d.draw_line(0, self.ground_y + height, left,
-                                     self.ground_y + height, 180, 110, 210)
-        if self.state == 'warning':
-            for height in self.BARRAGE_HEIGHTS:
-                pico2d.draw_line(0, self.ground_y + height,
-                                 self.x - self.WIDTH / 2, self.ground_y + height,
-                                 210, 150, 100)

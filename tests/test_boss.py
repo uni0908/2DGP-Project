@@ -1,6 +1,7 @@
 """방어용 낙서가 반격을 막는 보스 패턴 검사."""
 
 import unittest
+import random
 
 import game_world
 from boss import Boss
@@ -12,7 +13,7 @@ from eraser import Eraser
 class BossTests(unittest.TestCase):
     def setUp(self):
         game_world.clear()
-        self.boss = Boss(960, 540, 80)
+        self.boss = Boss(960, 540, 80, rng=random.Random(17))
         game_world.add_object(self.boss, game_world.ACTORS)
 
     def tearDown(self):
@@ -22,34 +23,34 @@ class BossTests(unittest.TestCase):
         bullet = Bullet(120, y, 1, 'player', 960)
         bullet.update(2)
 
-    def test_phases_repeat_and_rest_clears_low_bullets_before_upper_fire(self):
-        self.boss.update(1)
-        self.assertEqual(self.boss.state, 'warning')
-        self.assertFalse(game_world.objects(game_world.PROJECTILES))
-        self.boss.update(.21)
+    def test_phases_repeat_without_warning_or_erasing_existing_bullets(self):
+        self.boss.update(.01)
         self.assertEqual(self.boss.state, 'attack')
         self.assertEqual(len(game_world.objects(game_world.PROJECTILES)), 6)
         self.boss.update(self.boss.PHASE_DURATIONS['attack'])
         self.assertEqual(self.boss.state, 'rest')
         self.assertEqual(self.boss.burst_shots, 6)
-        self.assertEqual(len(game_world.objects(game_world.PROJECTILES)), 12)
+        self.assertEqual(self.boss.volley_index, 6)
+        self.assertGreaterEqual(len(game_world.objects(game_world.PROJECTILES)), 36)
+        before = game_world.objects(game_world.PROJECTILES)
         self.boss.update(.5)
-        self.assertEqual(len(game_world.objects(game_world.PROJECTILES)), 12)
+        self.assertTrue(all(obj in game_world.objects(game_world.PROJECTILES) for obj in before))
         self.boss.update(3.5)
-        self.assertEqual(self.boss.state, 'warning')
+        self.assertEqual(self.boss.state, 'attack')
 
-    def test_rest_upper_barrage_has_warning_then_repeats_without_low_shots(self):
+    def test_rest_fires_random_single_shots_without_warning(self):
         self.boss.state = 'attack'
         self.boss.advance_phase()
-        self.boss.update(.64)
-        self.assertFalse(game_world.objects(game_world.PROJECTILES))
-        self.boss.update(.02)
+        self.boss.update(.001)
         self.assertEqual(self.boss.rest_shots, 1)
         shots = game_world.objects(game_world.PROJECTILES)
-        self.assertEqual(len(shots), 11)
-        self.assertTrue(all(shot.y >= 152 and shot.parry_reward is None for shot in shots))
-        self.boss.update(.6)
-        self.assertEqual(self.boss.rest_shots, 2)
+        self.assertEqual(len(shots), 1)
+        self.boss.update(1)
+        shots = game_world.objects(game_world.PROJECTILES)
+        self.assertTrue(all(152 <= shot.y <= 232 and shot.parry_reward is None for shot in shots))
+        self.assertGreaterEqual(len(shots), 8)
+        self.assertLessEqual(len(shots), 14)
+        self.assertGreater(len({round(shot.y) for shot in shots}), 4)
 
     def test_upper_rest_bullets_miss_floor_but_hit_platform_height(self):
         from player import Player
@@ -59,7 +60,8 @@ class BossTests(unittest.TestCase):
                 player = Player(120, 80, 960)
                 player.y = center_y
                 game_world.add_object(player, game_world.ACTORS)
-                self.boss.fire_rest_volley()
+                for _ in range(60):
+                    self.boss.fire_rest_volley()
                 for shot in game_world.objects(game_world.PROJECTILES):
                     shot.update(3)
                 self.assertEqual(player.hp, expected_hp)
@@ -76,11 +78,16 @@ class BossTests(unittest.TestCase):
         self.assertIn(eraser, game_world.objects(game_world.PROJECTILES))
         hostile = [obj for obj in game_world.objects(game_world.PROJECTILES)
                    if isinstance(obj, Bullet) and obj.team == 'enemy']
-        self.assertTrue(all(obj.y >= 152 for obj in hostile))
+        self.assertEqual(len(hostile), 6)
+        self.assertTrue(all(obj.active for obj in hostile))
+        low = min(hostile, key=lambda obj: obj.y)
+        x = low.x
+        low.update(.1)
+        self.assertLess(low.x, x)
 
     def test_whole_body_takes_damage_during_every_phase(self):
         expected_hp = 30
-        for phase in ('warning', 'attack', 'rest'):
+        for phase in ('attack', 'rest'):
             self.boss.state = phase
             heights = (90, 108, 130) if phase == 'rest' else (90, 136, 185)
             for height in heights:
@@ -91,7 +98,7 @@ class BossTests(unittest.TestCase):
 
     def test_each_attack_restarts_fixed_volley_count(self):
         cycle = sum(self.boss.PHASE_DURATIONS.values())
-        self.boss.update(cycle + self.boss.PHASE_DURATIONS['warning'] + .02)
+        self.boss.update(cycle + .02)
         self.assertEqual(self.boss.state, 'attack')
         self.assertEqual(self.boss.burst_shots, 1)
         self.assertEqual(self.boss.volley_index, 7)
@@ -117,13 +124,17 @@ class BossTests(unittest.TestCase):
         self.assertEqual(self.boss.hp, 30)
         self.assertIn(self.boss, game_world.objects(game_world.ACTORS))
 
-    def test_defeat_cleans_hostile_bullets_and_stops_pattern(self):
+    def test_defeat_stops_firing_but_bullets_fly_until_offscreen(self):
         self.boss.fire_volley()
         self.boss.state = 'rest'
         self.boss.take_damage(30)
-        self.assertFalse(game_world.objects(game_world.PROJECTILES))
+        bullets = game_world.objects(game_world.PROJECTILES)
+        self.assertEqual(len(bullets), 6)
         self.assertNotIn(self.boss, game_world.objects(game_world.ACTORS))
         self.boss.update(20)
+        self.assertEqual(game_world.objects(game_world.PROJECTILES), bullets)
+        for bullet in bullets:
+            bullet.update(5)
         self.assertFalse(game_world.objects(game_world.PROJECTILES))
 
     def test_attack_volley_contains_only_normal_bullets(self):
@@ -173,5 +184,5 @@ class BossTests(unittest.TestCase):
         self.shoot(108)
         self.assertEqual(self.boss.hp, 29)
         self.boss.advance_phase()
-        self.assertEqual(self.boss.state, 'warning')
+        self.assertEqual(self.boss.state, 'attack')
         self.assertEqual(self.boss.get_bb()[3], 192)
