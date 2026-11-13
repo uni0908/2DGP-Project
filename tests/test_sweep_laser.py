@@ -97,12 +97,30 @@ class SweepLaserTests(unittest.TestCase):
         self.assertNotIn(platform, game_world.objects(game_world.TERRAIN))
         self.assertLess(player.get_bb()[1], 266)
         self.assertEqual(player.hp, 5)
-        player.clear_input()
-        player.pressed_keys.add(pico2d.SDLK_LEFT)
         for _ in range(180):
             game_world.update(.01)
         self.assertFalse(self.laser.active)
+        self.assertEqual(player.x, 300)
+        self.assertTrue(player.crouching)
         self.assertEqual(player.hp, 5)
+
+    def test_descent_stops_above_crouched_head_but_hits_standing_player(self):
+        import pico2d
+        standing = Player(300, 80, 960)
+        crouched = Player(500, 80, 960)
+        crouched.pressed_keys.add(pico2d.SDLK_DOWN)
+        crouched.update(.001)
+        for player in (standing, crouched):
+            game_world.add_object(player, game_world.ACTORS)
+        self.laser.y = 200
+        self.laser.direction = -1
+        self.laser.update(1)
+        self.assertFalse(self.laser.active)
+        self.assertEqual(self.laser.y, self.laser.descent_end_y)
+        self.assertGreater(self.laser.y - self.laser.THICKNESS / 2, crouched.get_bb()[3])
+        self.assertLess(self.laser.y - self.laser.THICKNESS / 2, standing.get_bb()[3])
+        self.assertEqual(crouched.hp, 5)
+        self.assertEqual(standing.hp, 4)
 
     def test_player_edge_is_safe_and_contact_respects_existing_invincibility(self):
         safe = Player(18, 80, 960)

@@ -9,12 +9,14 @@ class SweepLaser:
     SPEED = 180.0
     SAFE_EDGE = 48
     DAMAGE = 1
+    DESCENT_FLOOR_CLEARANCE = 32
 
     def __init__(self, world_width, world_height, ground_y):
         self.left = self.SAFE_EDGE
         self.right = world_width
         self.bottom_y = ground_y - self.THICKNESS / 2
         self.top_y = world_height + self.THICKNESS / 2
+        self.descent_end_y = ground_y + self.DESCENT_FLOOR_CLEARANCE + self.THICKNESS / 2
         self.y = self.bottom_y
         self.direction = 1
         self.active = True
@@ -22,7 +24,7 @@ class SweepLaser:
     def update(self, dt):
         remaining = max(0, dt)
         while self.active and remaining > 0:
-            destination = self.top_y if self.direction > 0 else self.bottom_y
+            destination = self.top_y if self.direction > 0 else self.descent_end_y
             duration = abs(destination - self.y) / self.SPEED
             step = min(remaining, duration)
             next_y = self.y + self.direction * self.SPEED * step
