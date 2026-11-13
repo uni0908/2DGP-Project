@@ -7,7 +7,7 @@ import game_world
 from player import Player
 from doodle import Doodle, overlaps
 from eraser import Eraser
-from enemy import TestEnemy
+from boss import Boss
 
 WINDOW_WIDTH = 960
 WINDOW_HEIGHT = 540
@@ -23,7 +23,7 @@ def enter():
     game_world.clear()
     player = Player(120, GROUND_Y, WINDOW_WIDTH)
     game_world.add_object(player, game_world.ACTORS)
-    enemy = TestEnemy(WINDOW_WIDTH, WINDOW_HEIGHT, GROUND_Y)
+    enemy = Boss(WINDOW_WIDTH, WINDOW_HEIGHT, GROUND_Y)
     game_world.add_object(enemy, game_world.ACTORS)
     game_over = False
 
@@ -43,7 +43,7 @@ def handle_events():
             return False
         if event.type == pico2d.SDL_KEYDOWN and event.key == pico2d.SDLK_ESCAPE:
             return False
-        if game_over:
+        if game_over or enemy.hp <= 0:
             if event.type == pico2d.SDL_KEYDOWN and event.key == pico2d.SDLK_r:
                 enter()
             continue
@@ -135,5 +135,15 @@ def draw():
                   '게임 오버! R: 재시작 / Esc: 종료', (180, 30, 30))
     elif enemy.hp <= 0:
         font.draw(WINDOW_WIDTH / 2 - 120, WINDOW_HEIGHT - 90,
-                  '테스트 적 처치 완료', (30, 80, 30))
+                  '보스 처치! R: 다시 도전', (30, 80, 30))
+    else:
+        state_labels = {
+            'warning': '패턴 1 예고: 공격선을 보고 낙서로 대비하세요',
+            'attack': '탄막 공격: 낙서로 방어! 몸체에는 피해를 줄 수 없어요',
+            'rest': '반격 기회! 낙서를 지우고 낮은 초록 약점을 쏘세요',
+        }
+        remaining = max(0, enemy.PHASE_DURATIONS[enemy.state] - enemy.state_time)
+        font.draw(20, WINDOW_HEIGHT - 112,
+                  f'{state_labels[enemy.state]} ({remaining:.1f}초)',
+                  (30, 110, 40) if enemy.state == 'rest' else (160, 60, 40))
     pico2d.update_canvas()
