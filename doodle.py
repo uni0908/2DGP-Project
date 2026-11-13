@@ -31,17 +31,18 @@ class Doodle:
         pass  # 낙서는 중력 없이 생성 위치를 유지한다.
 
     def draw(self):
+        screen_x = game_world.screen_x(self.x)
         # 결정적인 궤적을 사용해 프레임마다 무늬가 바뀌지 않도록 한다.
         for phase in (0, 1.7, 3.4):
             previous = None
             for i in range(65):
                 angle = i * math.tau / 64
-                x = self.x + (self.WIDTH / 2 - 2) * math.cos(angle)
+                x = screen_x + (self.WIDTH / 2 - 2) * math.cos(angle)
                 y = self.y + (self.HEIGHT / 2 - 2) * math.sin(5 * angle + phase)
                 if previous is not None:
                     pico2d.draw_line(*previous, x, y, 70, 70, 70)
                 previous = (x, y)
-        pico2d.draw_rectangle(*self.get_bb(), 100, 100, 100)
+        pico2d.draw_rectangle(*game_world.screen_bb(self.get_bb()), 100, 100, 100)
 
 
 def overlaps(a, b):

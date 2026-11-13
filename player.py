@@ -213,15 +213,15 @@ class Player:
 
     def draw(self):
         if self.parry_feedback_timer > 0.65:
-            pico2d.draw_rectangle(*self.get_parry_bb(), 240, 70, 160)
+            pico2d.draw_rectangle(*game_world.screen_bb(self.get_parry_bb()), 240, 70, 160)
         if self.invincibility_timer > 0 and int(self.invincibility_timer * 10) % 2 == 0:
             return
-        left = self.x - self.WIDTH / 2
+        left = game_world.screen_x(self.x) - self.WIDTH / 2
         bottom = self.y - self.height / 2
         color = (240, 70, 160) if self.parry_timer > 0 else (40, 40, 40)
         pico2d.draw_rectangle(left, bottom, left + self.WIDTH,
                               bottom + self.height, *color,
                               filled=self.parry_timer > 0)
-        eye_x = self.x + self.facing * 9
+        eye_x = game_world.screen_x(self.x) + self.facing * 9
         pico2d.draw_rectangle(eye_x - 2, self.y + 8, eye_x + 2,
                               self.y + 12, 40, 40, 40)

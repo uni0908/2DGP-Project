@@ -4,6 +4,16 @@ TERRAIN = 0
 ACTORS = 1
 PROJECTILES = 2
 _layers = [[], [], []]
+camera_x = 0.0
+
+
+def screen_x(world_x):
+    return world_x - camera_x
+
+
+def screen_bb(bounds):
+    left, bottom, right, top = bounds
+    return (screen_x(left), bottom, screen_x(right), top)
 
 
 def add_object(obj, layer):
@@ -22,6 +32,8 @@ def remove_object(obj):
 
 
 def clear():
+    global camera_x
+    camera_x = 0.0
     for layer in _layers:
         layer.clear()
 

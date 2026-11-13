@@ -67,6 +67,7 @@ class Bullet:
             color = (240, 70, 160)
         elif self.parry_reward == 'eraser':
             color = (30, 180, 240)
-        pico2d.draw_rectangle(self.x - self.WIDTH / 2, self.y - self.HEIGHT / 2,
-                              self.x + self.WIDTH / 2, self.y + self.HEIGHT / 2,
+        screen_x = game_world.screen_x(self.x)
+        pico2d.draw_rectangle(screen_x - self.WIDTH / 2, self.y - self.HEIGHT / 2,
+                              screen_x + self.WIDTH / 2, self.y + self.HEIGHT / 2,
                               *color, filled=True)
