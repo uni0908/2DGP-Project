@@ -103,7 +103,9 @@ def throw_eraser():
     if game_over or player.hp <= 0 or player.eraser_count <= 0:
         return None
     # 플레이어 중심 높이에서 발사해 바로 앞 낙서부터 충돌을 판정한다.
-    downward = pico2d.SDLK_DOWN in player.pressed_keys
+    feet_y = player.get_bb()[1]
+    downward = (pico2d.SDLK_DOWN in player.pressed_keys
+                and feet_y > GROUND_Y + 0.001)
     eraser = Eraser(player.x, player.y, player.facing, WINDOW_WIDTH,
                     downward=downward, ground_y=GROUND_Y)
     game_world.add_object(eraser, game_world.PROJECTILES)

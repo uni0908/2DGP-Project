@@ -123,12 +123,34 @@ class ItemTests(unittest.TestCase):
         import pico2d
         platform = Doodle(300, 110)
         game_world.add_object(platform, game_world.TERRAIN)
+        play_mode.player.y = 200  # 공중의 아래 투척은 여전히 유지한다.
         play_mode.player.pressed_keys.add(pico2d.SDLK_DOWN)
         eraser = play_mode.throw_eraser()
         eraser.update(1)
         self.assertIn(platform, game_world.objects(game_world.TERRAIN))
         self.assertFalse(game_world.objects(game_world.PROJECTILES))
         self.assertEqual(eraser.y, play_mode.GROUND_Y)
+
+    def test_crouched_ground_throw_goes_forward_in_both_directions(self):
+        import pico2d
+        from types import SimpleNamespace
+        player = play_mode.player
+        player.handle_event(SimpleNamespace(type=pico2d.SDL_KEYDOWN,
+                                            key=pico2d.SDLK_DOWN))
+        self.assertTrue(player.crouching)
+        self.assertEqual(player.get_bb()[1], play_mode.GROUND_Y)
+        for direction in (1, -1):
+            with self.subTest(direction=direction):
+                player.x = 400
+                player.facing = direction
+                target = Doodle(player.x + direction * 100, 108)
+                game_world.add_object(target, game_world.TERRAIN)
+                before = player.eraser_count
+                eraser = play_mode.throw_eraser()
+                self.assertFalse(eraser.downward)
+                self.assertEqual(player.eraser_count, before - 1)
+                eraser.update(.3)
+                self.assertNotIn(target, game_world.objects(game_world.TERRAIN))
 
     def test_down_throw_unavailable_at_zero(self):
         import pico2d
