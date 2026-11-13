@@ -24,6 +24,7 @@ class Player:
     PARRY_TOP_MARGIN = 24
     PARRY_BOTTOM_MARGIN = 12
     PARRY_REWARD = 1
+    PARRY_WINDOW = 0.16
     team = 'player'
 
     def __init__(self, x, ground_y, world_width):
@@ -45,11 +46,13 @@ class Player:
         self.parry_feedback_timer = 0.0
         self.last_parry_reward = None
         self.jump_cut_available = False
+        self.parry_timer = 0.0
 
     def take_damage(self, amount):
         if self.hp <= 0 or self.invincibility_timer > 0 or amount <= 0:
             return
         self.hp = max(0, self.hp - amount)
+        self.parry_timer = 0.0
         self.invincibility_timer = self.INVINCIBILITY_TIME
         if self.hp == 0:
             self.clear_input()
@@ -60,8 +63,11 @@ class Player:
                 self._set_crouching(True)
             if event.key == pico2d.SDLK_SPACE and event.key not in self.pressed_keys:
                 if self.hp > 0 and not self.crouching:
-                    self.jump()
-                    self.attempt_parry()
+                    if self.grounded:
+                        self.jump()
+                    else:
+                        self.parry_timer = self.PARRY_WINDOW
+                        self.attempt_parry()
             self.pressed_keys.add(event.key)
         elif event.type == pico2d.SDL_KEYUP:
             self.pressed_keys.discard(event.key)
@@ -76,6 +82,7 @@ class Player:
     def clear_input(self):
         self.pressed_keys.clear()
         self.cut_jump()
+        self.parry_timer = 0.0
 
     def get_parry_bb(self):
         left, bottom, right, top = self.get_bb()
@@ -83,7 +90,8 @@ class Player:
                 right + self.PARRY_SIDE_MARGIN, top + self.PARRY_TOP_MARGIN)
 
     def attempt_parry(self):
-        # 미래의 접촉을 기다리지 않고 입력된 바로 그 순간의 위치만 검사한다.
+        if self.parry_timer <= 0 or self.grounded:
+            return
         candidates = [obj for obj in game_world.objects(game_world.PROJECTILES)
                       if isinstance(obj, Bullet) and obj.active and obj.team == 'enemy'
                       and obj.parry_reward in ('doodle', 'eraser')
@@ -92,11 +100,11 @@ class Player:
         if candidates:
             self.try_parry(candidates[0])
 
-    def try_parry(self, bullet):
-        if (self.hp <= 0 or self.crouching
+    def try_parry(self, bullet, at_contact=False):
+        if (self.hp <= 0 or self.crouching or self.grounded or self.parry_timer <= 0
                 or not bullet.active or bullet.team != 'enemy'
                 or bullet.parry_reward not in ('doodle', 'eraser')
-                or not overlaps(self.get_parry_bb(), bullet.get_bb())):
+                or (not at_contact and not overlaps(self.get_parry_bb(), bullet.get_bb()))):
             return False
         if bullet.parry_reward == 'doodle':
             self.doodle_count += self.PARRY_REWARD
@@ -107,6 +115,7 @@ class Player:
         game_world.remove_object(bullet)
         self.velocity_y = self.JUMP_SPEED
         self.jump_cut_available = False
+        self.parry_timer = 0.0
         self.grounded = False
         self.last_parry_reward = bullet.parry_reward
         self.parry_feedback_timer = 0.8
@@ -140,6 +149,7 @@ class Player:
             return
         self.invincibility_timer = max(0.0, self.invincibility_timer - max(0, dt))
         self.parry_feedback_timer = max(0.0, self.parry_feedback_timer - max(0, dt))
+        self.parry_timer = max(0.0, self.parry_timer - max(0, dt))
         if pico2d.SDLK_DOWN in self.pressed_keys:
             if self.grounded:
                 self._set_crouching(True)
@@ -157,6 +167,7 @@ class Player:
             step = min(remaining, 1 / 120)
             self._move(step, direction, terrain)
             remaining -= step
+        self.attempt_parry()
         self.fire_timer = max(0, self.fire_timer - max(0, dt))
         if pico2d.SDLK_a in self.pressed_keys and self.fire_timer <= 0:
             x = self.x + self.facing * (self.WIDTH / 2 + Bullet.WIDTH / 2)
@@ -185,6 +196,7 @@ class Player:
         self.grounded = self.velocity_y <= 0 and supported
         if self.grounded:
             self.velocity_y = 0.0
+            self.parry_timer = 0.0
             return
         next_y = self.y + self.velocity_y * dt - 0.5 * self.GRAVITY * dt * dt
         self.velocity_y -= self.GRAVITY * dt
@@ -196,6 +208,7 @@ class Player:
             next_y = max(crossed) + self.height / 2
             self.velocity_y = 0.0
             self.grounded = True
+            self.parry_timer = 0.0
         self.y = next_y
 
     def draw(self):
@@ -205,8 +218,10 @@ class Player:
             return
         left = self.x - self.WIDTH / 2
         bottom = self.y - self.height / 2
+        color = (240, 70, 160) if self.parry_timer > 0 else (40, 40, 40)
         pico2d.draw_rectangle(left, bottom, left + self.WIDTH,
-                              bottom + self.height, 40, 40, 40)
+                              bottom + self.height, *color,
+                              filled=self.parry_timer > 0)
         eye_x = self.x + self.facing * 9
         pico2d.draw_rectangle(eye_x - 2, self.y + 8, eye_x + 2,
                               self.y + 12, 40, 40, 40)

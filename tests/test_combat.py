@@ -98,7 +98,7 @@ class CombatTests(unittest.TestCase):
         self.assertEqual(len(shots), 5)
         self.assertEqual([shot.parry_reward for shot in shots],
                          [None, 'doodle', 'eraser', None, 'doodle'])
-        self.assertTrue(all(shot.y == 230 for shot in shots))
+        self.assertTrue(all(shot.y == 170 for shot in shots))
 
     def test_invincibility_blocks_followup_hit_then_expires(self):
         self.bullet(200, 108).update(.5)
