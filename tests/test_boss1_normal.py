@@ -49,14 +49,14 @@ class Boss1NormalTests(unittest.TestCase):
                 self.assertGreaterEqual(obj.y, 170)
                 self.assertLessEqual(obj.y, 210)
 
-    def test_returns_to_barrage_and_keeps_existing_bullets(self):
+    def test_advances_to_homing_and_keeps_existing_bullets(self):
         old = Bullet(500, 100, -1, 'enemy', 960)
         game_world.add_object(old, game_world.PROJECTILES)
         duration = sum(self.boss.NORMAL_PHASE_DURATIONS.values()) * self.boss.NORMAL_CYCLES
         self.boss.update(duration + .02)
-        self.assertEqual(self.boss.attack_name, '탄막 공격')
-        self.assertEqual(self.boss.state, 'attack')
-        self.assertEqual(self.boss.burst_shots, 1)
+        self.assertEqual(self.boss.attack_name, '유도탄 공격')
+        self.assertEqual(self.boss.state, 'homing_launch')
+        self.assertEqual(self.boss.homing_shots, 1)
         self.assertIn(old, game_world.objects(game_world.PROJECTILES))
         self.assertTrue(old.active)
 

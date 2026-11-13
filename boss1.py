@@ -6,12 +6,14 @@ import pico2d
 import game_world
 from bullet import Bullet
 from enemy import TestEnemy
+from homing_missile import HomingMissile
 
 
 class Boss1(TestEnemy):
     NAME = '보스1'
     BARRAGE_ATTACK_NAME = '탄막 공격'
     NORMAL_ATTACK_NAME = '일반 공격'
+    HOMING_ATTACK_NAME = '유도탄 공격'
     BARRAGE_HEIGHTS = (8, 24, 40, 56, 72, 88)
     REST_HEIGHT = TestEnemy.HEIGHT / 2
     FIRE_INTERVAL = 0.45
@@ -28,6 +30,9 @@ class Boss1(TestEnemy):
     NORMAL_BURST_SHOTS = 3
     NORMAL_CYCLES = 2
     NORMAL_MOVE_SPEED = 70.0
+    HOMING_PHASE_DURATIONS = {'homing_launch': 1.4, 'homing_recover': 1.0}
+    HOMING_FIRE_INTERVAL = 0.7
+    HOMING_SHOTS = 2
 
     def __init__(self, world_width, world_height, ground_y, rng=None):
         super().__init__(world_width, world_height, ground_y)
@@ -45,10 +50,14 @@ class Boss1(TestEnemy):
         self.normal_shots = 0
         self.normal_motion_time = 0.0
         self.normal_parry_fired = False
+        self.homing_shots = 0
+        self.homing_parry_fired = False
+        self.homing_reward_index = 0
 
     @property
     def attack_name(self):
-        return self.NORMAL_ATTACK_NAME if self.pattern == 'normal' else self.BARRAGE_ATTACK_NAME
+        return {'normal': self.NORMAL_ATTACK_NAME, 'barrage': self.BARRAGE_ATTACK_NAME,
+                'homing': self.HOMING_ATTACK_NAME}[self.pattern]
 
     @property
     def body_height(self):
@@ -60,7 +69,17 @@ class Boss1(TestEnemy):
                 self.x + self.WIDTH / 2, bottom + self.body_height)
 
     def advance_phase(self):
-        if self.pattern == 'normal':
+        if self.pattern == 'homing':
+            if self.state == 'homing_launch':
+                self.state = 'homing_wait'
+            elif self.state == 'homing_wait':
+                self.state = 'homing_parry'
+                self.homing_parry_fired = False
+            elif self.state == 'homing_parry':
+                self.state = 'homing_recover'
+            else:
+                self.pattern, self.state = 'barrage', 'attack'
+        elif self.pattern == 'normal':
             if self.state == 'normal_burst':
                 self.state = 'normal_pause'
             elif self.state == 'normal_pause':
@@ -69,7 +88,8 @@ class Boss1(TestEnemy):
             else:
                 self.normal_cycles += 1
                 if self.normal_cycles >= self.NORMAL_CYCLES:
-                    self.pattern, self.state = 'barrage', 'attack'
+                    self.pattern, self.state = 'homing', 'homing_launch'
+                    self.homing_shots = 0
                 else:
                     self.state = 'normal_burst'
                     self.normal_shots = 0
@@ -80,7 +100,7 @@ class Boss1(TestEnemy):
             self.normal_cycles = self.normal_shots = 0
             self.normal_motion_time = 0.0
             self.y = self.min_y
-        if self.pattern == 'barrage':
+        if self.pattern != 'normal':
             self.y = self.ground_y + self.body_height / 2
         self.state_time = 0.0
         self.fire_timer = 0.0
@@ -88,6 +108,19 @@ class Boss1(TestEnemy):
             self.burst_shots = 0
         elif self.state == 'rest':
             self.rest_shots = 0
+
+    def has_hostile_projectiles(self):
+        return any(isinstance(obj, Bullet) and obj.team == 'enemy' and obj.active
+                   for obj in game_world.objects(game_world.PROJECTILES))
+
+    def fire_homing_missile(self, reward=None):
+        target = next((obj for obj in game_world.objects(game_world.ACTORS)
+                       if getattr(obj, 'team', None) == 'player' and obj.hp > 0), None)
+        height = self.ground_y + (90 if reward else 70)
+        missile = HomingMissile(self.x - self.WIDTH / 2 - 14, height,
+                                target, self.world_width, parry_reward=reward)
+        game_world.add_object(missile, game_world.PROJECTILES)
+        return missile
 
     def update_normal(self, dt):
         self.normal_motion_time += dt
@@ -136,11 +169,30 @@ class Boss1(TestEnemy):
             return
         remaining = max(0, dt)
         while remaining > 0:
-            durations = self.NORMAL_PHASE_DURATIONS if self.pattern == 'normal' else self.PHASE_DURATIONS
+            if self.pattern == 'homing' and self.state in ('homing_wait', 'homing_parry'):
+                if self.state == 'homing_parry' and not self.homing_parry_fired:
+                    reward = ('doodle', 'eraser')[self.homing_reward_index % 2]
+                    self.fire_homing_missile(reward)
+                    self.homing_reward_index += 1
+                    self.homing_parry_fired = True
+                if self.has_hostile_projectiles():
+                    self.state_time += remaining
+                    break
+                self.advance_phase()
+                continue
+            durations = (self.NORMAL_PHASE_DURATIONS if self.pattern == 'normal'
+                         else self.HOMING_PHASE_DURATIONS if self.pattern == 'homing'
+                         else self.PHASE_DURATIONS)
             duration = durations[self.state]
             step = min(remaining, duration - self.state_time)
             if self.pattern == 'normal':
                 self.update_normal(step)
+            elif self.pattern == 'homing' and self.state == 'homing_launch':
+                self.fire_timer -= step
+                while self.fire_timer <= 0 and self.homing_shots < self.HOMING_SHOTS:
+                    self.fire_homing_missile()
+                    self.homing_shots += 1
+                    self.fire_timer += self.HOMING_FIRE_INTERVAL
             elif self.state == 'attack':
                 self.fire_timer -= step
                 while self.fire_timer <= 0 and self.burst_shots < self.VOLLEYS_PER_BURST:
