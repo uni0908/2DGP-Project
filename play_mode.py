@@ -7,7 +7,7 @@ import game_world
 from player import Player
 from doodle import Doodle, overlaps
 from eraser import Eraser
-from boss import Boss
+from boss1 import Boss1
 
 WINDOW_WIDTH = 960
 WINDOW_HEIGHT = 540
@@ -23,7 +23,7 @@ def enter():
     game_world.clear()
     player = Player(120, GROUND_Y, WINDOW_WIDTH)
     game_world.add_object(player, game_world.ACTORS)
-    enemy = Boss(WINDOW_WIDTH, WINDOW_HEIGHT, GROUND_Y)
+    enemy = Boss1(WINDOW_WIDTH, WINDOW_HEIGHT, GROUND_Y)
     game_world.add_object(enemy, game_world.ACTORS)
     game_over = False
 
