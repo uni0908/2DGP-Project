@@ -48,7 +48,8 @@ class Boss1LaserTests(unittest.TestCase):
         self.boss.take_damage(30)
         self.assertTrue(laser.active)
         laser.update(2)
-        self.assertNotIn(platform, game_world.objects(game_world.TERRAIN))
+        self.assertIn(platform, game_world.objects(game_world.TERRAIN))
+        self.assertEqual(platform.hp, 20)
 
     def test_laser_only_mode_starts_and_repeats_without_other_attacks(self):
         game_world.clear()

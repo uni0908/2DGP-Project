@@ -1,8 +1,7 @@
-"""화면 대부분을 덮으며 상승·하강하고 낙서를 제거하는 얇은 레이저."""
+"""낙서를 보존하며 통과하고 플레이어에게만 피해를 주는 왕복 레이저."""
 
 import pico2d
 import game_world
-from doodle import Doodle
 
 
 class SweepLaser:
@@ -41,15 +40,7 @@ class SweepLaser:
     def sweep_collisions(self, old_y, new_y):
         low = min(old_y, new_y) - self.THICKNESS / 2
         high = max(old_y, new_y) + self.THICKNESS / 2
-        for obj in game_world.objects(game_world.TERRAIN):
-            if not isinstance(obj, Doodle):
-                continue
-            left, bottom, right, top = obj.get_bb()
-            passed = (old_y - self.THICKNESS / 2 <= top <= new_y - self.THICKNESS / 2
-                      if self.direction > 0 else
-                      new_y + self.THICKNESS / 2 <= bottom <= old_y + self.THICKNESS / 2)
-            if left < self.right and right > self.left and passed:
-                game_world.remove_object(obj)
+        # 낙서는 레이저를 막지도, 레이저에 피해를 받지도 않는다.
         for obj in game_world.objects(game_world.ACTORS):
             if getattr(obj, 'team', None) != 'player' or obj.hp <= 0:
                 continue
