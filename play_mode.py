@@ -125,7 +125,7 @@ def draw():
     font.draw(20, WINDOW_HEIGHT - 58, '좌우: 이동  아래: 웅크리기  Space: 점프  A: 연사  Esc: 종료',
               (30, 30, 30))
     font.draw(20, WINDOW_HEIGHT - 84, '아래 + D: 발밑으로 지우개 투척', (30, 30, 30))
-    font.draw(20, 45, 'Space: 짧게/길게 점프, 공중 재입력: 패링  |  분홍: 낙서 +1  하늘: 지우개 +1',
+    font.draw(20, 45, 'Space: 짧게/길게 점프  |  이번 패턴은 전부 일반탄: 패링 불가',
               (30, 30, 30))
     if player.parry_feedback_timer > 0:
         reward_name = '낙서' if player.last_parry_reward == 'doodle' else '지우개'
@@ -138,9 +138,9 @@ def draw():
                   '보스 처치! R: 다시 도전', (30, 80, 30))
     else:
         state_labels = {
-            'warning': '패턴 1 예고: 공격선을 보고 낙서로 대비하세요',
-            'attack': f'탄막 발사 {enemy.burst_shots}/{enemy.VOLLEYS_PER_BURST}: 방어하며 공격하세요',
-            'rest': '발사 중단: 날아오는 탄을 피하고 낙서를 치워 반격하세요',
+            'warning': '패턴 1 예고: 낙서를 2~3층 쌓아 넓은 탄막에 대비하세요',
+            'attack': f'일반 탄막 {enemy.burst_shots}/{enemy.VOLLEYS_PER_BURST}: 한 층 위로도 날아옵니다',
+            'rest': '기 모으는 중: 낮아진 보스를 향해 낙서를 치우고 반격하세요',
         }
         remaining = max(0, enemy.PHASE_DURATIONS[enemy.state] - enemy.state_time)
         font.draw(20, WINDOW_HEIGHT - 112,

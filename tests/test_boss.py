@@ -28,13 +28,13 @@ class BossTests(unittest.TestCase):
         self.assertFalse(game_world.objects(game_world.PROJECTILES))
         self.boss.update(.21)
         self.assertEqual(self.boss.state, 'attack')
-        self.assertEqual(len(game_world.objects(game_world.PROJECTILES)), 3)
+        self.assertEqual(len(game_world.objects(game_world.PROJECTILES)), 6)
         self.boss.update(self.boss.PHASE_DURATIONS['attack'])
         self.assertEqual(self.boss.state, 'rest')
         self.assertEqual(self.boss.burst_shots, 6)
-        self.assertEqual(len(game_world.objects(game_world.PROJECTILES)), 18)
+        self.assertEqual(len(game_world.objects(game_world.PROJECTILES)), 36)
         self.boss.update(.5)
-        self.assertEqual(len(game_world.objects(game_world.PROJECTILES)), 18)
+        self.assertEqual(len(game_world.objects(game_world.PROJECTILES)), 36)
         self.boss.update(3.5)
         self.assertEqual(self.boss.state, 'warning')
 
@@ -42,7 +42,8 @@ class BossTests(unittest.TestCase):
         expected_hp = 30
         for phase in ('warning', 'attack', 'rest'):
             self.boss.state = phase
-            for height in (90, 136, 185):
+            heights = (90, 108, 130) if phase == 'rest' else (90, 136, 185)
+            for height in heights:
                 with self.subTest(phase=phase, height=height):
                     self.shoot(height)
                     expected_hp -= 1
@@ -85,20 +86,52 @@ class BossTests(unittest.TestCase):
         self.boss.update(20)
         self.assertFalse(game_world.objects(game_world.PROJECTILES))
 
-    def test_attack_volley_offers_both_parry_resources(self):
+    def test_attack_volley_contains_only_normal_bullets(self):
+        self.boss.fire_volley()
+        bullets = game_world.objects(game_world.PROJECTILES)
+        self.assertEqual(len(bullets), 6)
+        self.assertTrue(all(bullet.parry_reward is None for bullet in bullets))
+
+    def test_one_layer_leaks_but_two_layers_protect_standing_player(self):
         from player import Player
-        from types import SimpleNamespace
-        import pico2d
-        player = Player(120, 80, 960)
-        player.jump()
-        player.update(.016)
-        for reward in ('doodle', 'eraser'):
+        for layers, expected_hp in ((1, 4), (2, 5)):
+            with self.subTest(layers=layers):
+                game_world.clear()
+                player = Player(120, 80, 960)
+                game_world.add_object(player, game_world.ACTORS)
+                for i in range(layers):
+                    game_world.add_object(Doodle(250, 108 + i * 32), game_world.TERRAIN)
+                self.boss.fire_volley()
+                for bullet in game_world.objects(game_world.PROJECTILES):
+                    bullet.update(4)
+                self.assertEqual(player.hp, expected_hp)
+
+    def test_three_layers_protect_player_at_raised_height(self):
+        from player import Player
+        for layers, expected_hp in ((2, 4), (3, 5)):
+            game_world.clear()
+            player = Player(120, 80, 960)
+            player.y = 140
+            game_world.add_object(player, game_world.ACTORS)
+            for i in range(layers):
+                game_world.add_object(Doodle(250, 108 + i * 32), game_world.TERRAIN)
             self.boss.fire_volley()
-            colored = [obj for obj in game_world.objects(game_world.PROJECTILES)
-                       if isinstance(obj, Bullet) and obj.active
-                       and obj.parry_reward == reward][-1]
-            colored.x = 150
-            player.handle_event(SimpleNamespace(type=pico2d.SDL_KEYUP, key=pico2d.SDLK_SPACE))
-            player.handle_event(SimpleNamespace(type=pico2d.SDL_KEYDOWN, key=pico2d.SDLK_SPACE))
-            self.assertFalse(colored.active)
-        self.assertEqual((player.doodle_count, player.eraser_count), (11, 11))
+            for bullet in game_world.objects(game_world.PROJECTILES):
+                bullet.update(4)
+            self.assertEqual(player.hp, expected_hp)
+
+    def test_rest_halves_height_with_feet_fixed_and_restores_afterwards(self):
+        self.assertEqual(self.boss.get_bb()[3] - self.boss.get_bb()[1], 112)
+        self.boss.state = 'attack'
+        self.boss.advance_phase()
+        self.assertEqual(self.boss.state, 'rest')
+        self.assertEqual(self.boss.get_bb()[1], 80)
+        self.assertEqual(self.boss.get_bb()[3], 136)
+        self.assertEqual(self.boss.y, 108)
+        self.shoot(170)
+        self.assertEqual(self.boss.hp, 30)
+        self.shoot(108)
+        self.assertEqual(self.boss.hp, 29)
+        self.boss.advance_phase()
+        self.assertEqual(self.boss.state, 'warning')
+        self.assertEqual(self.boss.get_bb()[3], 192)

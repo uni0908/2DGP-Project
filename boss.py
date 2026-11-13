@@ -7,6 +7,8 @@ from enemy import TestEnemy
 
 
 class Boss(TestEnemy):
+    BARRAGE_HEIGHTS = (8, 24, 40, 56, 72, 88)
+    REST_HEIGHT = TestEnemy.HEIGHT / 2
     FIRE_INTERVAL = 0.45
     VOLLEYS_PER_BURST = 6
     PHASE_DURATIONS = {'warning': 1.2, 'attack': FIRE_INTERVAL * VOLLEYS_PER_BURST,
@@ -29,6 +31,14 @@ class Boss(TestEnemy):
             if self.hp == 0:
                 self.clear_enemy_bullets()
 
+    @property
+    def body_height(self):
+        return self.REST_HEIGHT if self.state == 'rest' else self.HEIGHT
+
+    def get_bb(self):
+        return (self.x - self.WIDTH / 2, self.ground_y,
+                self.x + self.WIDTH / 2, self.ground_y + self.body_height)
+
     def clear_enemy_bullets(self):
         for obj in game_world.objects(game_world.PROJECTILES):
             if isinstance(obj, Bullet) and obj.team == self.team:
@@ -37,17 +47,18 @@ class Boss(TestEnemy):
 
     def advance_phase(self):
         self.state = {'warning': 'attack', 'attack': 'rest', 'rest': 'warning'}[self.state]
+        self.y = self.ground_y + self.body_height / 2
         self.state_time = 0.0
         self.fire_timer = 0.0
         if self.state == 'attack':
             self.burst_shots = 0
 
     def fire_volley(self):
-        reward = ('doodle', 'eraser')[self.volley_index % 2]
-        for height, parry_reward in ((28, None), (76, reward), (118, None)):
+        for height in self.BARRAGE_HEIGHTS:
             bullet = Bullet(self.x - self.WIDTH / 2 - Bullet.WIDTH / 2,
                             self.ground_y + height, -1, self.team,
-                            self.world_width, parry_reward=parry_reward)
+                            self.world_width)
+            bullet.HEIGHT = 14
             bullet.speed = self.BULLET_SPEED
             game_world.add_object(bullet, game_world.PROJECTILES)
         self.volley_index += 1
@@ -71,9 +82,21 @@ class Boss(TestEnemy):
                 self.advance_phase()
 
     def draw(self):
-        super().draw()
+        left, bottom, right, top = self.get_bb()
+        color = (100, 75, 160) if self.state == 'rest' else (150, 60, 80)
+        pico2d.draw_rectangle(left, bottom, right, top, *color)
+        pico2d.draw_rectangle(left + 20, top - 30, left + 36, top - 14,
+                              *color, filled=True)
+        pico2d.draw_rectangle(left, top + 8,
+                              left + self.WIDTH * self.hp / self.MAX_HP,
+                              top + 14, 180, 40, 40, filled=True)
+        if self.state == 'rest':
+            # 낮게 웅크린 몸 주위의 안쪽 사각형으로 기를 모으는 상태를 표시한다.
+            inset = 5 + int(self.state_time * 8) % 8
+            pico2d.draw_rectangle(left - inset, bottom, right + inset, top + inset,
+                                  160, 110, 210)
         if self.state == 'warning':
-            for height in (28, 76, 118):
+            for height in self.BARRAGE_HEIGHTS:
                 pico2d.draw_line(0, self.ground_y + height,
                                  self.x - self.WIDTH / 2, self.ground_y + height,
                                  210, 150, 100)
