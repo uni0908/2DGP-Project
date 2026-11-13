@@ -64,9 +64,13 @@ def handle_events():
 def spawn_doodle():
     if game_over or player.hp <= 0 or player.doodle_count <= 0:
         return None
-    distance = player.WIDTH / 2 + Doodle.SPAWN_GAP + Doodle.WIDTH / 2
-    doodle = Doodle(player.x + player.facing * distance,
-                    max(player.y, GROUND_Y + Doodle.HEIGHT / 2))
+    if pico2d.SDLK_DOWN in player.pressed_keys:
+        feet_y = player.get_bb()[1]
+        doodle = Doodle(player.x, feet_y - Doodle.UNDERFOOT_GAP - Doodle.HEIGHT / 2)
+    else:
+        distance = player.WIDTH / 2 + Doodle.SPAWN_GAP + Doodle.WIDTH / 2
+        doodle = Doodle(player.x + player.facing * distance,
+                        max(player.y, GROUND_Y + Doodle.HEIGHT / 2))
     bounds = doodle.get_bb()
     # 경계에서 위치를 강제로 보정하지 않고 생성을 거절한다.
     if (bounds[0] < 0 or bounds[2] > WINDOW_WIDTH
@@ -127,7 +131,7 @@ def draw():
               (30, 30, 30))
     font.draw(20, WINDOW_HEIGHT - 58, '좌우: 이동  아래: 웅크리기  Space: 점프  A: 연사  Esc: 종료',
               (30, 30, 30))
-    font.draw(20, WINDOW_HEIGHT - 84, '아래 + D: 발밑으로 지우개 투척', (30, 30, 30))
+    font.draw(20, WINDOW_HEIGHT - 84, '아래 + S: 발밑 낙서 생성 / 아래 + D: 발판 지우기', (30, 30, 30))
     font.draw(20, WINDOW_HEIGHT - 112, f'{enemy.NAME} · {enemy.attack_name}', (90, 50, 70))
     font.draw(20, 45, 'Space: 짧게/길게 점프  |  공중 재입력: 분홍·하늘탄 패링',
               (30, 30, 30))

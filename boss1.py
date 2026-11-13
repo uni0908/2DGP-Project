@@ -36,7 +36,7 @@ class Boss1(TestEnemy):
     HOMING_PHASE_DURATIONS = {'homing_launch': 1.4, 'homing_recover': 1.0}
     HOMING_FIRE_INTERVAL = 0.7
     HOMING_SHOTS = 2
-    LASER_PHASE_DURATIONS = {'laser_charge': 1.5, 'laser_recover': 1.0}
+    LASER_PHASE_DURATIONS = {'laser_charge': 3.0, 'laser_recover': 1.0}
 
     def __init__(self, world_width, world_height, ground_y, rng=None, laser_only=False):
         super().__init__(world_width, world_height, ground_y)
