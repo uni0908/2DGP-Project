@@ -22,6 +22,12 @@ class Boss1(TestEnemy):
     REST_MAX_HEIGHT = 152
     REST_INTERVAL_RANGE = (0.08, 0.14)
     REST_BULLET_SPEED = 300.0
+    NORMAL_PHASE_DURATIONS = {'normal_burst': 0.54, 'normal_pause': 0.9,
+                              'normal_parry': 2.5}
+    NORMAL_FIRE_INTERVAL = 0.18
+    NORMAL_BURST_SHOTS = 3
+    NORMAL_CYCLES = 2
+    NORMAL_MOVE_SPEED = 70.0
 
     def __init__(self, world_width, world_height, ground_y, rng=None):
         super().__init__(world_width, world_height, ground_y)
@@ -34,24 +40,78 @@ class Boss1(TestEnemy):
         self.burst_shots = 0
         self.rest_shots = 0
         self.rng = rng if rng is not None else random.Random()
+        self.pattern = 'barrage'
+        self.normal_cycles = 0
+        self.normal_shots = 0
+        self.normal_motion_time = 0.0
+        self.normal_parry_fired = False
+
+    @property
+    def attack_name(self):
+        return self.NORMAL_ATTACK_NAME if self.pattern == 'normal' else self.BARRAGE_ATTACK_NAME
 
     @property
     def body_height(self):
         return self.REST_HEIGHT if self.state == 'rest' else self.HEIGHT
 
     def get_bb(self):
-        return (self.x - self.WIDTH / 2, self.ground_y,
-                self.x + self.WIDTH / 2, self.ground_y + self.body_height)
+        bottom = self.y - self.HEIGHT / 2 if self.pattern == 'normal' else self.ground_y
+        return (self.x - self.WIDTH / 2, bottom,
+                self.x + self.WIDTH / 2, bottom + self.body_height)
 
     def advance_phase(self):
-        self.state = 'rest' if self.state == 'attack' else 'attack'
-        self.y = self.ground_y + self.body_height / 2
+        if self.pattern == 'normal':
+            if self.state == 'normal_burst':
+                self.state = 'normal_pause'
+            elif self.state == 'normal_pause':
+                self.state = 'normal_parry'
+                self.normal_parry_fired = False
+            else:
+                self.normal_cycles += 1
+                if self.normal_cycles >= self.NORMAL_CYCLES:
+                    self.pattern, self.state = 'barrage', 'attack'
+                else:
+                    self.state = 'normal_burst'
+                    self.normal_shots = 0
+        elif self.state == 'attack':
+            self.state = 'rest'
+        else:
+            self.pattern, self.state = 'normal', 'normal_burst'
+            self.normal_cycles = self.normal_shots = 0
+            self.normal_motion_time = 0.0
+            self.y = self.min_y
+        if self.pattern == 'barrage':
+            self.y = self.ground_y + self.body_height / 2
         self.state_time = 0.0
         self.fire_timer = 0.0
         if self.state == 'attack':
             self.burst_shots = 0
         elif self.state == 'rest':
             self.rest_shots = 0
+
+    def update_normal(self, dt):
+        self.normal_motion_time += dt
+        span = self.max_y - self.min_y
+        travel = (self.normal_motion_time * self.NORMAL_MOVE_SPEED) % (2 * span)
+        self.y = self.min_y + span - abs(span - travel)
+        if self.state == 'normal_burst':
+            self.fire_timer -= dt
+            while self.fire_timer <= 0 and self.normal_shots < self.NORMAL_BURST_SHOTS:
+                self.fire_normal_bullet()
+                self.normal_shots += 1
+                self.fire_timer += self.NORMAL_FIRE_INTERVAL
+        elif self.state == 'normal_parry' and not self.normal_parry_fired:
+            self.fire_normal_bullet(('doodle', 'eraser')[self.normal_cycles % 2])
+            self.normal_parry_fired = True
+
+    def fire_normal_bullet(self, reward=None):
+        height = self.y - self.HEIGHT / 2 + 28
+        if reward is not None:
+            # 점프로 닿을 수 있는 높이에서 단독 발사한다.
+            height = min(self.ground_y + 130, max(self.ground_y + 90, height))
+        bullet = Bullet(self.x - self.WIDTH / 2 - Bullet.WIDTH / 2,
+                        height, -1, self.team, self.world_width, parry_reward=reward)
+        game_world.add_object(bullet, game_world.PROJECTILES)
 
     def fire_volley(self):
         self.fire_rows(self.BARRAGE_HEIGHTS, self.BULLET_SPEED)
@@ -76,9 +136,12 @@ class Boss1(TestEnemy):
             return
         remaining = max(0, dt)
         while remaining > 0:
-            duration = self.PHASE_DURATIONS[self.state]
+            durations = self.NORMAL_PHASE_DURATIONS if self.pattern == 'normal' else self.PHASE_DURATIONS
+            duration = durations[self.state]
             step = min(remaining, duration - self.state_time)
-            if self.state == 'attack':
+            if self.pattern == 'normal':
+                self.update_normal(step)
+            elif self.state == 'attack':
                 self.fire_timer -= step
                 while self.fire_timer <= 0 and self.burst_shots < self.VOLLEYS_PER_BURST:
                     self.fire_volley()

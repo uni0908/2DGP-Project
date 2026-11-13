@@ -127,7 +127,8 @@ def draw():
     font.draw(20, WINDOW_HEIGHT - 58, '좌우: 이동  아래: 웅크리기  Space: 점프  A: 연사  Esc: 종료',
               (30, 30, 30))
     font.draw(20, WINDOW_HEIGHT - 84, '아래 + D: 발밑으로 지우개 투척', (30, 30, 30))
-    font.draw(20, 45, 'Space: 짧게/길게 점프  |  이번 패턴은 전부 일반탄: 패링 불가',
+    font.draw(20, WINDOW_HEIGHT - 112, f'{enemy.NAME} · {enemy.attack_name}', (90, 50, 70))
+    font.draw(20, 45, 'Space: 짧게/길게 점프  |  공중 재입력: 분홍·하늘탄 패링',
               (30, 30, 30))
     if player.parry_feedback_timer > 0:
         reward_name = '낙서' if player.last_parry_reward == 'doodle' else '지우개'

@@ -36,7 +36,7 @@ class BossTests(unittest.TestCase):
         self.boss.update(.5)
         self.assertTrue(all(obj in game_world.objects(game_world.PROJECTILES) for obj in before))
         self.boss.update(3.5)
-        self.assertEqual(self.boss.state, 'attack')
+        self.assertEqual(self.boss.state, 'normal_burst')
 
     def test_rest_fires_random_single_shots_without_warning(self):
         self.boss.state = 'attack'
@@ -98,6 +98,7 @@ class BossTests(unittest.TestCase):
 
     def test_each_attack_restarts_fixed_volley_count(self):
         cycle = sum(self.boss.PHASE_DURATIONS.values())
+        cycle += sum(self.boss.NORMAL_PHASE_DURATIONS.values()) * self.boss.NORMAL_CYCLES
         self.boss.update(cycle + .02)
         self.assertEqual(self.boss.state, 'attack')
         self.assertEqual(self.boss.burst_shots, 1)
@@ -184,5 +185,5 @@ class BossTests(unittest.TestCase):
         self.shoot(108)
         self.assertEqual(self.boss.hp, 29)
         self.boss.advance_phase()
-        self.assertEqual(self.boss.state, 'attack')
+        self.assertEqual(self.boss.state, 'normal_burst')
         self.assertEqual(self.boss.get_bb()[3], 192)
