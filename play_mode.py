@@ -12,6 +12,7 @@ from boss1 import Boss1
 WINDOW_WIDTH = 960
 WINDOW_HEIGHT = 540
 GROUND_Y = 80
+LASER_TEST_MODE = True  # False로 바꾸면 보스1 전체 패턴을 순서대로 실행한다.
 player = None
 font = None
 enemy = None
@@ -23,7 +24,7 @@ def enter():
     game_world.clear()
     player = Player(120, GROUND_Y, WINDOW_WIDTH)
     game_world.add_object(player, game_world.ACTORS)
-    enemy = Boss1(WINDOW_WIDTH, WINDOW_HEIGHT, GROUND_Y)
+    enemy = Boss1(WINDOW_WIDTH, WINDOW_HEIGHT, GROUND_Y, laser_only=LASER_TEST_MODE)
     game_world.add_object(enemy, game_world.ACTORS)
     game_over = False
 

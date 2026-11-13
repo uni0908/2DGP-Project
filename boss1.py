@@ -37,7 +37,7 @@ class Boss1(TestEnemy):
     HOMING_SHOTS = 2
     LASER_PHASE_DURATIONS = {'laser_charge': 0.6, 'laser_recover': 1.0}
 
-    def __init__(self, world_width, world_height, ground_y, rng=None):
+    def __init__(self, world_width, world_height, ground_y, rng=None, laser_only=False):
         super().__init__(world_width, world_height, ground_y)
         self.ground_y = ground_y
         self.y = ground_y + self.HEIGHT / 2
@@ -58,6 +58,9 @@ class Boss1(TestEnemy):
         self.homing_reward_index = 0
         self.world_height = world_height
         self.laser = None
+        self.laser_only = laser_only
+        if self.laser_only:
+            self.pattern, self.state = 'laser', 'laser_charge'
 
     @property
     def attack_name(self):
@@ -82,7 +85,11 @@ class Boss1(TestEnemy):
             elif self.state == 'laser_sweep':
                 self.state = 'laser_recover'
             else:
-                self.pattern, self.state = 'barrage', 'attack'
+                if self.laser_only:
+                    self.pattern, self.state = 'laser', 'laser_charge'
+                    self.laser = None
+                else:
+                    self.pattern, self.state = 'barrage', 'attack'
         elif self.pattern == 'homing':
             if self.state == 'homing_launch':
                 self.state = 'homing_wait'

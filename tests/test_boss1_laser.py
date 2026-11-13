@@ -49,3 +49,16 @@ class Boss1LaserTests(unittest.TestCase):
         self.assertTrue(laser.active)
         laser.update(2)
         self.assertNotIn(platform, game_world.objects(game_world.TERRAIN))
+
+    def test_laser_only_mode_starts_and_repeats_without_other_attacks(self):
+        game_world.clear()
+        boss = Boss1(960, 540, 80, laser_only=True)
+        for _ in range(2):
+            self.assertEqual((boss.pattern, boss.state), ('laser', 'laser_charge'))
+            boss.update(.61)
+            self.assertEqual(len(game_world.objects(game_world.PROJECTILES)), 1)
+            self.assertIsInstance(boss.laser, SweepLaser)
+            boss.laser.update(6)
+            boss.update(1.01)
+            self.assertFalse(game_world.objects(game_world.PROJECTILES))
+            self.assertEqual(boss.volley_index, 0)
