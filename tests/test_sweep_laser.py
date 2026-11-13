@@ -45,11 +45,34 @@ class SweepLaserTests(unittest.TestCase):
         player = Player(300, 80, 960)
         player.y = 204
         game_world.add_object(player, game_world.ACTORS)
-        self.laser.update(.5)
+        self.laser.update(.64)
         self.assertNotIn(platform, game_world.objects(game_world.TERRAIN))
         player.update(.02)
         self.assertFalse(player.grounded)
         self.assertLess(player.y, 204)
+
+    def test_upward_doodle_survives_overlap_until_trailing_edge_passes(self):
+        platform = Doodle(250, 160)  # 아래 144, 위 176
+        game_world.add_object(platform, game_world.TERRAIN)
+        self.laser.y = 120
+        self.laser.update(.1)
+        self.assertIn(platform, game_world.objects(game_world.TERRAIN))
+        self.laser.update(.2)
+        self.assertIn(platform, game_world.objects(game_world.TERRAIN))
+        self.laser.update(.06)
+        self.assertNotIn(platform, game_world.objects(game_world.TERRAIN))
+
+    def test_downward_doodle_survives_overlap_until_trailing_edge_passes(self):
+        platform = Doodle(250, 160)
+        game_world.add_object(platform, game_world.TERRAIN)
+        self.laser.y = 200
+        self.laser.direction = -1
+        self.laser.update(.1)
+        self.assertIn(platform, game_world.objects(game_world.TERRAIN))
+        self.laser.update(.2)
+        self.assertIn(platform, game_world.objects(game_world.TERRAIN))
+        self.laser.update(.06)
+        self.assertNotIn(platform, game_world.objects(game_world.TERRAIN))
 
     def test_player_edge_is_safe_and_contact_respects_existing_invincibility(self):
         safe = Player(18, 80, 960)

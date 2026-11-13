@@ -1,6 +1,7 @@
 """보스1 전용 행동과 공격 패턴."""
 
 import random
+import math
 
 import pico2d
 import game_world
@@ -35,7 +36,7 @@ class Boss1(TestEnemy):
     HOMING_PHASE_DURATIONS = {'homing_launch': 1.4, 'homing_recover': 1.0}
     HOMING_FIRE_INTERVAL = 0.7
     HOMING_SHOTS = 2
-    LASER_PHASE_DURATIONS = {'laser_charge': 0.6, 'laser_recover': 1.0}
+    LASER_PHASE_DURATIONS = {'laser_charge': 1.5, 'laser_recover': 1.0}
 
     def __init__(self, world_width, world_height, ground_y, rng=None, laser_only=False):
         super().__init__(world_width, world_height, ground_y)
@@ -243,7 +244,8 @@ class Boss1(TestEnemy):
         color = (100, 75, 160) if self.state == 'rest' else (150, 60, 80)
         if self.pattern == 'laser':
             color = (30, 160, 180)
-        pico2d.draw_rectangle(left, bottom, right, top, *color)
+        pico2d.draw_rectangle(left, bottom, right, top, *color,
+                              filled=self.state == 'laser_charge')
         pico2d.draw_rectangle(left + 20, top - 30, left + 36, top - 14,
                               *color, filled=True)
         pico2d.draw_rectangle(left, top + 8,
@@ -255,6 +257,15 @@ class Boss1(TestEnemy):
             pico2d.draw_rectangle(left - inset, bottom, right + inset, top + inset,
                                   160, 110, 210)
         elif self.state == 'laser_charge':
-            inset = 4 + int(self.state_time * 20) % 12
+            progress = min(1.0, self.state_time / self.LASER_PHASE_DURATIONS['laser_charge'])
+            inset = 6 + int((1 - progress) * 28)
             pico2d.draw_rectangle(left - inset, bottom, right + inset, top + inset,
                                   30, 210, 230)
+            center_x, center_y = left + self.WIDTH / 2, (bottom + top) / 2
+            radius = 60 * (1 - progress) + 10
+            for i in range(8):
+                angle = math.tau * i / 8 + self.state_time * 3
+                x = center_x + math.cos(angle) * radius
+                y = center_y + math.sin(angle) * radius
+                pico2d.draw_rectangle(x - 3, y - 3, x + 3, y + 3,
+                                      170, 250, 255, filled=True)

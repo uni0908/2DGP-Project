@@ -45,7 +45,10 @@ class SweepLaser:
             if not isinstance(obj, Doodle):
                 continue
             left, bottom, right, top = obj.get_bb()
-            if left < self.right and right > self.left and bottom <= high and top >= low:
+            passed = (old_y - self.THICKNESS / 2 <= top <= new_y - self.THICKNESS / 2
+                      if self.direction > 0 else
+                      new_y + self.THICKNESS / 2 <= bottom <= old_y + self.THICKNESS / 2)
+            if left < self.right and right > self.left and passed:
                 game_world.remove_object(obj)
         for obj in game_world.objects(game_world.ACTORS):
             if getattr(obj, 'team', None) != 'player' or obj.hp <= 0:

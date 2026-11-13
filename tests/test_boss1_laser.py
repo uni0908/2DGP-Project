@@ -23,7 +23,7 @@ class Boss1LaserTests(unittest.TestCase):
     def test_charge_then_single_laser_and_return_after_round_trip(self):
         self.assertEqual(self.boss.pattern, 'laser')
         self.assertEqual(self.boss.attack_name, '레이저 공격')
-        self.boss.update(.59)
+        self.boss.update(self.boss.LASER_PHASE_DURATIONS['laser_charge'] - .01)
         self.assertFalse(game_world.objects(game_world.PROJECTILES))
         self.boss.update(.02)
         self.assertEqual(self.boss.state, 'laser_sweep')
@@ -41,7 +41,7 @@ class Boss1LaserTests(unittest.TestCase):
         self.assertEqual(self.boss.burst_shots, 1)
 
     def test_existing_laser_keeps_sweeping_after_boss_defeat(self):
-        self.boss.update(.61)
+        self.boss.update(self.boss.LASER_PHASE_DURATIONS['laser_charge'] + .01)
         laser = self.boss.laser
         platform = Doodle(250, 300)
         game_world.add_object(platform, game_world.TERRAIN)
@@ -55,7 +55,7 @@ class Boss1LaserTests(unittest.TestCase):
         boss = Boss1(960, 540, 80, laser_only=True)
         for _ in range(2):
             self.assertEqual((boss.pattern, boss.state), ('laser', 'laser_charge'))
-            boss.update(.61)
+            boss.update(boss.LASER_PHASE_DURATIONS['laser_charge'] + .01)
             self.assertEqual(len(game_world.objects(game_world.PROJECTILES)), 1)
             self.assertIsInstance(boss.laser, SweepLaser)
             boss.laser.update(6)
