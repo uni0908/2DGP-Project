@@ -13,6 +13,7 @@ class Player:
     CROUCH_SPEED = 130.0
     MOVE_SPEED = 260.0  # 임시 값: 초당 픽셀
     JUMP_SPEED = 620.0  # 임시 값: 초당 픽셀
+    SHORT_JUMP_SPEED = 180.0
     GRAVITY = 1800.0  # 임시 값: 초당 픽셀/초
     INITIAL_DOODLES = 10
     INITIAL_ERASERS = 10
@@ -43,6 +44,7 @@ class Player:
         self.crouching = False
         self.parry_feedback_timer = 0.0
         self.last_parry_reward = None
+        self.jump_cut_available = False
 
     def take_damage(self, amount):
         if self.hp <= 0 or self.invincibility_timer > 0 or amount <= 0:
@@ -63,9 +65,17 @@ class Player:
             self.pressed_keys.add(event.key)
         elif event.type == pico2d.SDL_KEYUP:
             self.pressed_keys.discard(event.key)
+            if event.key == pico2d.SDLK_SPACE:
+                self.cut_jump()
+
+    def cut_jump(self):
+        if self.jump_cut_available:
+            self.velocity_y = min(self.velocity_y, self.SHORT_JUMP_SPEED)
+            self.jump_cut_available = False
 
     def clear_input(self):
         self.pressed_keys.clear()
+        self.cut_jump()
 
     def get_parry_bb(self):
         left, bottom, right, top = self.get_bb()
@@ -96,6 +106,7 @@ class Player:
         bullet.active = False
         game_world.remove_object(bullet)
         self.velocity_y = self.JUMP_SPEED
+        self.jump_cut_available = False
         self.grounded = False
         self.last_parry_reward = bullet.parry_reward
         self.parry_feedback_timer = 0.8
@@ -105,6 +116,7 @@ class Player:
         if self.grounded and not self.crouching:
             self.velocity_y = self.JUMP_SPEED
             self.grounded = False
+            self.jump_cut_available = True
 
     def get_bb(self):
         return (self.x - self.WIDTH / 2, self.y - self.height / 2,
