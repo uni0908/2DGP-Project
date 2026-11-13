@@ -82,8 +82,8 @@ class Boss1HomingTests(unittest.TestCase):
         self.boss.update(.49)
         self.assertEqual(self.boss.state, 'homing_recover')
         self.boss.update(.02)
-        self.assertEqual(self.boss.pattern, 'barrage')
-        self.assertEqual(self.boss.burst_shots, 1)
+        self.assertEqual(self.boss.pattern, 'laser')
+        self.assertEqual(self.boss.state, 'laser_charge')
 
     def test_next_homing_visit_uses_cyan_and_waits_for_resolution(self):
         first = self.reach_solo_parry()

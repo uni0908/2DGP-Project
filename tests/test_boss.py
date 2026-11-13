@@ -103,6 +103,9 @@ class BossTests(unittest.TestCase):
         self.assertEqual(self.boss.pattern, 'homing')
         self.boss.state = 'homing_recover'
         self.boss.advance_phase()
+        self.assertEqual(self.boss.pattern, 'laser')
+        self.boss.state = 'laser_recover'
+        self.boss.advance_phase()
         self.boss.update(.02)
         self.assertEqual(self.boss.state, 'attack')
         self.assertEqual(self.boss.burst_shots, 1)

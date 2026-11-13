@@ -7,6 +7,7 @@ import game_world
 from bullet import Bullet
 from enemy import TestEnemy
 from homing_missile import HomingMissile
+from sweep_laser import SweepLaser
 
 
 class Boss1(TestEnemy):
@@ -14,6 +15,7 @@ class Boss1(TestEnemy):
     BARRAGE_ATTACK_NAME = '탄막 공격'
     NORMAL_ATTACK_NAME = '일반 공격'
     HOMING_ATTACK_NAME = '유도탄 공격'
+    LASER_ATTACK_NAME = '레이저 공격'
     BARRAGE_HEIGHTS = (8, 24, 40, 56, 72, 88)
     REST_HEIGHT = TestEnemy.HEIGHT / 2
     FIRE_INTERVAL = 0.45
@@ -33,6 +35,7 @@ class Boss1(TestEnemy):
     HOMING_PHASE_DURATIONS = {'homing_launch': 1.4, 'homing_recover': 1.0}
     HOMING_FIRE_INTERVAL = 0.7
     HOMING_SHOTS = 2
+    LASER_PHASE_DURATIONS = {'laser_charge': 0.6, 'laser_recover': 1.0}
 
     def __init__(self, world_width, world_height, ground_y, rng=None):
         super().__init__(world_width, world_height, ground_y)
@@ -53,11 +56,13 @@ class Boss1(TestEnemy):
         self.homing_shots = 0
         self.homing_parry_fired = False
         self.homing_reward_index = 0
+        self.world_height = world_height
+        self.laser = None
 
     @property
     def attack_name(self):
         return {'normal': self.NORMAL_ATTACK_NAME, 'barrage': self.BARRAGE_ATTACK_NAME,
-                'homing': self.HOMING_ATTACK_NAME}[self.pattern]
+                'homing': self.HOMING_ATTACK_NAME, 'laser': self.LASER_ATTACK_NAME}[self.pattern]
 
     @property
     def body_height(self):
@@ -69,7 +74,16 @@ class Boss1(TestEnemy):
                 self.x + self.WIDTH / 2, bottom + self.body_height)
 
     def advance_phase(self):
-        if self.pattern == 'homing':
+        if self.pattern == 'laser':
+            if self.state == 'laser_charge':
+                self.state = 'laser_sweep'
+                self.laser = SweepLaser(self.world_width, self.world_height, self.ground_y)
+                game_world.add_object(self.laser, game_world.PROJECTILES)
+            elif self.state == 'laser_sweep':
+                self.state = 'laser_recover'
+            else:
+                self.pattern, self.state = 'barrage', 'attack'
+        elif self.pattern == 'homing':
             if self.state == 'homing_launch':
                 self.state = 'homing_wait'
             elif self.state == 'homing_wait':
@@ -78,7 +92,8 @@ class Boss1(TestEnemy):
             elif self.state == 'homing_parry':
                 self.state = 'homing_recover'
             else:
-                self.pattern, self.state = 'barrage', 'attack'
+                self.pattern, self.state = 'laser', 'laser_charge'
+                self.laser = None
         elif self.pattern == 'normal':
             if self.state == 'normal_burst':
                 self.state = 'normal_pause'
@@ -169,6 +184,12 @@ class Boss1(TestEnemy):
             return
         remaining = max(0, dt)
         while remaining > 0:
+            if self.pattern == 'laser' and self.state == 'laser_sweep':
+                if self.laser is not None and self.laser.active:
+                    self.state_time += remaining
+                    break
+                self.advance_phase()
+                continue
             if self.pattern == 'homing' and self.state in ('homing_wait', 'homing_parry'):
                 if self.state == 'homing_parry' and not self.homing_parry_fired:
                     reward = ('doodle', 'eraser')[self.homing_reward_index % 2]
@@ -182,6 +203,7 @@ class Boss1(TestEnemy):
                 continue
             durations = (self.NORMAL_PHASE_DURATIONS if self.pattern == 'normal'
                          else self.HOMING_PHASE_DURATIONS if self.pattern == 'homing'
+                         else self.LASER_PHASE_DURATIONS if self.pattern == 'laser'
                          else self.PHASE_DURATIONS)
             duration = durations[self.state]
             step = min(remaining, duration - self.state_time)
@@ -212,6 +234,8 @@ class Boss1(TestEnemy):
     def draw(self):
         left, bottom, right, top = self.get_bb()
         color = (100, 75, 160) if self.state == 'rest' else (150, 60, 80)
+        if self.pattern == 'laser':
+            color = (30, 160, 180)
         pico2d.draw_rectangle(left, bottom, right, top, *color)
         pico2d.draw_rectangle(left + 20, top - 30, left + 36, top - 14,
                               *color, filled=True)
@@ -223,3 +247,7 @@ class Boss1(TestEnemy):
             inset = 5 + int(self.state_time * 8) % 8
             pico2d.draw_rectangle(left - inset, bottom, right + inset, top + inset,
                                   160, 110, 210)
+        elif self.state == 'laser_charge':
+            inset = 4 + int(self.state_time * 20) % 12
+            pico2d.draw_rectangle(left - inset, bottom, right + inset, top + inset,
+                                  30, 210, 230)
