@@ -29,23 +29,31 @@ class BossTests(unittest.TestCase):
         self.boss.update(.21)
         self.assertEqual(self.boss.state, 'attack')
         self.assertEqual(len(game_world.objects(game_world.PROJECTILES)), 3)
-        self.boss.update(4)
+        self.boss.update(self.boss.PHASE_DURATIONS['attack'])
         self.assertEqual(self.boss.state, 'rest')
-        self.assertFalse(game_world.objects(game_world.PROJECTILES))
-        self.boss.update(4)
+        self.assertEqual(self.boss.burst_shots, 6)
+        self.assertEqual(len(game_world.objects(game_world.PROJECTILES)), 18)
+        self.boss.update(.5)
+        self.assertEqual(len(game_world.objects(game_world.PROJECTILES)), 18)
+        self.boss.update(3.5)
         self.assertEqual(self.boss.state, 'warning')
 
-    def test_only_low_weak_point_during_rest_takes_damage(self):
-        self.shoot()
-        self.assertEqual(self.boss.hp, 30)
-        self.boss.state = 'attack'
-        self.shoot()
-        self.assertEqual(self.boss.hp, 30)
-        self.boss.state = 'rest'
-        self.shoot(170)
-        self.assertEqual(self.boss.hp, 30)
-        self.shoot()
-        self.assertEqual(self.boss.hp, 29)
+    def test_whole_body_takes_damage_during_every_phase(self):
+        expected_hp = 30
+        for phase in ('warning', 'attack', 'rest'):
+            self.boss.state = phase
+            for height in (90, 136, 185):
+                with self.subTest(phase=phase, height=height):
+                    self.shoot(height)
+                    expected_hp -= 1
+                    self.assertEqual(self.boss.hp, expected_hp)
+
+    def test_each_attack_restarts_fixed_volley_count(self):
+        cycle = sum(self.boss.PHASE_DURATIONS.values())
+        self.boss.update(cycle + self.boss.PHASE_DURATIONS['warning'] + .02)
+        self.assertEqual(self.boss.state, 'attack')
+        self.assertEqual(self.boss.burst_shots, 1)
+        self.assertEqual(self.boss.volley_index, 7)
 
     def test_cover_blocks_attack_and_own_shot_until_erased(self):
         cover = Doodle(250, 108)

@@ -139,8 +139,8 @@ def draw():
     else:
         state_labels = {
             'warning': '패턴 1 예고: 공격선을 보고 낙서로 대비하세요',
-            'attack': '탄막 공격: 낙서로 방어! 몸체에는 피해를 줄 수 없어요',
-            'rest': '반격 기회! 낙서를 지우고 낮은 초록 약점을 쏘세요',
+            'attack': f'탄막 발사 {enemy.burst_shots}/{enemy.VOLLEYS_PER_BURST}: 방어하며 공격하세요',
+            'rest': '발사 중단: 날아오는 탄을 피하고 낙서를 치워 반격하세요',
         }
         remaining = max(0, enemy.PHASE_DURATIONS[enemy.state] - enemy.state_time)
         font.draw(20, WINDOW_HEIGHT - 112,

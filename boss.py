@@ -1,4 +1,4 @@
-"""1번 보스 패턴: 예고 → 탄막 → 낮은 약점 노출 → 반복."""
+"""1번 보스 패턴: 예고 → 정해진 수의 탄막 → 휴식 → 반복."""
 
 import pico2d
 import game_world
@@ -7,8 +7,10 @@ from enemy import TestEnemy
 
 
 class Boss(TestEnemy):
-    PHASE_DURATIONS = {'warning': 1.2, 'attack': 4.0, 'rest': 4.0}
     FIRE_INTERVAL = 0.45
+    VOLLEYS_PER_BURST = 6
+    PHASE_DURATIONS = {'warning': 1.2, 'attack': FIRE_INTERVAL * VOLLEYS_PER_BURST,
+                       'rest': 4.0}
     BULLET_SPEED = 200.0
 
     def __init__(self, world_width, world_height, ground_y):
@@ -19,23 +21,13 @@ class Boss(TestEnemy):
         self.state_time = 0.0
         self.fire_timer = 0.0
         self.volley_index = 0
-
-    def get_weak_bb(self):
-        left = self.x - self.WIDTH / 2
-        return (left, self.ground_y + 12, left + 28, self.ground_y + 44)
+        self.burst_shots = 0
 
     def take_damage(self, amount):
-        if self.state == 'rest' and self.hp > 0:
+        if self.hp > 0:
             super().take_damage(amount)
             if self.hp == 0:
                 self.clear_enemy_bullets()
-
-    def receive_bullet(self, bullet):
-        _, bottom, _, top = self.get_weak_bb()
-        if (bullet.team == 'player' and self.state == 'rest'
-                and bullet.y + bullet.HEIGHT / 2 >= bottom
-                and bullet.y - bullet.HEIGHT / 2 <= top):
-            self.take_damage(bullet.DAMAGE)
 
     def clear_enemy_bullets(self):
         for obj in game_world.objects(game_world.PROJECTILES):
@@ -47,9 +39,8 @@ class Boss(TestEnemy):
         self.state = {'warning': 'attack', 'attack': 'rest', 'rest': 'warning'}[self.state]
         self.state_time = 0.0
         self.fire_timer = 0.0
-        if self.state == 'rest':
-            # 휴식 동안은 남은 탄에 맞지 않고 낙서 제거·반격을 시도할 수 있다.
-            self.clear_enemy_bullets()
+        if self.state == 'attack':
+            self.burst_shots = 0
 
     def fire_volley(self):
         reward = ('doodle', 'eraser')[self.volley_index % 2]
@@ -70,8 +61,9 @@ class Boss(TestEnemy):
             step = min(remaining, duration - self.state_time)
             if self.state == 'attack':
                 self.fire_timer -= step
-                while self.fire_timer <= 0:
+                while self.fire_timer <= 0 and self.burst_shots < self.VOLLEYS_PER_BURST:
                     self.fire_volley()
+                    self.burst_shots += 1
                     self.fire_timer += self.FIRE_INTERVAL
             self.state_time += step
             remaining -= step
@@ -80,8 +72,6 @@ class Boss(TestEnemy):
 
     def draw(self):
         super().draw()
-        weak_color = (40, 200, 80) if self.state == 'rest' else (100, 100, 110)
-        pico2d.draw_rectangle(*self.get_weak_bb(), *weak_color, filled=True)
         if self.state == 'warning':
             for height in (28, 76, 118):
                 pico2d.draw_line(0, self.ground_y + height,
