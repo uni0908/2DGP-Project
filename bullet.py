@@ -49,7 +49,10 @@ class Bullet:
         if hits:
             target = min(hits, key=lambda hit: hit[0])[1]
             if not (hasattr(target, 'try_parry') and target.try_parry(self, at_contact=True)):
-                target.take_damage(self.DAMAGE)
+                if hasattr(target, 'receive_bullet'):
+                    target.receive_bullet(self)
+                else:
+                    target.take_damage(self.DAMAGE)
             self.active = False
             game_world.remove_object(self)
             return
