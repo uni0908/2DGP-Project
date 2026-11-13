@@ -10,7 +10,7 @@ from bullet import Bullet
 class Boss1NormalTests(unittest.TestCase):
     def setUp(self):
         game_world.clear()
-        self.boss = Boss1(960, 540, 80)
+        self.boss = Boss1(960, 540, 80, shuffle_patterns=False)
         game_world.add_object(self.boss, game_world.ACTORS)
         self.boss.state = 'rest'
         self.boss.advance_phase()

@@ -13,7 +13,7 @@ from eraser import Eraser
 class BossTests(unittest.TestCase):
     def setUp(self):
         game_world.clear()
-        self.boss = Boss(960, 540, 80, rng=random.Random(17))
+        self.boss = Boss(960, 540, 80, rng=random.Random(17), shuffle_patterns=False)
         game_world.add_object(self.boss, game_world.ACTORS)
 
     def tearDown(self):

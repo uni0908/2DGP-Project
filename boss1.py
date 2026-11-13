@@ -38,7 +38,8 @@ class Boss1(TestEnemy):
     HOMING_SHOTS = 2
     LASER_PHASE_DURATIONS = {'laser_charge': 3.0, 'laser_recover': 1.0}
 
-    def __init__(self, world_width, world_height, ground_y, rng=None, laser_only=False):
+    def __init__(self, world_width, world_height, ground_y, rng=None, laser_only=False,
+                 shuffle_patterns=True):
         super().__init__(world_width, world_height, ground_y)
         self.ground_y = ground_y
         self.y = ground_y + self.HEIGHT / 2
@@ -60,8 +61,43 @@ class Boss1(TestEnemy):
         self.world_height = world_height
         self.laser = None
         self.laser_only = laser_only
+        self.shuffle_patterns = shuffle_patterns
+        self.pattern_queue = []
         if self.laser_only:
-            self.pattern, self.state = 'laser', 'laser_charge'
+            self.start_pattern('laser')
+        elif self.shuffle_patterns:
+            self.pattern_queue = ['barrage', 'homing', 'laser']
+            self.rng.shuffle(self.pattern_queue)
+            self.start_pattern('normal')
+
+    def start_pattern(self, pattern):
+        self.pattern = pattern
+        self.state = {'barrage': 'attack', 'normal': 'normal_burst',
+                      'homing': 'homing_launch', 'laser': 'laser_charge'}[pattern]
+        self.state_time = self.fire_timer = 0.0
+        self.y = self.min_y
+        self.burst_shots = self.rest_shots = 0
+        self.normal_cycles = self.normal_shots = 0
+        self.normal_motion_time = 0.0
+        self.normal_parry_fired = False
+        self.homing_shots = 0
+        self.homing_parry_fired = False
+        self.laser = None
+
+    def choose_next_pattern(self):
+        if self.laser_only:
+            self.start_pattern('laser')
+            return
+        if not self.shuffle_patterns:
+            self.start_pattern({'barrage': 'normal', 'normal': 'homing',
+                                'homing': 'laser', 'laser': 'barrage'}[self.pattern])
+            return
+        if not self.pattern_queue:
+            self.pattern_queue = ['normal', 'barrage', 'homing', 'laser']
+            self.rng.shuffle(self.pattern_queue)
+            if self.pattern_queue[0] == self.pattern:
+                self.pattern_queue[0], self.pattern_queue[1] = self.pattern_queue[1], self.pattern_queue[0]
+        self.start_pattern(self.pattern_queue.pop(0))
 
     @property
     def attack_name(self):
@@ -86,11 +122,7 @@ class Boss1(TestEnemy):
             elif self.state == 'laser_sweep':
                 self.state = 'laser_recover'
             else:
-                if self.laser_only:
-                    self.pattern, self.state = 'laser', 'laser_charge'
-                    self.laser = None
-                else:
-                    self.pattern, self.state = 'barrage', 'attack'
+                self.choose_next_pattern()
         elif self.pattern == 'homing':
             if self.state == 'homing_launch':
                 self.state = 'homing_wait'
@@ -100,8 +132,7 @@ class Boss1(TestEnemy):
             elif self.state == 'homing_parry':
                 self.state = 'homing_recover'
             else:
-                self.pattern, self.state = 'laser', 'laser_charge'
-                self.laser = None
+                self.choose_next_pattern()
         elif self.pattern == 'normal':
             if self.state == 'normal_burst':
                 self.state = 'normal_pause'
@@ -111,18 +142,14 @@ class Boss1(TestEnemy):
             else:
                 self.normal_cycles += 1
                 if self.normal_cycles >= self.NORMAL_CYCLES:
-                    self.pattern, self.state = 'homing', 'homing_launch'
-                    self.homing_shots = 0
+                    self.choose_next_pattern()
                 else:
                     self.state = 'normal_burst'
                     self.normal_shots = 0
         elif self.state == 'attack':
             self.state = 'rest'
         else:
-            self.pattern, self.state = 'normal', 'normal_burst'
-            self.normal_cycles = self.normal_shots = 0
-            self.normal_motion_time = 0.0
-            self.y = self.min_y
+            self.choose_next_pattern()
         if self.pattern != 'normal':
             self.y = self.ground_y + self.body_height / 2
         self.state_time = 0.0

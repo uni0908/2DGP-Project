@@ -12,7 +12,7 @@ from boss1 import Boss1
 WINDOW_WIDTH = 960
 WINDOW_HEIGHT = 540
 GROUND_Y = 80
-LASER_TEST_MODE = True  # False로 바꾸면 보스1 전체 패턴을 순서대로 실행한다.
+LASER_TEST_MODE = False  # True로 바꾸면 레이저만 반복하는 테스트 모드다.
 player = None
 font = None
 enemy = None

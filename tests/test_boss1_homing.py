@@ -15,7 +15,7 @@ class Boss1HomingTests(unittest.TestCase):
     def setUp(self):
         game_world.clear()
         self.player = Player(120, 80, 960)
-        self.boss = Boss1(960, 540, 80)
+        self.boss = Boss1(960, 540, 80, shuffle_patterns=False)
         game_world.add_object(self.player, game_world.ACTORS)
         game_world.add_object(self.boss, game_world.ACTORS)
         self.boss.pattern = 'normal'
