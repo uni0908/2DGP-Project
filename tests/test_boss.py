@@ -76,3 +76,21 @@ class BossTests(unittest.TestCase):
         self.assertNotIn(self.boss, game_world.objects(game_world.ACTORS))
         self.boss.update(20)
         self.assertFalse(game_world.objects(game_world.PROJECTILES))
+
+    def test_attack_volley_offers_both_parry_resources(self):
+        from player import Player
+        from types import SimpleNamespace
+        import pico2d
+        player = Player(120, 80, 960)
+        player.jump()
+        player.update(.016)
+        for reward in ('doodle', 'eraser'):
+            self.boss.fire_volley()
+            colored = [obj for obj in game_world.objects(game_world.PROJECTILES)
+                       if isinstance(obj, Bullet) and obj.active
+                       and obj.parry_reward == reward][-1]
+            colored.x = 150
+            player.handle_event(SimpleNamespace(type=pico2d.SDL_KEYUP, key=pico2d.SDLK_SPACE))
+            player.handle_event(SimpleNamespace(type=pico2d.SDL_KEYDOWN, key=pico2d.SDLK_SPACE))
+            self.assertFalse(colored.active)
+        self.assertEqual((player.doodle_count, player.eraser_count), (11, 11))
