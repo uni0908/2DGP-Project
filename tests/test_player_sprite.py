@@ -69,10 +69,10 @@ class PlayerSpriteTests(unittest.TestCase):
         player = self.player
         player.crouching = True
         for keys, drawing_name in (
-                ((), 'crouch_walk_lowered'),
-                ((pico2d.SDLK_a,), 'crouch_walk_horizontal'),
-                ((pico2d.SDLK_RIGHT,), 'crouch_lowered'),
-                ((pico2d.SDLK_RIGHT, pico2d.SDLK_a), 'crouch_horizontal')):
+                ((), 'crouch_lowered'),
+                ((pico2d.SDLK_a,), 'crouch_horizontal'),
+                ((pico2d.SDLK_RIGHT,), 'crouch_walk_lowered'),
+                ((pico2d.SDLK_RIGHT, pico2d.SDLK_a), 'crouch_walk_horizontal')):
             player.pressed_keys = set(keys)
             player.sprite.update(player, 0)
             player.sprite.update(player, .21)

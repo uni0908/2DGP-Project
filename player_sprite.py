@@ -63,14 +63,7 @@ class PlayerSprite:
 
     def current_frame(self, player):
         name = self.state(player)
-        # Generated crouch strips have their idle/walk motion reversed.
-        drawing_name = {
-            'crouch_lowered': 'crouch_walk_lowered',
-            'crouch_horizontal': 'crouch_walk_horizontal',
-            'crouch_walk_lowered': 'crouch_lowered',
-            'crouch_walk_horizontal': 'crouch_horizontal',
-        }.get(name, name)
-        return self.frame(DATA['animations'][drawing_name], self.elapsed if name == self.name else 0)
+        return self.frame(DATA['animations'][name], self.elapsed if name == self.name else 0)
 
     @staticmethod
     def point(player, frame, point):
