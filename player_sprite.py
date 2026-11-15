@@ -12,8 +12,13 @@ DATA = json.loads((ASSET_DIR / 'player-sprites.json').read_text(encoding='utf-8-
 DISPLAY_HEIGHT = 80.0
 RENDER_SCALE = DISPLAY_HEIGHT / DATA['render_reference']['standing_source_height']
 CHARACTER_IMAGE = 'player-character-refined.png'
-CROUCH_DIR = ASSET_DIR.parent / 'player-crouch-v2'
-DATA['animations'].update(json.loads((CROUCH_DIR / 'player-crouch.json').read_text(encoding='utf-8-sig')))
+CORRECTED_DIR = ASSET_DIR.parent / 'player-sprites-v2'
+CORRECTED_DATA = json.loads((CORRECTED_DIR / 'player-sprites.json').read_text(encoding='utf-8-sig'))
+for name in ('crouch_lowered', 'crouch_horizontal', 'crouch_walk_lowered', 'crouch_walk_horizontal'):
+    animation = CORRECTED_DATA['animations'][name]
+    for frame in animation['frames']:
+        frame['image'] = 'corrected'
+    DATA['animations'][name] = animation
 
 
 class PlayerSprite:
@@ -22,7 +27,7 @@ class PlayerSprite:
         self.elapsed = 0.0
         self.image = None
         self.effect_image = None
-        self.crouch_images = {}
+        self.corrected_image = None
 
     def update(self, player, dt):
         name = self.state(player)
@@ -100,12 +105,10 @@ class PlayerSprite:
             self.effect_image = pico2d.load_image(str(ASSET_DIR / DATA['effect_image']))
         frame = self.current_frame(player)
         image = self.image
-        if frame.get('image') in ('crouch', 'crouch_walk'):
-            key = frame['image']
-            if key not in self.crouch_images:
-                filename = 'player-crouch.png' if key == 'crouch' else 'player-crouch-walk.png'
-                self.crouch_images[key] = pico2d.load_image(str(CROUCH_DIR / filename))
-            image = self.crouch_images[key]
+        if frame.get('image') == 'corrected':
+            if self.corrected_image is None:
+                self.corrected_image = pico2d.load_image(str(CORRECTED_DIR / CORRECTED_DATA['character_image']))
+            image = self.corrected_image
         self.draw_frame(image, player, frame)
         effect = None
         elapsed = 0.0

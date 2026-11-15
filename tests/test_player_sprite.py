@@ -79,15 +79,16 @@ class PlayerSpriteTests(unittest.TestCase):
             self.assertEqual(player.sprite.current_frame(player),
                              PlayerSprite.frame(DATA['animations'][drawing_name], .21))
 
-    def test_new_crouch_idle_holds_and_crawl_advances(self):
+    def test_revised_crouch_plays_supplied_frames_and_keeps_anchors(self):
         player = self.player
         player.crouching = True
         player.height = player.CROUCH_HEIGHT
         player.y = 80 + player.height / 2
         player.sprite.update(player, 0)
-        idle = player.sprite.current_frame(player)
         player.sprite.update(player, .3)
-        self.assertEqual(player.sprite.current_frame(player), idle)
+        self.assertEqual(player.sprite.current_frame(player),
+                         PlayerSprite.frame(DATA['animations']['crouch_lowered'], .3))
+        self.assertEqual(player.sprite.current_frame(player)['image'], 'corrected')
         player.pressed_keys.update((pico2d.SDLK_RIGHT, pico2d.SDLK_a))
         player.sprite.update(player, 0)
         first = player.sprite.current_frame(player)
