@@ -12,7 +12,7 @@ class Player:
     CROUCH_HEIGHT = 28
     CROUCH_SPEED = 130.0
     MOVE_SPEED = 260.0  # 임시 값: 초당 픽셀
-    JUMP_SPEED = 620.0  # 임시 값: 초당 픽셀
+    JUMP_SPEED = 820.0  # 최대 상승량 약 187px: 바닥 y=80에서 발이 화면 중앙에 도달
     SHORT_JUMP_SPEED = 180.0
     GRAVITY = 1800.0  # 임시 값: 초당 픽셀/초
     INITIAL_DOODLES = 10

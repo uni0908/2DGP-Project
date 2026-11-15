@@ -38,10 +38,14 @@ class VariableJumpTests(unittest.TestCase):
         self.assertLess(short, 25)
         self.assertGreater(full, 100)
 
+    def test_full_jump_feet_reach_near_screen_midpoint(self):
+        rise = self.simulate(1.0)
+        self.assertAlmostEqual(80 + rise, 540 / 2, delta=5)
+
     def test_release_during_descent_does_not_add_upward_speed(self):
         player = Player(120, 80, 960)
         player.jump()
-        player.update(.4)
+        player.update(player.JUMP_SPEED / player.GRAVITY + .05)
         velocity = player.velocity_y
         self.assertLess(velocity, 0)
         player.cut_jump()
