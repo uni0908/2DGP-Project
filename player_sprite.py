@@ -60,8 +60,6 @@ class PlayerSprite:
 
     def current_frame(self, player):
         name = self.state(player)
-        if player.recoil_timer > 0 and name in DATA['recoil_animations']:
-            return DATA['recoil_animations'][name]['frames'][0]
         return self.frame(DATA['animations'][name], self.elapsed if name == self.name else 0)
 
     @staticmethod

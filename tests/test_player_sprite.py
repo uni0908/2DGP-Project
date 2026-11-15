@@ -32,6 +32,22 @@ class PlayerSpriteTests(unittest.TestCase):
         player.velocity_y = -100
         self.assertEqual(PlayerSprite.state(player), 'fall_diagonal')
 
+    def test_sustained_fire_keeps_base_animation_across_shots(self):
+        player = self.player
+        for aim_keys, name in (((), 'idle_horizontal'),
+                               ((pico2d.SDLK_UP,), 'idle_up'),
+                               ((pico2d.SDLK_RIGHT, pico2d.SDLK_UP), 'run_diagonal')):
+            player.pressed_keys = {pico2d.SDLK_a, *aim_keys}
+            player.fire_timer = 0
+            elapsed = 0.0
+            for index in range(60):
+                player.update(1 / 120)
+                if index:
+                    elapsed += 1 / 120
+                expected = PlayerSprite.frame(DATA['animations'][name], elapsed)
+                self.assertEqual(player.sprite.current_frame(player), expected)
+            game_world.clear()
+
     def test_anchors_mirror_around_player_and_follow_camera(self):
         player = self.player
         player.pressed_keys.add(pico2d.SDLK_a)

@@ -49,7 +49,6 @@ class Player:
         self.jump_cut_available = False
         self.parry_timer = 0.0
         self.hurt_timer = 0.0
-        self.recoil_timer = 0.0
         self.sprite = PlayerSprite()
 
     def take_damage(self, amount):
@@ -154,7 +153,6 @@ class Player:
             self.sprite.update(self, dt)
             return
         self.hurt_timer = max(0.0, self.hurt_timer - max(0, dt))
-        self.recoil_timer = max(0.0, self.recoil_timer - max(0, dt))
         self.invincibility_timer = max(0.0, self.invincibility_timer - max(0, dt))
         self.parry_feedback_timer = max(0.0, self.parry_feedback_timer - max(0, dt))
         self.parry_timer = max(0.0, self.parry_timer - max(0, dt))
@@ -179,7 +177,6 @@ class Player:
         self.sprite.update(self, dt)
         self.fire_timer = max(0, self.fire_timer - max(0, dt))
         if pico2d.SDLK_a in self.pressed_keys and self.fire_timer <= 0:
-            self.recoil_timer = 0.05
             aiming_up = pico2d.SDLK_UP in self.pressed_keys
             aim_x = direction if aiming_up else self.facing
             aim_y = 1 if aiming_up else 0
