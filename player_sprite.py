@@ -11,6 +11,7 @@ ASSET_DIR = Path(__file__).resolve().parent / 'output' / 'player-sprites-v1'
 DATA = json.loads((ASSET_DIR / 'player-sprites.json').read_text(encoding='utf-8-sig'))
 DISPLAY_HEIGHT = 80.0
 RENDER_SCALE = DISPLAY_HEIGHT / DATA['render_reference']['standing_source_height']
+CHARACTER_IMAGE = 'player-character-refined.png'
 
 
 class PlayerSprite:
@@ -92,7 +93,7 @@ class PlayerSprite:
     def draw(self, player):
         # Load textures only with a live canvas, never during physics tests.
         if self.image is None:
-            self.image = pico2d.load_image(str(ASSET_DIR / DATA['character_image']))
+            self.image = pico2d.load_image(str(ASSET_DIR / CHARACTER_IMAGE))
             self.effect_image = pico2d.load_image(str(ASSET_DIR / DATA['effect_image']))
         self.draw_frame(self.image, player, self.current_frame(player))
         effect = None
