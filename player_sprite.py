@@ -9,6 +9,8 @@ import game_world
 
 ASSET_DIR = Path(__file__).resolve().parent / 'output' / 'player-sprites-v1'
 DATA = json.loads((ASSET_DIR / 'player-sprites.json').read_text(encoding='utf-8-sig'))
+DISPLAY_HEIGHT = 80.0
+RENDER_SCALE = DISPLAY_HEIGHT / DATA['render_reference']['standing_source_height']
 
 
 class PlayerSprite:
@@ -64,7 +66,7 @@ class PlayerSprite:
 
     @staticmethod
     def point(player, frame, point):
-        scale = DATA['render_reference']['uniform_scale']
+        scale = RENDER_SCALE
         ax, ay = frame.get('foot_anchor', DATA['render_reference']['foot_anchor'])
         return (player.x + player.facing * (point[0] - ax) * scale,
                 player.y - player.height / 2 + (ay - point[1]) * scale)
@@ -81,7 +83,7 @@ class PlayerSprite:
     def draw_frame(self, image, player, frame):
         width, height = DATA['cell_size']
         center_x, center_y = self.point(player, frame, (width / 2, height / 2))
-        scale = DATA['render_reference']['uniform_scale']
+        scale = RENDER_SCALE
         image.clip_composite_draw(*frame['pico2d_clip_rect'], 0,
                                   'h' if player.facing < 0 else '',
                                   game_world.screen_x(center_x), center_y,
@@ -105,7 +107,7 @@ class PlayerSprite:
             animation = DATA['effects'][effect]
             frame = self.frame(animation, elapsed)
             body_frame = self.current_frame(player)
-            scale = DATA['render_reference']['uniform_scale']
+            scale = RENDER_SCALE
             attach_x, attach_y = self.point(player, body_frame, frame['character_attachment'])
             ax, ay = frame['attachment_anchor']
             width, height = DATA['cell_size']
