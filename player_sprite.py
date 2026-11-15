@@ -12,6 +12,8 @@ DATA = json.loads((ASSET_DIR / 'player-sprites.json').read_text(encoding='utf-8-
 DISPLAY_HEIGHT = 80.0
 RENDER_SCALE = DISPLAY_HEIGHT / DATA['render_reference']['standing_source_height']
 CHARACTER_IMAGE = 'player-character-refined.png'
+CROUCH_DIR = ASSET_DIR.parent / 'player-crouch-v2'
+DATA['animations'].update(json.loads((CROUCH_DIR / 'player-crouch.json').read_text(encoding='utf-8-sig')))
 
 
 class PlayerSprite:
@@ -20,6 +22,7 @@ class PlayerSprite:
         self.elapsed = 0.0
         self.image = None
         self.effect_image = None
+        self.crouch_images = {}
 
     def update(self, player, dt):
         name = self.state(player)
@@ -95,7 +98,15 @@ class PlayerSprite:
         if self.image is None:
             self.image = pico2d.load_image(str(ASSET_DIR / CHARACTER_IMAGE))
             self.effect_image = pico2d.load_image(str(ASSET_DIR / DATA['effect_image']))
-        self.draw_frame(self.image, player, self.current_frame(player))
+        frame = self.current_frame(player)
+        image = self.image
+        if frame.get('image') in ('crouch', 'crouch_walk'):
+            key = frame['image']
+            if key not in self.crouch_images:
+                filename = 'player-crouch.png' if key == 'crouch' else 'player-crouch-walk.png'
+                self.crouch_images[key] = pico2d.load_image(str(CROUCH_DIR / filename))
+            image = self.crouch_images[key]
+        self.draw_frame(image, player, frame)
         effect = None
         elapsed = 0.0
         if player.parry_feedback_timer > .65:

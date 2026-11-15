@@ -1,0 +1,76 @@
+﻿{
+    "crouch_lowered":  {
+                           "frames":  [
+                                          {
+                                              "rect":  [
+                                                           0,
+                                                           0,
+                                                           256,
+                                                           256
+                                                       ],
+                                              "pico2d_clip_rect":  [
+                                                                       0,
+                                                                       512,
+                                                                       256,
+                                                                       256
+                                                                   ],
+                                              "duration_seconds":  1,
+                                              "foot_anchor":  [
+                                                                  88,
+                                                                  220
+                                                              ],
+                                              "content_bounds":  [
+                                                                     14,
+                                                                     145,
+                                                                     148,
+                                                                     75
+                                                                 ],
+                                              "muzzle":  [
+                                                             160,
+                                                             207
+                                                         ],
+                                              "image":  "crouch"
+                                          }
+                                      ],
+                           "fps":  1,
+                           "loop":  true,
+                           "frame_count":  1
+                       },
+    "crouch_horizontal":  {
+                              "frames":  [
+                                             {
+                                                 "rect":  [
+                                                              0,
+                                                              256,
+                                                              256,
+                                                              256
+                                                          ],
+                                                 "pico2d_clip_rect":  [
+                                                                          0,
+                                                                          256,
+                                                                          256,
+                                                                          256
+                                                                      ],
+                                                 "duration_seconds":  1,
+                                                 "foot_anchor":  [
+                                                                     100.5,
+                                                                     220
+                                                                 ],
+                                                 "content_bounds":  [
+                                                                        16,
+                                                                        146,
+                                                                        169,
+                                                                        74
+                                                                    ],
+                                                 "muzzle":  [
+                                                                183,
+                                                                180
+                                                            ],
+                                                 "image":  "crouch"
+                                             }
+                                         ],
+                              "fps":  1,
+                              "loop":  true,
+                              "frame_count":  1
+                          }
+}
