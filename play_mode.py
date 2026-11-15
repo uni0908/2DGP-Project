@@ -73,6 +73,7 @@ def spawn_doodle():
 def update(dt):
     global game_over
     if game_over:
+        player.update(dt)
         return
     # 투사체가 움직이는 대상의 이전/현재 위치 사이를 건너뛰지 않게 분할한다.
     remaining = max(0, dt)

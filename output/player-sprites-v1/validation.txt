@@ -1,0 +1,3 @@
+﻿player-character.png: dimensions and transparent corner PASS
+player-parry-fx.png: dimensions and transparent corner PASS
+22 base animations, 16 individual recoil poses, 109 character cells, 7 effect cells; timing and rect checks PASS

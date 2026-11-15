@@ -4,6 +4,7 @@ import pico2d
 import game_world
 from bullet import Bullet
 from doodle import overlaps
+from player_sprite import PlayerSprite
 
 
 class Player:
@@ -47,6 +48,9 @@ class Player:
         self.last_parry_reward = None
         self.jump_cut_available = False
         self.parry_timer = 0.0
+        self.hurt_timer = 0.0
+        self.recoil_timer = 0.0
+        self.sprite = PlayerSprite()
 
     def take_damage(self, amount):
         if self.hp <= 0 or self.invincibility_timer > 0 or amount <= 0:
@@ -54,6 +58,7 @@ class Player:
         self.hp = max(0, self.hp - amount)
         self.parry_timer = 0.0
         self.invincibility_timer = self.INVINCIBILITY_TIME
+        self.hurt_timer = 0.125
         if self.hp == 0:
             self.clear_input()
 
@@ -146,7 +151,10 @@ class Player:
 
     def update(self, dt):
         if self.hp <= 0:
+            self.sprite.update(self, dt)
             return
+        self.hurt_timer = max(0.0, self.hurt_timer - max(0, dt))
+        self.recoil_timer = max(0.0, self.recoil_timer - max(0, dt))
         self.invincibility_timer = max(0.0, self.invincibility_timer - max(0, dt))
         self.parry_feedback_timer = max(0.0, self.parry_feedback_timer - max(0, dt))
         self.parry_timer = max(0.0, self.parry_timer - max(0, dt))
@@ -168,13 +176,18 @@ class Player:
             self._move(step, direction, terrain)
             remaining -= step
         self.attempt_parry()
+        self.sprite.update(self, dt)
         self.fire_timer = max(0, self.fire_timer - max(0, dt))
         if pico2d.SDLK_a in self.pressed_keys and self.fire_timer <= 0:
+            self.recoil_timer = 0.05
             aiming_up = pico2d.SDLK_UP in self.pressed_keys
             aim_x = direction if aiming_up else self.facing
             aim_y = 1 if aiming_up else 0
             x = self.x + aim_x * (self.WIDTH / 2 + Bullet.WIDTH / 2)
             y = self.y + aim_y * (self.height / 2 + Bullet.HEIGHT / 2)
+            muzzle = self.sprite.muzzle(self)
+            if muzzle is not None:
+                x, y = muzzle
             game_world.add_object(Bullet(x, y, aim_x, self.team,
                                          self.world_width, direction_y=aim_y),
                                   game_world.PROJECTILES)
@@ -217,16 +230,6 @@ class Player:
         self.y = next_y
 
     def draw(self):
-        if self.parry_feedback_timer > 0.65:
-            pico2d.draw_rectangle(*game_world.screen_bb(self.get_parry_bb()), 240, 70, 160)
-        if self.invincibility_timer > 0 and int(self.invincibility_timer * 10) % 2 == 0:
+        if self.hp > 0 and self.invincibility_timer > 0 and int(self.invincibility_timer * 10) % 2 == 0:
             return
-        left = game_world.screen_x(self.x) - self.WIDTH / 2
-        bottom = self.y - self.height / 2
-        color = (240, 70, 160) if self.parry_timer > 0 else (40, 40, 40)
-        pico2d.draw_rectangle(left, bottom, left + self.WIDTH,
-                              bottom + self.height, *color,
-                              filled=self.parry_timer > 0)
-        eye_x = game_world.screen_x(self.x) + self.facing * 9
-        pico2d.draw_rectangle(eye_x - 2, self.y + 8, eye_x + 2,
-                              self.y + 12, 40, 40, 40)
+        self.sprite.draw(self)
