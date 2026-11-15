@@ -14,7 +14,7 @@ RENDER_SCALE = DISPLAY_HEIGHT / DATA['render_reference']['standing_source_height
 CHARACTER_IMAGE = 'player-character-refined.png'
 CORRECTED_DIR = ASSET_DIR.parent / 'player-sprites-v2'
 CORRECTED_DATA = json.loads((CORRECTED_DIR / 'player-sprites.json').read_text(encoding='utf-8-sig'))
-for name in ('crouch_lowered', 'crouch_horizontal', 'crouch_walk_lowered', 'crouch_walk_horizontal'):
+for name in ('crouch_lowered', 'crouch_horizontal', 'crouch_walk_lowered', 'crouch_walk_horizontal', 'death'):
     animation = CORRECTED_DATA['animations'][name]
     for frame in animation['frames']:
         frame['image'] = 'corrected'
