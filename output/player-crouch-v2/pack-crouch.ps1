@@ -27,7 +27,8 @@ function Add-Animation($name, $image, $crops, $row, $fps) {
     for ($col = 0; $col -lt $crops.Count; $col++) {
         $crop = [CrouchBounds]::Tight($image, $crops[$col])
         $bounds = [SpritePack]::Pack($image, $crop, $atlas, $col, $row, 'ground')
-        $anchorX = $bounds[0] + $bounds[2] / 2.0
+        # Register to the same body point, independent of the extended gun.
+        $anchorX = 96
         $mx = 0; $my = 0
         for ($y = 8; $y -lt 240; $y++) {
             for ($x = 8; $x -lt 248; $x++) {

@@ -79,6 +79,25 @@ class PlayerSpriteTests(unittest.TestCase):
             self.assertEqual(player.sprite.current_frame(player),
                              PlayerSprite.frame(DATA['animations'][drawing_name], .21))
 
+    def test_new_crouch_idle_holds_and_crawl_advances(self):
+        player = self.player
+        player.crouching = True
+        player.height = player.CROUCH_HEIGHT
+        player.y = 80 + player.height / 2
+        player.sprite.update(player, 0)
+        idle = player.sprite.current_frame(player)
+        player.sprite.update(player, .3)
+        self.assertEqual(player.sprite.current_frame(player), idle)
+        player.pressed_keys.update((pico2d.SDLK_RIGHT, pico2d.SDLK_a))
+        player.sprite.update(player, 0)
+        first = player.sprite.current_frame(player)
+        player.sprite.update(player, .125)
+        second = player.sprite.current_frame(player)
+        self.assertNotEqual(first['rect'], second['rect'])
+        self.assertEqual(first['foot_anchor'], second['foot_anchor'])
+        self.assertEqual(player.sprite.point(player, second, second['foot_anchor']), (300, 80))
+        self.assertGreater(player.sprite.muzzle(player)[0], player.x)
+
     def test_death_finishes_even_after_boss_game_over(self):
         player = self.player
         player.take_damage(5)

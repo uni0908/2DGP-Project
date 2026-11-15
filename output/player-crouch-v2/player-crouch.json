@@ -16,7 +16,7 @@
                                                                    ],
                                               "duration_seconds":  1,
                                               "foot_anchor":  [
-                                                                  88,
+                                                                  96,
                                                                   220
                                                               ],
                                               "content_bounds":  [
@@ -53,7 +53,7 @@
                                                                       ],
                                                  "duration_seconds":  1,
                                                  "foot_anchor":  [
-                                                                     100.5,
+                                                                     96,
                                                                      220
                                                                  ],
                                                  "content_bounds":  [
@@ -72,5 +72,259 @@
                               "fps":  1,
                               "loop":  true,
                               "frame_count":  1
-                          }
+                          },
+    "crouch_walk_lowered":  {
+                                "frames":  [
+                                               {
+                                                   "rect":  [
+                                                                0,
+                                                                0,
+                                                                256,
+                                                                256
+                                                            ],
+                                                   "pico2d_clip_rect":  [
+                                                                            0,
+                                                                            512,
+                                                                            256,
+                                                                            256
+                                                                        ],
+                                                   "duration_seconds":  0.125,
+                                                   "foot_anchor":  [
+                                                                       96,
+                                                                       220
+                                                                   ],
+                                                   "content_bounds":  [
+                                                                          33,
+                                                                          145,
+                                                                          128,
+                                                                          75
+                                                                      ],
+                                                   "muzzle":  [
+                                                                  159,
+                                                                  207
+                                                              ],
+                                                   "image":  "crouch_walk"
+                                               },
+                                               {
+                                                   "rect":  [
+                                                                256,
+                                                                0,
+                                                                256,
+                                                                256
+                                                            ],
+                                                   "pico2d_clip_rect":  [
+                                                                            256,
+                                                                            512,
+                                                                            256,
+                                                                            256
+                                                                        ],
+                                                   "duration_seconds":  0.125,
+                                                   "foot_anchor":  [
+                                                                       96,
+                                                                       220
+                                                                   ],
+                                                   "content_bounds":  [
+                                                                          38,
+                                                                          145,
+                                                                          120,
+                                                                          75
+                                                                      ],
+                                                   "muzzle":  [
+                                                                  156,
+                                                                  207
+                                                              ],
+                                                   "image":  "crouch_walk"
+                                               },
+                                               {
+                                                   "rect":  [
+                                                                512,
+                                                                0,
+                                                                256,
+                                                                256
+                                                            ],
+                                                   "pico2d_clip_rect":  [
+                                                                            512,
+                                                                            512,
+                                                                            256,
+                                                                            256
+                                                                        ],
+                                                   "duration_seconds":  0.125,
+                                                   "foot_anchor":  [
+                                                                       96,
+                                                                       220
+                                                                   ],
+                                                   "content_bounds":  [
+                                                                          30,
+                                                                          145,
+                                                                          136,
+                                                                          75
+                                                                      ],
+                                                   "muzzle":  [
+                                                                  163,
+                                                                  208
+                                                              ],
+                                                   "image":  "crouch_walk"
+                                               },
+                                               {
+                                                   "rect":  [
+                                                                768,
+                                                                0,
+                                                                256,
+                                                                256
+                                                            ],
+                                                   "pico2d_clip_rect":  [
+                                                                            768,
+                                                                            512,
+                                                                            256,
+                                                                            256
+                                                                        ],
+                                                   "duration_seconds":  0.125,
+                                                   "foot_anchor":  [
+                                                                       96,
+                                                                       220
+                                                                   ],
+                                                   "content_bounds":  [
+                                                                          45,
+                                                                          146,
+                                                                          115,
+                                                                          74
+                                                                      ],
+                                                   "muzzle":  [
+                                                                  159,
+                                                                  209
+                                                              ],
+                                                   "image":  "crouch_walk"
+                                               }
+                                           ],
+                                "fps":  8,
+                                "loop":  true,
+                                "frame_count":  4
+                            },
+    "crouch_walk_horizontal":  {
+                                   "frames":  [
+                                                  {
+                                                      "rect":  [
+                                                                   0,
+                                                                   256,
+                                                                   256,
+                                                                   256
+                                                               ],
+                                                      "pico2d_clip_rect":  [
+                                                                               0,
+                                                                               256,
+                                                                               256,
+                                                                               256
+                                                                           ],
+                                                      "duration_seconds":  0.125,
+                                                      "foot_anchor":  [
+                                                                          96,
+                                                                          220
+                                                                      ],
+                                                      "content_bounds":  [
+                                                                             33,
+                                                                             144,
+                                                                             145,
+                                                                             76
+                                                                         ],
+                                                      "muzzle":  [
+                                                                     176,
+                                                                     182
+                                                                 ],
+                                                      "image":  "crouch_walk"
+                                                  },
+                                                  {
+                                                      "rect":  [
+                                                                   256,
+                                                                   256,
+                                                                   256,
+                                                                   256
+                                                               ],
+                                                      "pico2d_clip_rect":  [
+                                                                               256,
+                                                                               256,
+                                                                               256,
+                                                                               256
+                                                                           ],
+                                                      "duration_seconds":  0.125,
+                                                      "foot_anchor":  [
+                                                                          96,
+                                                                          220
+                                                                      ],
+                                                      "content_bounds":  [
+                                                                             39,
+                                                                             146,
+                                                                             138,
+                                                                             74
+                                                                         ],
+                                                      "muzzle":  [
+                                                                     175,
+                                                                     183
+                                                                 ],
+                                                      "image":  "crouch_walk"
+                                                  },
+                                                  {
+                                                      "rect":  [
+                                                                   512,
+                                                                   256,
+                                                                   256,
+                                                                   256
+                                                               ],
+                                                      "pico2d_clip_rect":  [
+                                                                               512,
+                                                                               256,
+                                                                               256,
+                                                                               256
+                                                                           ],
+                                                      "duration_seconds":  0.125,
+                                                      "foot_anchor":  [
+                                                                          96,
+                                                                          220
+                                                                      ],
+                                                      "content_bounds":  [
+                                                                             30,
+                                                                             146,
+                                                                             149,
+                                                                             74
+                                                                         ],
+                                                      "muzzle":  [
+                                                                     176,
+                                                                     184
+                                                                 ],
+                                                      "image":  "crouch_walk"
+                                                  },
+                                                  {
+                                                      "rect":  [
+                                                                   768,
+                                                                   256,
+                                                                   256,
+                                                                   256
+                                                               ],
+                                                      "pico2d_clip_rect":  [
+                                                                               768,
+                                                                               256,
+                                                                               256,
+                                                                               256
+                                                                           ],
+                                                      "duration_seconds":  0.125,
+                                                      "foot_anchor":  [
+                                                                          96,
+                                                                          220
+                                                                      ],
+                                                      "content_bounds":  [
+                                                                             45,
+                                                                             146,
+                                                                             133,
+                                                                             74
+                                                                         ],
+                                                      "muzzle":  [
+                                                                     176,
+                                                                     184
+                                                                 ],
+                                                      "image":  "crouch_walk"
+                                                  }
+                                              ],
+                                   "fps":  8,
+                                   "loop":  true,
+                                   "frame_count":  4
+                               }
 }
