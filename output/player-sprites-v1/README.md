@@ -2,6 +2,8 @@
 
 게임 적용 보정본: `player-character-refined.png`. 원본 `player-character.png`는 보존하며 JSON 좌표를 그대로 사용한다. `refine-lines.ps1`은 웅크리기 24프레임의 어두운 연필 선만 진하게 하고 밝은 머리 채움과 좌표는 유지한다. `preview-line-correction.png`의 위쪽은 원본, 아래쪽은 보정본이며 첫 열은 변화 없는 기본 대기 참고다.
 
+쓰러지기 8프레임도 보정했다. 현재 게임용 최종 보정본은 `powershell -NoProfile -ExecutionPolicy Bypass -File output/player-sprites-v1/refine-lines.ps1 -IncludeDeath`로 재현한다. 이 옵션 없이 실행하면 웅크리기만 보정한 시트를 생성한다. 모든 보정은 원본에서 시작하므로 반복 실행해도 농도가 누적되지 않는다.
+
 - player-character.png: 투명 PNG, 2048×6144, 8열×24행, 칸 256×256. 캐릭터 109프레임.
 - player-parry-fx.png: 투명 PNG, 1024×512, 4열×2행. 잔상 4프레임, 성공 섬광 3프레임.
 - player-sprites.json: 실제 이미지 좌표, pico2d용 하단 원점 좌표, 재생 속도·반복·프레임별 시간·발 기준점·총구 추정 좌표.
