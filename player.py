@@ -170,9 +170,14 @@ class Player:
         self.attempt_parry()
         self.fire_timer = max(0, self.fire_timer - max(0, dt))
         if pico2d.SDLK_a in self.pressed_keys and self.fire_timer <= 0:
-            x = self.x + self.facing * (self.WIDTH / 2 + Bullet.WIDTH / 2)
-            game_world.add_object(Bullet(x, self.y, self.facing, self.team,
-                                         self.world_width), game_world.PROJECTILES)
+            aiming_up = pico2d.SDLK_UP in self.pressed_keys
+            aim_x = direction if aiming_up else self.facing
+            aim_y = 1 if aiming_up else 0
+            x = self.x + aim_x * (self.WIDTH / 2 + Bullet.WIDTH / 2)
+            y = self.y + aim_y * (self.height / 2 + Bullet.HEIGHT / 2)
+            game_world.add_object(Bullet(x, y, aim_x, self.team,
+                                         self.world_width, direction_y=aim_y),
+                                  game_world.PROJECTILES)
             self.fire_timer = self.FIRE_INTERVAL
 
     def _move(self, dt, direction, terrain):

@@ -1,5 +1,7 @@
 """진영별 수평 총알과 이동 구간 충돌 판정."""
 
+import math
+
 import pico2d
 import game_world
 from doodle import Doodle
@@ -10,9 +12,14 @@ class Bullet:
     HEIGHT = 6
     DAMAGE = 1
 
-    def __init__(self, x, y, direction, team, world_width, parry_reward=None):
+    def __init__(self, x, y, direction, team, world_width, parry_reward=None,
+                 direction_y=0, world_height=540):
         self.x, self.y = x, y
         self.direction = direction
+        length = math.hypot(direction, direction_y) or 1
+        self.velocity_x = direction / length
+        self.velocity_y = direction_y / length
+        self.world_height = world_height
         self.team = team
         self.speed = 650 if team == 'player' else 240
         self.world_width = world_width
@@ -28,7 +35,8 @@ class Bullet:
     def update(self, dt):
         if not self.active:
             return
-        next_x = self.x + self.direction * self.speed * max(0, dt)
+        next_x = self.x + self.velocity_x * self.speed * max(0, dt)
+        next_y = self.y + self.velocity_y * self.speed * max(0, dt)
         hits = []
         targets = [obj for obj in game_world.objects(game_world.TERRAIN)
                    if isinstance(obj, Doodle)]
@@ -40,12 +48,22 @@ class Bullet:
             if (self.parry_reward is not None and getattr(obj, 'parry_timer', 0) > 0
                     and not obj.grounded):
                 left, bottom, right, top = obj.get_parry_bb()
-            if self.y + self.HEIGHT / 2 < bottom or self.y - self.HEIGHT / 2 > top:
-                continue
-            low, high = left - self.WIDTH / 2, right + self.WIDTH / 2
-            if max(min(self.x, next_x), low) <= min(max(self.x, next_x), high):
-                distance = max(0, low - self.x) if self.direction > 0 else max(0, self.x - high)
-                hits.append((distance, obj))
+            # Sweep the bullet center through the target expanded by bullet size.
+            entry, exit_time = 0.0, 1.0
+            for start, end, low, high in (
+                    (self.x, next_x, left - self.WIDTH / 2, right + self.WIDTH / 2),
+                    (self.y, next_y, bottom - self.HEIGHT / 2, top + self.HEIGHT / 2)):
+                delta = end - start
+                if delta == 0:
+                    if not low <= start <= high:
+                        entry = 2.0
+                        break
+                else:
+                    near, far = sorted(((low - start) / delta, (high - start) / delta))
+                    entry = max(entry, near)
+                    exit_time = min(exit_time, far)
+            if entry <= exit_time:
+                hits.append((entry, obj))
         if hits:
             target = min(hits, key=lambda hit: hit[0])[1]
             if not (hasattr(target, 'try_parry') and target.try_parry(self, at_contact=True)):
@@ -57,7 +75,11 @@ class Bullet:
             game_world.remove_object(self)
             return
         self.x = next_x
-        if self.x + self.WIDTH / 2 < 0 or self.x - self.WIDTH / 2 > self.world_width:
+        self.y = next_y
+        if (self.x + self.WIDTH / 2 < 0 or self.x - self.WIDTH / 2 > self.world_width
+                or (self.velocity_y != 0 and
+                    (self.y - self.HEIGHT / 2 > self.world_height
+                     or self.y + self.HEIGHT / 2 < 0))):
             self.active = False
             game_world.remove_object(self)
 
