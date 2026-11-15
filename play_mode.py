@@ -18,10 +18,14 @@ enemy = None
 game_over = False
 
 
-def enter():
+def enter(player_state=None):
     global player, enemy, game_over
     game_world.clear()
     player = Player(120, GROUND_Y, WINDOW_WIDTH)
+    if player_state is not None:
+        player.hp = player_state['hp']
+        player.doodle_count = player_state['doodle_count']
+        player.eraser_count = player_state['eraser_count']
     game_world.add_object(player, game_world.ACTORS)
     enemy = Boss1(WINDOW_WIDTH, WINDOW_HEIGHT, GROUND_Y, laser_only=LASER_TEST_MODE)
     game_world.add_object(enemy, game_world.ACTORS)

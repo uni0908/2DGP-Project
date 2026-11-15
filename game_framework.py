@@ -6,13 +6,15 @@ import pico2d
 
 current_mode = None
 next_mode = None
+next_arguments = {}
 running = False
 
 
-def change_mode(mode):
-    global next_mode
+def change_mode(mode, **enter_arguments):
+    global next_mode, next_arguments
     if mode is not current_mode:
         next_mode = mode
+        next_arguments = enter_arguments
 
 
 def quit():
@@ -21,19 +23,21 @@ def quit():
 
 
 def apply_mode_change():
-    global current_mode, next_mode
+    global current_mode, next_mode, next_arguments
     if next_mode is None:
         return
     if current_mode is not None:
         current_mode.exit()
     current_mode, next_mode = next_mode, None
-    current_mode.enter()
+    arguments, next_arguments = next_arguments, {}
+    current_mode.enter(**arguments)
 
 
 def run(start_mode, shortcuts=None):
-    global current_mode, next_mode, running
+    global current_mode, next_mode, next_arguments, running
     shortcuts = shortcuts or {}
     current_mode, next_mode, running = None, start_mode, True
+    next_arguments = {}
     try:
         apply_mode_change()
         previous_time = perf_counter()
@@ -63,4 +67,5 @@ def run(start_mode, shortcuts=None):
         if current_mode is not None:
             current_mode.exit()
         current_mode = next_mode = None
+        next_arguments = {}
         running = False
