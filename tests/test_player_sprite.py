@@ -65,6 +65,20 @@ class PlayerSpriteTests(unittest.TestCase):
         self.assertEqual(args[5], 'h')
         self.assertAlmostEqual(args[6], 150)
 
+    def test_crouch_uses_corrected_idle_walk_strips(self):
+        player = self.player
+        player.crouching = True
+        for keys, drawing_name in (
+                ((), 'crouch_walk_lowered'),
+                ((pico2d.SDLK_a,), 'crouch_walk_horizontal'),
+                ((pico2d.SDLK_RIGHT,), 'crouch_lowered'),
+                ((pico2d.SDLK_RIGHT, pico2d.SDLK_a), 'crouch_horizontal')):
+            player.pressed_keys = set(keys)
+            player.sprite.update(player, 0)
+            player.sprite.update(player, .21)
+            self.assertEqual(player.sprite.current_frame(player),
+                             PlayerSprite.frame(DATA['animations'][drawing_name], .21))
+
     def test_death_finishes_even_after_boss_game_over(self):
         player = self.player
         player.take_damage(5)
