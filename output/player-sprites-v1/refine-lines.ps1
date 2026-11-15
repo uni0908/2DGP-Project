@@ -16,7 +16,10 @@ public static class PencilCorrection {
             // Keep ivory fill intact; retain graded pencil opacity and grain.
             double ink = Math.Max(0, Math.Min(1, (200 - brightness) / 100));
             if (ink == 0) continue;
-            int alpha = (int)Math.Round(255 * Math.Pow(c.A / 255.0, 1 - 0.35 * ink));
+            // Optical density, not RGB alone, causes the faint torso/limbs.
+            // Smoothly reinforce translucent graphite without flattening grain.
+            double reinforced = 1 - Math.Pow(1 - c.A / 255.0, 2.8);
+            int alpha = (int)Math.Round(c.A + (255 * reinforced - c.A) * ink);
             double shade = 1 - 0.12 * ink;
             image.SetPixel(x, y, Color.FromArgb(alpha,
                 (int)Math.Round(c.R * shade), (int)Math.Round(c.G * shade),
