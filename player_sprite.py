@@ -7,18 +7,11 @@ import pico2d
 import game_world
 
 
-ASSET_DIR = Path(__file__).resolve().parent / 'output' / 'player-sprites-v1'
+ASSET_DIR = Path(__file__).resolve().parent / 'output' / 'player-sprites-v4'
 DATA = json.loads((ASSET_DIR / 'player-sprites.json').read_text(encoding='utf-8-sig'))
 DISPLAY_HEIGHT = 80.0
 RENDER_SCALE = DISPLAY_HEIGHT / DATA['render_reference']['standing_source_height']
-CHARACTER_IMAGE = 'player-character-refined.png'
-CORRECTED_DIR = ASSET_DIR.parent / 'player-sprites-v2'
-CORRECTED_DATA = json.loads((CORRECTED_DIR / 'player-sprites.json').read_text(encoding='utf-8-sig'))
-for name in ('crouch_lowered', 'crouch_horizontal', 'crouch_walk_lowered', 'crouch_walk_horizontal', 'death'):
-    animation = CORRECTED_DATA['animations'][name]
-    for frame in animation['frames']:
-        frame['image'] = 'corrected'
-    DATA['animations'][name] = animation
+CHARACTER_IMAGE = DATA['character_image']
 
 
 class PlayerSprite:
@@ -27,7 +20,6 @@ class PlayerSprite:
         self.elapsed = 0.0
         self.image = None
         self.effect_image = None
-        self.corrected_image = None
 
     def update(self, player, dt):
         name = self.state(player)
@@ -104,12 +96,7 @@ class PlayerSprite:
             self.image = pico2d.load_image(str(ASSET_DIR / CHARACTER_IMAGE))
             self.effect_image = pico2d.load_image(str(ASSET_DIR / DATA['effect_image']))
         frame = self.current_frame(player)
-        image = self.image
-        if frame.get('image') == 'corrected':
-            if self.corrected_image is None:
-                self.corrected_image = pico2d.load_image(str(CORRECTED_DIR / CORRECTED_DATA['character_image']))
-            image = self.corrected_image
-        self.draw_frame(image, player, frame)
+        self.draw_frame(self.image, player, frame)
         effect = None
         elapsed = 0.0
         if player.parry_feedback_timer > .65:
