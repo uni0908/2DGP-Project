@@ -19,13 +19,25 @@ def animation_frame(name, elapsed):
     return DATA['frames'][frames[index]]
 
 
+def rest_pose(boss):
+    enter_duration = DATA['animations']['crouch_enter']['duration_seconds']
+    exit_start = boss.PHASE_DURATIONS['rest'] - DATA['animations']['crouch_exit']['duration_seconds']
+    if boss.state_time < enter_duration:
+        return 'crouch_enter', boss.state_time
+    if boss.state_time >= exit_start:
+        return 'crouch_exit', boss.state_time - exit_start
+    return 'crouch_idle', boss.state_time - enter_duration
+
+
 def animation_for(boss):
+    if boss.state == 'rest':
+        return rest_pose(boss)[0]
     if boss.state == 'normal_parry':
         return 'normal_fire' if boss.state_time < .18 else 'idle'
     if boss.state == 'homing_parry':
         return 'homing_launch' if boss.state_time < .7 else 'idle'
     return {
-        'attack': 'barrage_fire', 'rest': 'rest_upper_fire',
+        'attack': 'barrage_fire',
         'normal_burst': 'normal_fire', 'normal_pause': 'idle',
         'homing_launch': 'homing_launch', 'homing_wait': 'idle',
         'homing_recover': 'recover', 'laser_charge': 'laser_charge',
@@ -50,7 +62,8 @@ class BossSprite:
                     (top - bottom) / (reference[3] - reference[1]))
         width, height = DATA['cell_size']
         center_x = (left + right) / 2 + (width / 2 - (reference[0] + reference[2]) / 2) * scale
-        center_y = bottom + (reference[3] - height / 2) * scale
+        baseline = frame['bounds_top_left'][3] if name.startswith('crouch_') else reference[3]
+        center_y = bottom + (baseline - height / 2) * scale
         self.image(frame['sheet']).clip_draw(
             *frame['rect_pico2d'], game_world.screen_x(center_x), center_y,
             width * scale, height * scale)

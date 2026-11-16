@@ -8,7 +8,7 @@ from bullet import Bullet
 from enemy import TestEnemy
 from homing_missile import HomingMissile
 from sweep_laser import SweepLaser
-from boss_sprite import BossSprite, BossDeath, animation_for
+from boss_sprite import BossSprite, BossDeath, animation_for, rest_pose
 
 
 class Boss1(TestEnemy):
@@ -95,7 +95,9 @@ class Boss1(TestEnemy):
         self.hit_elapsed = 0.0
         super().take_damage(amount)
         if self.hp == 0:
-            game_world.add_object(BossDeath(self.sprite, self.get_bb()), game_world.EFFECTS)
+            left, bottom, right, _ = self.get_bb()
+            bounds = (left, bottom, right, bottom + self.HEIGHT)
+            game_world.add_object(BossDeath(self.sprite, bounds), game_world.EFFECTS)
 
     def choose_next_pattern(self):
         if self.laser_only:
@@ -294,7 +296,9 @@ class Boss1(TestEnemy):
 
     def draw(self):
         left, bottom, right, top = self.get_bb()
-        self.sprite.draw_body(animation_for(self), self.state_time, self.get_bb())
+        name, elapsed = (rest_pose(self) if self.state == 'rest'
+                         else (animation_for(self), self.state_time))
+        self.sprite.draw_body(name, elapsed, (left, bottom, right, bottom + self.HEIGHT))
         if self.hit_elapsed < 1 / 3:
             self.sprite.draw_effect('hit_overlay', self.hit_elapsed,
                                     self.x, (bottom + top) / 2, 48, 40)

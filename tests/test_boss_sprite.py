@@ -3,7 +3,7 @@ from unittest.mock import Mock, patch
 
 import game_world
 from boss1 import Boss1
-from boss_sprite import DATA, BossDeath, animation_for, animation_frame
+from boss_sprite import DATA, BossDeath, animation_for, animation_frame, rest_pose
 from doodle import Doodle
 
 
@@ -18,7 +18,7 @@ class BossSpriteTests(unittest.TestCase):
 
     def test_attack_states_select_supplied_animations(self):
         for state, expected in (
-                ('attack', 'barrage_fire'), ('rest', 'rest_upper_fire'),
+                ('attack', 'barrage_fire'), ('rest', 'crouch_enter'),
                 ('normal_burst', 'normal_fire'), ('normal_pause', 'idle'),
                 ('homing_launch', 'homing_launch'), ('homing_wait', 'idle'),
                 ('laser_charge', 'laser_charge'), ('laser_sweep', 'laser_hold'),
@@ -39,6 +39,27 @@ class BossSpriteTests(unittest.TestCase):
         with patch('pico2d.draw_rectangle'):
             self.boss.draw()
         self.boss.sprite.images['boss1-effects.png'].clip_composite_draw.assert_called_once()
+
+    @patch('pico2d.draw_rectangle')
+    def test_rest_plays_crouch_sequence_at_standing_scale(self, rectangle):
+        self.boss.sprite.images = {key: Mock() for key in DATA['sheets']}
+        self.boss.draw()
+        image = self.boss.sprite.images['boss1-body.png']
+        standing_size = image.clip_draw.call_args.args[-2:]
+        self.boss.state = 'rest'
+        for time, expected in ((0, 'crouch_enter'), (.5, 'crouch_idle'),
+                               (3.8, 'crouch_exit')):
+            self.boss.state_time = time
+            name, elapsed = rest_pose(self.boss)
+            self.assertEqual(name, expected)
+            self.assertGreaterEqual(elapsed, 0)
+            self.boss.draw()
+            args = image.clip_draw.call_args.args
+            self.assertEqual(args[-2:], standing_size)
+            frame = animation_frame(name, elapsed)
+            scale = args[-1] / DATA['cell_size'][1]
+            visible_bottom = args[5] + (DATA['cell_size'][1] / 2 - frame['bounds_top_left'][3]) * scale
+            self.assertAlmostEqual(visible_bottom, self.boss.ground_y)
 
     def test_death_visual_plays_once_and_does_not_fire_or_take_damage(self):
         self.boss.take_damage(30)
