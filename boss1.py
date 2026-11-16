@@ -1,7 +1,6 @@
 """보스1 전용 행동과 공격 패턴."""
 
 import random
-import math
 
 import pico2d
 import game_world
@@ -9,6 +8,7 @@ from bullet import Bullet
 from enemy import TestEnemy
 from homing_missile import HomingMissile
 from sweep_laser import SweepLaser
+from boss_sprite import BossSprite, animation_for
 
 
 class Boss1(TestEnemy):
@@ -41,6 +41,7 @@ class Boss1(TestEnemy):
     def __init__(self, world_width, world_height, ground_y, rng=None, laser_only=False,
                  shuffle_patterns=True):
         super().__init__(world_width, world_height, ground_y)
+        self.sprite = BossSprite()
         self.ground_y = ground_y
         self.y = ground_y + self.HEIGHT / 2
         self.state = 'attack'
@@ -268,31 +269,7 @@ class Boss1(TestEnemy):
 
     def draw(self):
         left, bottom, right, top = self.get_bb()
-        color = (100, 75, 160) if self.state == 'rest' else (150, 60, 80)
-        if self.pattern == 'laser':
-            color = (30, 160, 180)
-        pico2d.draw_rectangle(left, bottom, right, top, *color,
-                              filled=self.state == 'laser_charge')
-        pico2d.draw_rectangle(left + 20, top - 30, left + 36, top - 14,
-                              *color, filled=True)
+        self.sprite.draw_body(animation_for(self), self.state_time, self.get_bb())
         pico2d.draw_rectangle(left, top + 8,
                               left + self.WIDTH * self.hp / self.MAX_HP,
                               top + 14, 180, 40, 40, filled=True)
-        if self.state == 'rest':
-            # 낮게 웅크린 몸 주위의 안쪽 사각형으로 기를 모으는 상태를 표시한다.
-            inset = 5 + int(self.state_time * 8) % 8
-            pico2d.draw_rectangle(left - inset, bottom, right + inset, top + inset,
-                                  160, 110, 210)
-        elif self.state == 'laser_charge':
-            progress = min(1.0, self.state_time / self.LASER_PHASE_DURATIONS['laser_charge'])
-            inset = 6 + int((1 - progress) * 28)
-            pico2d.draw_rectangle(left - inset, bottom, right + inset, top + inset,
-                                  30, 210, 230)
-            center_x, center_y = left + self.WIDTH / 2, (bottom + top) / 2
-            radius = 60 * (1 - progress) + 10
-            for i in range(8):
-                angle = math.tau * i / 8 + self.state_time * 3
-                x = center_x + math.cos(angle) * radius
-                y = center_y + math.sin(angle) * radius
-                pico2d.draw_rectangle(x - 3, y - 3, x + 3, y + 3,
-                                      170, 250, 255, filled=True)

@@ -1,0 +1,7929 @@
+{
+  "sheets": {
+    "boss1-effects.png": {
+      "rows": 5,
+      "columns": 4,
+      "size": [
+        1024,
+        1280
+      ]
+    },
+    "boss1-body.png": {
+      "rows": 9,
+      "columns": 4,
+      "size": [
+        1024,
+        2304
+      ]
+    }
+  },
+  "version": 1,
+  "animations": {
+    "idle": {
+      "hold_last": false,
+      "loop": true,
+      "fps": 6,
+      "duration_seconds": 0.6666666666666666,
+      "layer": "body",
+      "frames": [
+        "idle_00",
+        "idle_01",
+        "idle_02",
+        "idle_03"
+      ]
+    },
+    "normal_fire": {
+      "hold_last": false,
+      "loop": true,
+      "fps": 22.22222222222222,
+      "duration_seconds": 0.18,
+      "layer": "body",
+      "frames": [
+        "normal_fire_01",
+        "normal_fire_02",
+        "normal_fire_03",
+        "normal_fire_00"
+      ]
+    },
+    "barrage_fire": {
+      "hold_last": false,
+      "loop": true,
+      "fps": 8.88888888888889,
+      "duration_seconds": 0.44999999999999996,
+      "layer": "body",
+      "frames": [
+        "barrage_fire_01",
+        "barrage_fire_02",
+        "barrage_fire_03",
+        "barrage_fire_00"
+      ]
+    },
+    "rest_upper_fire": {
+      "hold_last": false,
+      "loop": true,
+      "fps": 32,
+      "duration_seconds": 0.125,
+      "layer": "body",
+      "frames": [
+        "rest_upper_fire_01",
+        "rest_upper_fire_02",
+        "rest_upper_fire_03",
+        "rest_upper_fire_00"
+      ]
+    },
+    "homing_launch": {
+      "hold_last": false,
+      "loop": true,
+      "fps": 5.714285714285714,
+      "duration_seconds": 0.7,
+      "layer": "body",
+      "frames": [
+        "homing_launch_01",
+        "homing_launch_02",
+        "homing_launch_03",
+        "homing_launch_00"
+      ]
+    },
+    "laser_charge": {
+      "hold_last": false,
+      "loop": true,
+      "fps": 4,
+      "duration_seconds": 1,
+      "layer": "body",
+      "frames": [
+        "laser_charge_00",
+        "laser_charge_01",
+        "laser_charge_02",
+        "laser_charge_03"
+      ],
+      "repeat_count_for_current_code": 3,
+      "state_duration_seconds": 3
+    },
+    "laser_hold": {
+      "hold_last": false,
+      "loop": true,
+      "fps": 6,
+      "duration_seconds": 0.6666666666666666,
+      "layer": "body",
+      "frames": [
+        "laser_hold_00",
+        "laser_hold_01",
+        "laser_hold_02",
+        "laser_hold_03"
+      ],
+      "end_condition": "laser.active == false"
+    },
+    "recover": {
+      "hold_last": true,
+      "loop": false,
+      "fps": 4,
+      "duration_seconds": 1,
+      "layer": "body",
+      "frames": [
+        "recover_00",
+        "recover_01",
+        "recover_02",
+        "recover_03"
+      ]
+    },
+    "death": {
+      "hold_last": true,
+      "loop": false,
+      "fps": 5,
+      "duration_seconds": 0.8,
+      "layer": "body",
+      "frames": [
+        "death_00",
+        "death_01",
+        "death_02",
+        "death_03"
+      ],
+      "after_playback": "hold_last_frame_indefinitely"
+    },
+    "bullet": {
+      "loop": true,
+      "frames": [
+        "bullet_00",
+        "bullet_01",
+        "bullet_02",
+        "bullet_03"
+      ],
+      "layer": "effect",
+      "fps": 12,
+      "hold_last": false
+    },
+    "homing_missile": {
+      "loop": true,
+      "frames": [
+        "homing_missile_00",
+        "homing_missile_01",
+        "homing_missile_02",
+        "homing_missile_03"
+      ],
+      "layer": "effect",
+      "fps": 12,
+      "hold_last": false
+    },
+    "laser_tile": {
+      "loop": true,
+      "frames": [
+        "laser_tile_00",
+        "laser_tile_01",
+        "laser_tile_02",
+        "laser_tile_03"
+      ],
+      "layer": "effect",
+      "fps": 12,
+      "hold_last": false
+    },
+    "explosion": {
+      "loop": false,
+      "frames": [
+        "explosion_00",
+        "explosion_01",
+        "explosion_02",
+        "explosion_03"
+      ],
+      "layer": "effect",
+      "fps": 12,
+      "hold_last": false
+    },
+    "hit_overlay": {
+      "loop": false,
+      "frames": [
+        "hit_overlay_00",
+        "hit_overlay_01",
+        "hit_overlay_02",
+        "hit_overlay_03"
+      ],
+      "layer": "effect",
+      "fps": 12,
+      "hold_last": false,
+      "duration_seconds": 0.3333333333333333,
+      "composite": "source-over",
+      "attachment": "body.head_reference",
+      "preserve_body_animation_time": true,
+      "after_playback": "hide_overlay"
+    }
+  },
+  "facing": "left",
+  "coordinate_convention": {
+    "world": "world_x=boss_x+(point_x-164)*draw_scale_x; world_y=boss_y+(128-point_y)*draw_scale_y",
+    "rect": "x,y,width,height; pixel edges; no inclusive endpoint",
+    "conversion": "pico_y=height-top_y; rect_pico_y=sheet_height-top_y-height",
+    "point": "cell-local continuous pixel coordinates",
+    "pivot": "Fixed cell pivot [164,128] for body. Death keeps same cell pivot."
+  },
+  "cell_size": [
+    256,
+    256
+  ],
+  "frames": {
+    "idle_00": {
+      "source_transform": {
+        "translate": [
+          10.099999999999994,
+          8.44
+        ],
+        "scale": 1.08
+      },
+      "head_reference": {
+        "relative_to_pivot_pico2d": [
+          0,
+          64
+        ],
+        "top_left": [
+          164,
+          64
+        ],
+        "pico2d": [
+          164,
+          192
+        ]
+      },
+      "bounds_top_left": [
+        80,
+        16,
+        227,
+        227
+      ],
+      "sockets": {
+        "laser": {
+          "relative_to_pivot_pico2d": [
+            -83,
+            -48
+          ],
+          "top_left": [
+            81,
+            176
+          ],
+          "pico2d": [
+            81,
+            80
+          ]
+        },
+        "muzzle": {
+          "relative_to_pivot_pico2d": [
+            -83,
+            -48
+          ],
+          "top_left": [
+            81,
+            176
+          ],
+          "pico2d": [
+            81,
+            80
+          ]
+        },
+        "barrage": [
+          {
+            "relative_to_pivot_pico2d": [
+              -45,
+              38
+            ],
+            "top_left": [
+              119,
+              90
+            ],
+            "pico2d": [
+              119,
+              166
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -41,
+              1
+            ],
+            "top_left": [
+              123,
+              127
+            ],
+            "pico2d": [
+              123,
+              129
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -45,
+              -20
+            ],
+            "top_left": [
+              119,
+              148
+            ],
+            "pico2d": [
+              119,
+              108
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -53,
+              -41
+            ],
+            "top_left": [
+              111,
+              169
+            ],
+            "pico2d": [
+              111,
+              87
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -83,
+              -48
+            ],
+            "top_left": [
+              81,
+              176
+            ],
+            "pico2d": [
+              81,
+              80
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -79,
+              -62
+            ],
+            "top_left": [
+              85,
+              190
+            ],
+            "pico2d": [
+              85,
+              66
+            ]
+          }
+        ],
+        "homing": {
+          "relative_to_pivot_pico2d": [
+            -83,
+            -48
+          ],
+          "top_left": [
+            81,
+            176
+          ],
+          "pico2d": [
+            81,
+            80
+          ]
+        }
+      },
+      "pivot": {
+        "relative_to_pivot_pico2d": [
+          0,
+          0
+        ],
+        "top_left": [
+          164,
+          128
+        ],
+        "pico2d": [
+          164,
+          128
+        ]
+      },
+      "rect_pico2d": [
+        0,
+        2048,
+        256,
+        256
+      ],
+      "rect_top_left": [
+        0,
+        0,
+        256,
+        256
+      ],
+      "sheet": "boss1-body.png",
+      "socket_usage": {
+        "muzzle": false,
+        "barrage": false,
+        "homing": false,
+        "laser": false
+      }
+    },
+    "idle_01": {
+      "source_transform": {
+        "translate": [
+          12.799999999999983,
+          7.359999999999999
+        ],
+        "scale": 1.08
+      },
+      "head_reference": {
+        "relative_to_pivot_pico2d": [
+          0,
+          64
+        ],
+        "top_left": [
+          164,
+          64
+        ],
+        "pico2d": [
+          164,
+          192
+        ]
+      },
+      "bounds_top_left": [
+        69,
+        15,
+        221,
+        226
+      ],
+      "sockets": {
+        "laser": {
+          "relative_to_pivot_pico2d": [
+            -94,
+            -47
+          ],
+          "top_left": [
+            70,
+            175
+          ],
+          "pico2d": [
+            70,
+            81
+          ]
+        },
+        "muzzle": {
+          "relative_to_pivot_pico2d": [
+            -94,
+            -47
+          ],
+          "top_left": [
+            70,
+            175
+          ],
+          "pico2d": [
+            70,
+            81
+          ]
+        },
+        "barrage": [
+          {
+            "relative_to_pivot_pico2d": [
+              -51,
+              38
+            ],
+            "top_left": [
+              113,
+              90
+            ],
+            "pico2d": [
+              113,
+              166
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -45,
+              0
+            ],
+            "top_left": [
+              119,
+              128
+            ],
+            "pico2d": [
+              119,
+              128
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -51,
+              -21
+            ],
+            "top_left": [
+              113,
+              149
+            ],
+            "pico2d": [
+              113,
+              107
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -90,
+              -41
+            ],
+            "top_left": [
+              74,
+              169
+            ],
+            "pico2d": [
+              74,
+              87
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -94,
+              -47
+            ],
+            "top_left": [
+              70,
+              175
+            ],
+            "pico2d": [
+              70,
+              81
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -89,
+              -62
+            ],
+            "top_left": [
+              75,
+              190
+            ],
+            "pico2d": [
+              75,
+              66
+            ]
+          }
+        ],
+        "homing": {
+          "relative_to_pivot_pico2d": [
+            -94,
+            -47
+          ],
+          "top_left": [
+            70,
+            175
+          ],
+          "pico2d": [
+            70,
+            81
+          ]
+        }
+      },
+      "pivot": {
+        "relative_to_pivot_pico2d": [
+          0,
+          0
+        ],
+        "top_left": [
+          164,
+          128
+        ],
+        "pico2d": [
+          164,
+          128
+        ]
+      },
+      "rect_pico2d": [
+        256,
+        2048,
+        256,
+        256
+      ],
+      "rect_top_left": [
+        256,
+        0,
+        256,
+        256
+      ],
+      "sheet": "boss1-body.png",
+      "socket_usage": {
+        "muzzle": false,
+        "barrage": false,
+        "homing": false,
+        "laser": false
+      }
+    },
+    "idle_02": {
+      "source_transform": {
+        "translate": [
+          16.039999999999992,
+          7.359999999999999
+        ],
+        "scale": 1.08
+      },
+      "head_reference": {
+        "relative_to_pivot_pico2d": [
+          0,
+          64
+        ],
+        "top_left": [
+          164,
+          64
+        ],
+        "pico2d": [
+          164,
+          192
+        ]
+      },
+      "bounds_top_left": [
+        65,
+        16,
+        217,
+        227
+      ],
+      "sockets": {
+        "laser": {
+          "relative_to_pivot_pico2d": [
+            -99,
+            -38
+          ],
+          "top_left": [
+            65,
+            166
+          ],
+          "pico2d": [
+            65,
+            90
+          ]
+        },
+        "muzzle": {
+          "relative_to_pivot_pico2d": [
+            -99,
+            -38
+          ],
+          "top_left": [
+            65,
+            166
+          ],
+          "pico2d": [
+            65,
+            90
+          ]
+        },
+        "barrage": [
+          {
+            "relative_to_pivot_pico2d": [
+              -52,
+              38
+            ],
+            "top_left": [
+              112,
+              90
+            ],
+            "pico2d": [
+              112,
+              166
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -49,
+              -1
+            ],
+            "top_left": [
+              115,
+              129
+            ],
+            "pico2d": [
+              115,
+              127
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -57,
+              -21
+            ],
+            "top_left": [
+              107,
+              149
+            ],
+            "pico2d": [
+              107,
+              107
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -99,
+              -38
+            ],
+            "top_left": [
+              65,
+              166
+            ],
+            "pico2d": [
+              65,
+              90
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -98,
+              -42
+            ],
+            "top_left": [
+              66,
+              170
+            ],
+            "pico2d": [
+              66,
+              86
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -83,
+              -67
+            ],
+            "top_left": [
+              81,
+              195
+            ],
+            "pico2d": [
+              81,
+              61
+            ]
+          }
+        ],
+        "homing": {
+          "relative_to_pivot_pico2d": [
+            -99,
+            -38
+          ],
+          "top_left": [
+            65,
+            166
+          ],
+          "pico2d": [
+            65,
+            90
+          ]
+        }
+      },
+      "pivot": {
+        "relative_to_pivot_pico2d": [
+          0,
+          0
+        ],
+        "top_left": [
+          164,
+          128
+        ],
+        "pico2d": [
+          164,
+          128
+        ]
+      },
+      "rect_pico2d": [
+        512,
+        2048,
+        256,
+        256
+      ],
+      "rect_top_left": [
+        512,
+        0,
+        256,
+        256
+      ],
+      "sheet": "boss1-body.png",
+      "socket_usage": {
+        "muzzle": false,
+        "barrage": false,
+        "homing": false,
+        "laser": false
+      }
+    },
+    "idle_03": {
+      "source_transform": {
+        "translate": [
+          18.19999999999999,
+          7.359999999999999
+        ],
+        "scale": 1.08
+      },
+      "head_reference": {
+        "relative_to_pivot_pico2d": [
+          0,
+          64
+        ],
+        "top_left": [
+          164,
+          64
+        ],
+        "pico2d": [
+          164,
+          192
+        ]
+      },
+      "bounds_top_left": [
+        62,
+        16,
+        214,
+        227
+      ],
+      "sockets": {
+        "laser": {
+          "relative_to_pivot_pico2d": [
+            -101,
+            -42
+          ],
+          "top_left": [
+            63,
+            170
+          ],
+          "pico2d": [
+            63,
+            86
+          ]
+        },
+        "muzzle": {
+          "relative_to_pivot_pico2d": [
+            -101,
+            -42
+          ],
+          "top_left": [
+            63,
+            170
+          ],
+          "pico2d": [
+            63,
+            86
+          ]
+        },
+        "barrage": [
+          {
+            "relative_to_pivot_pico2d": [
+              -57,
+              38
+            ],
+            "top_left": [
+              107,
+              90
+            ],
+            "pico2d": [
+              107,
+              166
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -50,
+              2
+            ],
+            "top_left": [
+              114,
+              126
+            ],
+            "pico2d": [
+              114,
+              130
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -56,
+              -19
+            ],
+            "top_left": [
+              108,
+              147
+            ],
+            "pico2d": [
+              108,
+              109
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -100,
+              -40
+            ],
+            "top_left": [
+              64,
+              168
+            ],
+            "pico2d": [
+              64,
+              88
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -101,
+              -42
+            ],
+            "top_left": [
+              63,
+              170
+            ],
+            "pico2d": [
+              63,
+              86
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -92,
+              -62
+            ],
+            "top_left": [
+              72,
+              190
+            ],
+            "pico2d": [
+              72,
+              66
+            ]
+          }
+        ],
+        "homing": {
+          "relative_to_pivot_pico2d": [
+            -101,
+            -42
+          ],
+          "top_left": [
+            63,
+            170
+          ],
+          "pico2d": [
+            63,
+            86
+          ]
+        }
+      },
+      "pivot": {
+        "relative_to_pivot_pico2d": [
+          0,
+          0
+        ],
+        "top_left": [
+          164,
+          128
+        ],
+        "pico2d": [
+          164,
+          128
+        ]
+      },
+      "rect_pico2d": [
+        768,
+        2048,
+        256,
+        256
+      ],
+      "rect_top_left": [
+        768,
+        0,
+        256,
+        256
+      ],
+      "sheet": "boss1-body.png",
+      "socket_usage": {
+        "muzzle": false,
+        "barrage": false,
+        "homing": false,
+        "laser": false
+      }
+    },
+    "normal_fire_00": {
+      "source_transform": {
+        "translate": [
+          9.019999999999982,
+          7.359999999999999
+        ],
+        "scale": 1.08
+      },
+      "head_reference": {
+        "relative_to_pivot_pico2d": [
+          0,
+          64
+        ],
+        "top_left": [
+          164,
+          64
+        ],
+        "pico2d": [
+          164,
+          192
+        ]
+      },
+      "bounds_top_left": [
+        88,
+        16,
+        219,
+        229
+      ],
+      "sockets": {
+        "laser": {
+          "relative_to_pivot_pico2d": [
+            -75,
+            -57
+          ],
+          "top_left": [
+            89,
+            185
+          ],
+          "pico2d": [
+            89,
+            71
+          ]
+        },
+        "muzzle": {
+          "relative_to_pivot_pico2d": [
+            -75,
+            -57
+          ],
+          "top_left": [
+            89,
+            185
+          ],
+          "pico2d": [
+            89,
+            71
+          ]
+        },
+        "barrage": [
+          {
+            "relative_to_pivot_pico2d": [
+              -48,
+              38
+            ],
+            "top_left": [
+              116,
+              90
+            ],
+            "pico2d": [
+              116,
+              166
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -42,
+              1
+            ],
+            "top_left": [
+              122,
+              127
+            ],
+            "pico2d": [
+              122,
+              129
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -45,
+              -15
+            ],
+            "top_left": [
+              119,
+              143
+            ],
+            "pico2d": [
+              119,
+              113
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -47,
+              -38
+            ],
+            "top_left": [
+              117,
+              166
+            ],
+            "pico2d": [
+              117,
+              90
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -75,
+              -57
+            ],
+            "top_left": [
+              89,
+              185
+            ],
+            "pico2d": [
+              89,
+              71
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -75,
+              -62
+            ],
+            "top_left": [
+              89,
+              190
+            ],
+            "pico2d": [
+              89,
+              66
+            ]
+          }
+        ],
+        "homing": {
+          "relative_to_pivot_pico2d": [
+            -75,
+            -57
+          ],
+          "top_left": [
+            89,
+            185
+          ],
+          "pico2d": [
+            89,
+            71
+          ]
+        }
+      },
+      "pivot": {
+        "relative_to_pivot_pico2d": [
+          0,
+          0
+        ],
+        "top_left": [
+          164,
+          128
+        ],
+        "pico2d": [
+          164,
+          128
+        ]
+      },
+      "rect_pico2d": [
+        0,
+        1792,
+        256,
+        256
+      ],
+      "rect_top_left": [
+        0,
+        256,
+        256,
+        256
+      ],
+      "sheet": "boss1-body.png",
+      "socket_usage": {
+        "muzzle": true,
+        "barrage": false,
+        "homing": false,
+        "laser": false
+      }
+    },
+    "normal_fire_01": {
+      "source_transform": {
+        "translate": [
+          12.799999999999983,
+          7.359999999999999
+        ],
+        "scale": 1.08
+      },
+      "head_reference": {
+        "relative_to_pivot_pico2d": [
+          0,
+          64
+        ],
+        "top_left": [
+          164,
+          64
+        ],
+        "pico2d": [
+          164,
+          192
+        ]
+      },
+      "bounds_top_left": [
+        26,
+        15,
+        217,
+        229
+      ],
+      "sockets": {
+        "laser": {
+          "relative_to_pivot_pico2d": [
+            -137,
+            -1
+          ],
+          "top_left": [
+            27,
+            129
+          ],
+          "pico2d": [
+            27,
+            127
+          ]
+        },
+        "muzzle": {
+          "relative_to_pivot_pico2d": [
+            -137,
+            -1
+          ],
+          "top_left": [
+            27,
+            129
+          ],
+          "pico2d": [
+            27,
+            127
+          ]
+        },
+        "barrage": [
+          {
+            "relative_to_pivot_pico2d": [
+              -51,
+              38
+            ],
+            "top_left": [
+              113,
+              90
+            ],
+            "pico2d": [
+              113,
+              166
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -137,
+              -1
+            ],
+            "top_left": [
+              27,
+              129
+            ],
+            "pico2d": [
+              27,
+              127
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -137,
+              -2
+            ],
+            "top_left": [
+              27,
+              130
+            ],
+            "pico2d": [
+              27,
+              126
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -49,
+              -40
+            ],
+            "top_left": [
+              115,
+              168
+            ],
+            "pico2d": [
+              115,
+              88
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -75,
+              -58
+            ],
+            "top_left": [
+              89,
+              186
+            ],
+            "pico2d": [
+              89,
+              70
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -75,
+              -62
+            ],
+            "top_left": [
+              89,
+              190
+            ],
+            "pico2d": [
+              89,
+              66
+            ]
+          }
+        ],
+        "homing": {
+          "relative_to_pivot_pico2d": [
+            -137,
+            -1
+          ],
+          "top_left": [
+            27,
+            129
+          ],
+          "pico2d": [
+            27,
+            127
+          ]
+        }
+      },
+      "pivot": {
+        "relative_to_pivot_pico2d": [
+          0,
+          0
+        ],
+        "top_left": [
+          164,
+          128
+        ],
+        "pico2d": [
+          164,
+          128
+        ]
+      },
+      "rect_pico2d": [
+        256,
+        1792,
+        256,
+        256
+      ],
+      "rect_top_left": [
+        256,
+        256,
+        256,
+        256
+      ],
+      "sheet": "boss1-body.png",
+      "socket_usage": {
+        "muzzle": true,
+        "barrage": false,
+        "homing": false,
+        "laser": false
+      }
+    },
+    "normal_fire_02": {
+      "source_transform": {
+        "translate": [
+          15.5,
+          7.359999999999999
+        ],
+        "scale": 1.08
+      },
+      "head_reference": {
+        "relative_to_pivot_pico2d": [
+          0,
+          64
+        ],
+        "top_left": [
+          164,
+          64
+        ],
+        "pico2d": [
+          164,
+          192
+        ]
+      },
+      "bounds_top_left": [
+        61,
+        15,
+        213,
+        230
+      ],
+      "sockets": {
+        "laser": {
+          "relative_to_pivot_pico2d": [
+            -103,
+            -17
+          ],
+          "top_left": [
+            61,
+            145
+          ],
+          "pico2d": [
+            61,
+            111
+          ]
+        },
+        "muzzle": {
+          "relative_to_pivot_pico2d": [
+            -103,
+            -17
+          ],
+          "top_left": [
+            61,
+            145
+          ],
+          "pico2d": [
+            61,
+            111
+          ]
+        },
+        "barrage": [
+          {
+            "relative_to_pivot_pico2d": [
+              -54,
+              38
+            ],
+            "top_left": [
+              110,
+              90
+            ],
+            "pico2d": [
+              110,
+              166
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -90,
+              -1
+            ],
+            "top_left": [
+              74,
+              129
+            ],
+            "pico2d": [
+              74,
+              127
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -103,
+              -17
+            ],
+            "top_left": [
+              61,
+              145
+            ],
+            "pico2d": [
+              61,
+              111
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -103,
+              -22
+            ],
+            "top_left": [
+              61,
+              150
+            ],
+            "pico2d": [
+              61,
+              106
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -79,
+              -59
+            ],
+            "top_left": [
+              85,
+              187
+            ],
+            "pico2d": [
+              85,
+              69
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -80,
+              -63
+            ],
+            "top_left": [
+              84,
+              191
+            ],
+            "pico2d": [
+              84,
+              65
+            ]
+          }
+        ],
+        "homing": {
+          "relative_to_pivot_pico2d": [
+            -103,
+            -17
+          ],
+          "top_left": [
+            61,
+            145
+          ],
+          "pico2d": [
+            61,
+            111
+          ]
+        }
+      },
+      "pivot": {
+        "relative_to_pivot_pico2d": [
+          0,
+          0
+        ],
+        "top_left": [
+          164,
+          128
+        ],
+        "pico2d": [
+          164,
+          128
+        ]
+      },
+      "rect_pico2d": [
+        512,
+        1792,
+        256,
+        256
+      ],
+      "rect_top_left": [
+        512,
+        256,
+        256,
+        256
+      ],
+      "sheet": "boss1-body.png",
+      "socket_usage": {
+        "muzzle": true,
+        "barrage": false,
+        "homing": false,
+        "laser": false
+      }
+    },
+    "normal_fire_03": {
+      "source_transform": {
+        "translate": [
+          18.73999999999998,
+          7.359999999999999
+        ],
+        "scale": 1.08
+      },
+      "head_reference": {
+        "relative_to_pivot_pico2d": [
+          0,
+          64
+        ],
+        "top_left": [
+          164,
+          64
+        ],
+        "pico2d": [
+          164,
+          192
+        ]
+      },
+      "bounds_top_left": [
+        74,
+        16,
+        210,
+        230
+      ],
+      "sockets": {
+        "laser": {
+          "relative_to_pivot_pico2d": [
+            -90,
+            -55
+          ],
+          "top_left": [
+            74,
+            183
+          ],
+          "pico2d": [
+            74,
+            73
+          ]
+        },
+        "muzzle": {
+          "relative_to_pivot_pico2d": [
+            -90,
+            -55
+          ],
+          "top_left": [
+            74,
+            183
+          ],
+          "pico2d": [
+            74,
+            73
+          ]
+        },
+        "barrage": [
+          {
+            "relative_to_pivot_pico2d": [
+              -58,
+              38
+            ],
+            "top_left": [
+              106,
+              90
+            ],
+            "pico2d": [
+              106,
+              166
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -54,
+              0
+            ],
+            "top_left": [
+              110,
+              128
+            ],
+            "pico2d": [
+              110,
+              128
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -58,
+              -17
+            ],
+            "top_left": [
+              106,
+              145
+            ],
+            "pico2d": [
+              106,
+              111
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -60,
+              -40
+            ],
+            "top_left": [
+              104,
+              168
+            ],
+            "pico2d": [
+              104,
+              88
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -90,
+              -55
+            ],
+            "top_left": [
+              74,
+              183
+            ],
+            "pico2d": [
+              74,
+              73
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -89,
+              -62
+            ],
+            "top_left": [
+              75,
+              190
+            ],
+            "pico2d": [
+              75,
+              66
+            ]
+          }
+        ],
+        "homing": {
+          "relative_to_pivot_pico2d": [
+            -90,
+            -55
+          ],
+          "top_left": [
+            74,
+            183
+          ],
+          "pico2d": [
+            74,
+            73
+          ]
+        }
+      },
+      "pivot": {
+        "relative_to_pivot_pico2d": [
+          0,
+          0
+        ],
+        "top_left": [
+          164,
+          128
+        ],
+        "pico2d": [
+          164,
+          128
+        ]
+      },
+      "rect_pico2d": [
+        768,
+        1792,
+        256,
+        256
+      ],
+      "rect_top_left": [
+        768,
+        256,
+        256,
+        256
+      ],
+      "sheet": "boss1-body.png",
+      "socket_usage": {
+        "muzzle": true,
+        "barrage": false,
+        "homing": false,
+        "laser": false
+      }
+    },
+    "barrage_fire_00": {
+      "source_transform": {
+        "translate": [
+          9.560000000000002,
+          5.199999999999999
+        ],
+        "scale": 1.08
+      },
+      "head_reference": {
+        "relative_to_pivot_pico2d": [
+          0,
+          64
+        ],
+        "top_left": [
+          164,
+          64
+        ],
+        "pico2d": [
+          164,
+          192
+        ]
+      },
+      "bounds_top_left": [
+        90,
+        15,
+        218,
+        230
+      ],
+      "sockets": {
+        "laser": {
+          "relative_to_pivot_pico2d": [
+            -73,
+            -58
+          ],
+          "top_left": [
+            91,
+            186
+          ],
+          "pico2d": [
+            91,
+            70
+          ]
+        },
+        "muzzle": {
+          "relative_to_pivot_pico2d": [
+            -73,
+            -58
+          ],
+          "top_left": [
+            91,
+            186
+          ],
+          "pico2d": [
+            91,
+            70
+          ]
+        },
+        "barrage": [
+          {
+            "relative_to_pivot_pico2d": [
+              -47,
+              38
+            ],
+            "top_left": [
+              117,
+              90
+            ],
+            "pico2d": [
+              117,
+              166
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -43,
+              0
+            ],
+            "top_left": [
+              121,
+              128
+            ],
+            "pico2d": [
+              121,
+              128
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -46,
+              -21
+            ],
+            "top_left": [
+              118,
+              149
+            ],
+            "pico2d": [
+              118,
+              107
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -47,
+              -38
+            ],
+            "top_left": [
+              117,
+              166
+            ],
+            "pico2d": [
+              117,
+              90
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -73,
+              -58
+            ],
+            "top_left": [
+              91,
+              186
+            ],
+            "pico2d": [
+              91,
+              70
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -73,
+              -62
+            ],
+            "top_left": [
+              91,
+              190
+            ],
+            "pico2d": [
+              91,
+              66
+            ]
+          }
+        ],
+        "homing": {
+          "relative_to_pivot_pico2d": [
+            -73,
+            -58
+          ],
+          "top_left": [
+            91,
+            186
+          ],
+          "pico2d": [
+            91,
+            70
+          ]
+        }
+      },
+      "pivot": {
+        "relative_to_pivot_pico2d": [
+          0,
+          0
+        ],
+        "top_left": [
+          164,
+          128
+        ],
+        "pico2d": [
+          164,
+          128
+        ]
+      },
+      "rect_pico2d": [
+        0,
+        1536,
+        256,
+        256
+      ],
+      "rect_top_left": [
+        0,
+        512,
+        256,
+        256
+      ],
+      "sheet": "boss1-body.png",
+      "socket_usage": {
+        "muzzle": false,
+        "barrage": true,
+        "homing": false,
+        "laser": false
+      }
+    },
+    "barrage_fire_01": {
+      "source_transform": {
+        "translate": [
+          12.799999999999983,
+          5.199999999999999
+        ],
+        "scale": 1.08
+      },
+      "head_reference": {
+        "relative_to_pivot_pico2d": [
+          0,
+          64
+        ],
+        "top_left": [
+          164,
+          64
+        ],
+        "pico2d": [
+          164,
+          192
+        ]
+      },
+      "bounds_top_left": [
+        28,
+        15,
+        220,
+        228
+      ],
+      "sockets": {
+        "laser": {
+          "relative_to_pivot_pico2d": [
+            -135,
+            3
+          ],
+          "top_left": [
+            29,
+            125
+          ],
+          "pico2d": [
+            29,
+            131
+          ]
+        },
+        "muzzle": {
+          "relative_to_pivot_pico2d": [
+            -135,
+            3
+          ],
+          "top_left": [
+            29,
+            125
+          ],
+          "pico2d": [
+            29,
+            131
+          ]
+        },
+        "barrage": [
+          {
+            "relative_to_pivot_pico2d": [
+              -133,
+              38
+            ],
+            "top_left": [
+              31,
+              90
+            ],
+            "pico2d": [
+              31,
+              166
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -135,
+              3
+            ],
+            "top_left": [
+              29,
+              125
+            ],
+            "pico2d": [
+              29,
+              131
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -135,
+              -2
+            ],
+            "top_left": [
+              29,
+              130
+            ],
+            "pico2d": [
+              29,
+              126
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -134,
+              -29
+            ],
+            "top_left": [
+              30,
+              157
+            ],
+            "pico2d": [
+              30,
+              99
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -118,
+              -53
+            ],
+            "top_left": [
+              46,
+              181
+            ],
+            "pico2d": [
+              46,
+              75
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -118,
+              -62
+            ],
+            "top_left": [
+              46,
+              190
+            ],
+            "pico2d": [
+              46,
+              66
+            ]
+          }
+        ],
+        "homing": {
+          "relative_to_pivot_pico2d": [
+            -135,
+            3
+          ],
+          "top_left": [
+            29,
+            125
+          ],
+          "pico2d": [
+            29,
+            131
+          ]
+        }
+      },
+      "pivot": {
+        "relative_to_pivot_pico2d": [
+          0,
+          0
+        ],
+        "top_left": [
+          164,
+          128
+        ],
+        "pico2d": [
+          164,
+          128
+        ]
+      },
+      "rect_pico2d": [
+        256,
+        1536,
+        256,
+        256
+      ],
+      "rect_top_left": [
+        256,
+        512,
+        256,
+        256
+      ],
+      "sheet": "boss1-body.png",
+      "socket_usage": {
+        "muzzle": false,
+        "barrage": true,
+        "homing": false,
+        "laser": false
+      }
+    },
+    "barrage_fire_02": {
+      "source_transform": {
+        "translate": [
+          14.95999999999998,
+          5.199999999999999
+        ],
+        "scale": 1.08
+      },
+      "head_reference": {
+        "relative_to_pivot_pico2d": [
+          0,
+          64
+        ],
+        "top_left": [
+          164,
+          64
+        ],
+        "pico2d": [
+          164,
+          192
+        ]
+      },
+      "bounds_top_left": [
+        28,
+        16,
+        217,
+        228
+      ],
+      "sockets": {
+        "laser": {
+          "relative_to_pivot_pico2d": [
+            -136,
+            -18
+          ],
+          "top_left": [
+            28,
+            146
+          ],
+          "pico2d": [
+            28,
+            110
+          ]
+        },
+        "muzzle": {
+          "relative_to_pivot_pico2d": [
+            -136,
+            -18
+          ],
+          "top_left": [
+            28,
+            146
+          ],
+          "pico2d": [
+            28,
+            110
+          ]
+        },
+        "barrage": [
+          {
+            "relative_to_pivot_pico2d": [
+              -132,
+              26
+            ],
+            "top_left": [
+              32,
+              102
+            ],
+            "pico2d": [
+              32,
+              154
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -132,
+              18
+            ],
+            "top_left": [
+              32,
+              110
+            ],
+            "pico2d": [
+              32,
+              146
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -136,
+              -18
+            ],
+            "top_left": [
+              28,
+              146
+            ],
+            "pico2d": [
+              28,
+              110
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -135,
+              -22
+            ],
+            "top_left": [
+              29,
+              150
+            ],
+            "pico2d": [
+              29,
+              106
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -118,
+              -50
+            ],
+            "top_left": [
+              46,
+              178
+            ],
+            "pico2d": [
+              46,
+              78
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -115,
+              -62
+            ],
+            "top_left": [
+              49,
+              190
+            ],
+            "pico2d": [
+              49,
+              66
+            ]
+          }
+        ],
+        "homing": {
+          "relative_to_pivot_pico2d": [
+            -136,
+            -18
+          ],
+          "top_left": [
+            28,
+            146
+          ],
+          "pico2d": [
+            28,
+            110
+          ]
+        }
+      },
+      "pivot": {
+        "relative_to_pivot_pico2d": [
+          0,
+          0
+        ],
+        "top_left": [
+          164,
+          128
+        ],
+        "pico2d": [
+          164,
+          128
+        ]
+      },
+      "rect_pico2d": [
+        512,
+        1536,
+        256,
+        256
+      ],
+      "rect_top_left": [
+        512,
+        512,
+        256,
+        256
+      ],
+      "sheet": "boss1-body.png",
+      "socket_usage": {
+        "muzzle": false,
+        "barrage": true,
+        "homing": false,
+        "laser": false
+      }
+    },
+    "barrage_fire_03": {
+      "source_transform": {
+        "translate": [
+          18.73999999999998,
+          4.119999999999999
+        ],
+        "scale": 1.08
+      },
+      "head_reference": {
+        "relative_to_pivot_pico2d": [
+          0,
+          64
+        ],
+        "top_left": [
+          164,
+          64
+        ],
+        "pico2d": [
+          164,
+          192
+        ]
+      },
+      "bounds_top_left": [
+        55,
+        15,
+        211,
+        228
+      ],
+      "sockets": {
+        "laser": {
+          "relative_to_pivot_pico2d": [
+            -109,
+            -50
+          ],
+          "top_left": [
+            55,
+            178
+          ],
+          "pico2d": [
+            55,
+            78
+          ]
+        },
+        "muzzle": {
+          "relative_to_pivot_pico2d": [
+            -109,
+            -50
+          ],
+          "top_left": [
+            55,
+            178
+          ],
+          "pico2d": [
+            55,
+            78
+          ]
+        },
+        "barrage": [
+          {
+            "relative_to_pivot_pico2d": [
+              -57,
+              38
+            ],
+            "top_left": [
+              107,
+              90
+            ],
+            "pico2d": [
+              107,
+              166
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -52,
+              1
+            ],
+            "top_left": [
+              112,
+              127
+            ],
+            "pico2d": [
+              112,
+              129
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -76,
+              -21
+            ],
+            "top_left": [
+              88,
+              149
+            ],
+            "pico2d": [
+              88,
+              107
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -105,
+              -40
+            ],
+            "top_left": [
+              59,
+              168
+            ],
+            "pico2d": [
+              59,
+              88
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -109,
+              -50
+            ],
+            "top_left": [
+              55,
+              178
+            ],
+            "pico2d": [
+              55,
+              78
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -104,
+              -62
+            ],
+            "top_left": [
+              60,
+              190
+            ],
+            "pico2d": [
+              60,
+              66
+            ]
+          }
+        ],
+        "homing": {
+          "relative_to_pivot_pico2d": [
+            -109,
+            -50
+          ],
+          "top_left": [
+            55,
+            178
+          ],
+          "pico2d": [
+            55,
+            78
+          ]
+        }
+      },
+      "pivot": {
+        "relative_to_pivot_pico2d": [
+          0,
+          0
+        ],
+        "top_left": [
+          164,
+          128
+        ],
+        "pico2d": [
+          164,
+          128
+        ]
+      },
+      "rect_pico2d": [
+        768,
+        1536,
+        256,
+        256
+      ],
+      "rect_top_left": [
+        768,
+        512,
+        256,
+        256
+      ],
+      "sheet": "boss1-body.png",
+      "socket_usage": {
+        "muzzle": false,
+        "barrage": true,
+        "homing": false,
+        "laser": false
+      }
+    },
+    "rest_upper_fire_00": {
+      "source_transform": {
+        "translate": [
+          9.019999999999982,
+          3.039999999999999
+        ],
+        "scale": 1.08
+      },
+      "head_reference": {
+        "relative_to_pivot_pico2d": [
+          0,
+          64
+        ],
+        "top_left": [
+          164,
+          64
+        ],
+        "pico2d": [
+          164,
+          192
+        ]
+      },
+      "bounds_top_left": [
+        89,
+        15,
+        219,
+        229
+      ],
+      "sockets": {
+        "laser": {
+          "relative_to_pivot_pico2d": [
+            -47,
+            47
+          ],
+          "top_left": [
+            117,
+            81
+          ],
+          "pico2d": [
+            117,
+            175
+          ]
+        },
+        "muzzle": {
+          "relative_to_pivot_pico2d": [
+            -47,
+            47
+          ],
+          "top_left": [
+            117,
+            81
+          ],
+          "pico2d": [
+            117,
+            175
+          ]
+        },
+        "barrage": [
+          {
+            "relative_to_pivot_pico2d": [
+              -46,
+              38
+            ],
+            "top_left": [
+              118,
+              90
+            ],
+            "pico2d": [
+              118,
+              166
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -42,
+              0
+            ],
+            "top_left": [
+              122,
+              128
+            ],
+            "pico2d": [
+              122,
+              128
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -44,
+              -13
+            ],
+            "top_left": [
+              120,
+              141
+            ],
+            "pico2d": [
+              120,
+              115
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -46,
+              -39
+            ],
+            "top_left": [
+              118,
+              167
+            ],
+            "pico2d": [
+              118,
+              89
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -74,
+              -56
+            ],
+            "top_left": [
+              90,
+              184
+            ],
+            "pico2d": [
+              90,
+              72
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -74,
+              -62
+            ],
+            "top_left": [
+              90,
+              190
+            ],
+            "pico2d": [
+              90,
+              66
+            ]
+          }
+        ],
+        "homing": {
+          "relative_to_pivot_pico2d": [
+            -47,
+            47
+          ],
+          "top_left": [
+            117,
+            81
+          ],
+          "pico2d": [
+            117,
+            175
+          ]
+        }
+      },
+      "pivot": {
+        "relative_to_pivot_pico2d": [
+          0,
+          0
+        ],
+        "top_left": [
+          164,
+          128
+        ],
+        "pico2d": [
+          164,
+          128
+        ]
+      },
+      "rect_pico2d": [
+        0,
+        1280,
+        256,
+        256
+      ],
+      "rect_top_left": [
+        0,
+        768,
+        256,
+        256
+      ],
+      "sheet": "boss1-body.png",
+      "socket_usage": {
+        "muzzle": true,
+        "barrage": false,
+        "homing": false,
+        "laser": false
+      }
+    },
+    "rest_upper_fire_01": {
+      "source_transform": {
+        "translate": [
+          12.799999999999983,
+          1.959999999999999
+        ],
+        "scale": 1.08
+      },
+      "head_reference": {
+        "relative_to_pivot_pico2d": [
+          0,
+          64
+        ],
+        "top_left": [
+          164,
+          64
+        ],
+        "pico2d": [
+          164,
+          192
+        ]
+      },
+      "bounds_top_left": [
+        47,
+        15,
+        219,
+        228
+      ],
+      "sockets": {
+        "laser": {
+          "relative_to_pivot_pico2d": [
+            -116,
+            53
+          ],
+          "top_left": [
+            48,
+            75
+          ],
+          "pico2d": [
+            48,
+            181
+          ]
+        },
+        "muzzle": {
+          "relative_to_pivot_pico2d": [
+            -116,
+            53
+          ],
+          "top_left": [
+            48,
+            75
+          ],
+          "pico2d": [
+            48,
+            181
+          ]
+        },
+        "barrage": [
+          {
+            "relative_to_pivot_pico2d": [
+              -110,
+              38
+            ],
+            "top_left": [
+              54,
+              90
+            ],
+            "pico2d": [
+              54,
+              166
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -87,
+              18
+            ],
+            "top_left": [
+              77,
+              110
+            ],
+            "pico2d": [
+              77,
+              146
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -48,
+              -16
+            ],
+            "top_left": [
+              116,
+              144
+            ],
+            "pico2d": [
+              116,
+              112
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -51,
+              -40
+            ],
+            "top_left": [
+              113,
+              168
+            ],
+            "pico2d": [
+              113,
+              88
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -80,
+              -57
+            ],
+            "top_left": [
+              84,
+              185
+            ],
+            "pico2d": [
+              84,
+              71
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -79,
+              -62
+            ],
+            "top_left": [
+              85,
+              190
+            ],
+            "pico2d": [
+              85,
+              66
+            ]
+          }
+        ],
+        "homing": {
+          "relative_to_pivot_pico2d": [
+            -116,
+            53
+          ],
+          "top_left": [
+            48,
+            75
+          ],
+          "pico2d": [
+            48,
+            181
+          ]
+        }
+      },
+      "pivot": {
+        "relative_to_pivot_pico2d": [
+          0,
+          0
+        ],
+        "top_left": [
+          164,
+          128
+        ],
+        "pico2d": [
+          164,
+          128
+        ]
+      },
+      "rect_pico2d": [
+        256,
+        1280,
+        256,
+        256
+      ],
+      "rect_top_left": [
+        256,
+        768,
+        256,
+        256
+      ],
+      "sheet": "boss1-body.png",
+      "socket_usage": {
+        "muzzle": true,
+        "barrage": false,
+        "homing": false,
+        "laser": false
+      }
+    },
+    "rest_upper_fire_02": {
+      "source_transform": {
+        "translate": [
+          15.5,
+          1.959999999999999
+        ],
+        "scale": 1.08
+      },
+      "head_reference": {
+        "relative_to_pivot_pico2d": [
+          0,
+          64
+        ],
+        "top_left": [
+          164,
+          64
+        ],
+        "pico2d": [
+          164,
+          192
+        ]
+      },
+      "bounds_top_left": [
+        43,
+        15,
+        214,
+        228
+      ],
+      "sockets": {
+        "laser": {
+          "relative_to_pivot_pico2d": [
+            -87,
+            53
+          ],
+          "top_left": [
+            77,
+            75
+          ],
+          "pico2d": [
+            77,
+            181
+          ]
+        },
+        "muzzle": {
+          "relative_to_pivot_pico2d": [
+            -87,
+            53
+          ],
+          "top_left": [
+            77,
+            75
+          ],
+          "pico2d": [
+            77,
+            181
+          ]
+        },
+        "barrage": [
+          {
+            "relative_to_pivot_pico2d": [
+              -78,
+              38
+            ],
+            "top_left": [
+              86,
+              90
+            ],
+            "pico2d": [
+              86,
+              166
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -62,
+              18
+            ],
+            "top_left": [
+              102,
+              110
+            ],
+            "pico2d": [
+              102,
+              146
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -52,
+              -20
+            ],
+            "top_left": [
+              112,
+              148
+            ],
+            "pico2d": [
+              112,
+              108
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -55,
+              -39
+            ],
+            "top_left": [
+              109,
+              167
+            ],
+            "pico2d": [
+              109,
+              89
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -84,
+              -59
+            ],
+            "top_left": [
+              80,
+              187
+            ],
+            "pico2d": [
+              80,
+              69
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -84,
+              -62
+            ],
+            "top_left": [
+              80,
+              190
+            ],
+            "pico2d": [
+              80,
+              66
+            ]
+          }
+        ],
+        "homing": {
+          "relative_to_pivot_pico2d": [
+            -87,
+            53
+          ],
+          "top_left": [
+            77,
+            75
+          ],
+          "pico2d": [
+            77,
+            181
+          ]
+        }
+      },
+      "pivot": {
+        "relative_to_pivot_pico2d": [
+          0,
+          0
+        ],
+        "top_left": [
+          164,
+          128
+        ],
+        "pico2d": [
+          164,
+          128
+        ]
+      },
+      "rect_pico2d": [
+        512,
+        1280,
+        256,
+        256
+      ],
+      "rect_top_left": [
+        512,
+        768,
+        256,
+        256
+      ],
+      "sheet": "boss1-body.png",
+      "socket_usage": {
+        "muzzle": true,
+        "barrage": false,
+        "homing": false,
+        "laser": false
+      }
+    },
+    "rest_upper_fire_03": {
+      "source_transform": {
+        "translate": [
+          18.19999999999999,
+          1.959999999999999
+        ],
+        "scale": 1.08
+      },
+      "head_reference": {
+        "relative_to_pivot_pico2d": [
+          0,
+          64
+        ],
+        "top_left": [
+          164,
+          64
+        ],
+        "pico2d": [
+          164,
+          192
+        ]
+      },
+      "bounds_top_left": [
+        47,
+        15,
+        212,
+        228
+      ],
+      "sockets": {
+        "laser": {
+          "relative_to_pivot_pico2d": [
+            -117,
+            21
+          ],
+          "top_left": [
+            47,
+            107
+          ],
+          "pico2d": [
+            47,
+            149
+          ]
+        },
+        "muzzle": {
+          "relative_to_pivot_pico2d": [
+            -117,
+            21
+          ],
+          "top_left": [
+            47,
+            107
+          ],
+          "pico2d": [
+            47,
+            149
+          ]
+        },
+        "barrage": [
+          {
+            "relative_to_pivot_pico2d": [
+              -117,
+              21
+            ],
+            "top_left": [
+              47,
+              107
+            ],
+            "pico2d": [
+              47,
+              149
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -117,
+              18
+            ],
+            "top_left": [
+              47,
+              110
+            ],
+            "pico2d": [
+              47,
+              146
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -54,
+              -21
+            ],
+            "top_left": [
+              110,
+              149
+            ],
+            "pico2d": [
+              110,
+              107
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -55,
+              -38
+            ],
+            "top_left": [
+              109,
+              166
+            ],
+            "pico2d": [
+              109,
+              90
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -81,
+              -60
+            ],
+            "top_left": [
+              83,
+              188
+            ],
+            "pico2d": [
+              83,
+              68
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -81,
+              -62
+            ],
+            "top_left": [
+              83,
+              190
+            ],
+            "pico2d": [
+              83,
+              66
+            ]
+          }
+        ],
+        "homing": {
+          "relative_to_pivot_pico2d": [
+            -117,
+            21
+          ],
+          "top_left": [
+            47,
+            107
+          ],
+          "pico2d": [
+            47,
+            149
+          ]
+        }
+      },
+      "pivot": {
+        "relative_to_pivot_pico2d": [
+          0,
+          0
+        ],
+        "top_left": [
+          164,
+          128
+        ],
+        "pico2d": [
+          164,
+          128
+        ]
+      },
+      "rect_pico2d": [
+        768,
+        1280,
+        256,
+        256
+      ],
+      "rect_top_left": [
+        768,
+        768,
+        256,
+        256
+      ],
+      "sheet": "boss1-body.png",
+      "socket_usage": {
+        "muzzle": true,
+        "barrage": false,
+        "homing": false,
+        "laser": false
+      }
+    },
+    "homing_launch_00": {
+      "source_transform": {
+        "translate": [
+          9.019999999999982,
+          -0.20000000000000284
+        ],
+        "scale": 1.08
+      },
+      "head_reference": {
+        "relative_to_pivot_pico2d": [
+          0,
+          64
+        ],
+        "top_left": [
+          164,
+          64
+        ],
+        "pico2d": [
+          164,
+          192
+        ]
+      },
+      "bounds_top_left": [
+        88,
+        16,
+        221,
+        226
+      ],
+      "sockets": {
+        "laser": {
+          "relative_to_pivot_pico2d": [
+            -75,
+            -59
+          ],
+          "top_left": [
+            89,
+            187
+          ],
+          "pico2d": [
+            89,
+            69
+          ]
+        },
+        "muzzle": {
+          "relative_to_pivot_pico2d": [
+            -75,
+            -59
+          ],
+          "top_left": [
+            89,
+            187
+          ],
+          "pico2d": [
+            89,
+            69
+          ]
+        },
+        "barrage": [
+          {
+            "relative_to_pivot_pico2d": [
+              -48,
+              38
+            ],
+            "top_left": [
+              116,
+              90
+            ],
+            "pico2d": [
+              116,
+              166
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -42,
+              0
+            ],
+            "top_left": [
+              122,
+              128
+            ],
+            "pico2d": [
+              122,
+              128
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -45,
+              -18
+            ],
+            "top_left": [
+              119,
+              146
+            ],
+            "pico2d": [
+              119,
+              110
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -46,
+              -40
+            ],
+            "top_left": [
+              118,
+              168
+            ],
+            "pico2d": [
+              118,
+              88
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -75,
+              -59
+            ],
+            "top_left": [
+              89,
+              187
+            ],
+            "pico2d": [
+              89,
+              69
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -75,
+              -62
+            ],
+            "top_left": [
+              89,
+              190
+            ],
+            "pico2d": [
+              89,
+              66
+            ]
+          }
+        ],
+        "homing": {
+          "relative_to_pivot_pico2d": [
+            -75,
+            -59
+          ],
+          "top_left": [
+            89,
+            187
+          ],
+          "pico2d": [
+            89,
+            69
+          ]
+        }
+      },
+      "pivot": {
+        "relative_to_pivot_pico2d": [
+          0,
+          0
+        ],
+        "top_left": [
+          164,
+          128
+        ],
+        "pico2d": [
+          164,
+          128
+        ]
+      },
+      "rect_pico2d": [
+        0,
+        1024,
+        256,
+        256
+      ],
+      "rect_top_left": [
+        0,
+        1024,
+        256,
+        256
+      ],
+      "sheet": "boss1-body.png",
+      "socket_usage": {
+        "muzzle": false,
+        "barrage": false,
+        "homing": true,
+        "laser": false
+      }
+    },
+    "homing_launch_01": {
+      "source_transform": {
+        "translate": [
+          13.340000000000003,
+          -1.2800000000000011
+        ],
+        "scale": 1.08
+      },
+      "head_reference": {
+        "relative_to_pivot_pico2d": [
+          0,
+          64
+        ],
+        "top_left": [
+          164,
+          64
+        ],
+        "pico2d": [
+          164,
+          192
+        ]
+      },
+      "bounds_top_left": [
+        50,
+        15,
+        221,
+        225
+      ],
+      "sockets": {
+        "laser": {
+          "relative_to_pivot_pico2d": [
+            -114,
+            9
+          ],
+          "top_left": [
+            50,
+            119
+          ],
+          "pico2d": [
+            50,
+            137
+          ]
+        },
+        "muzzle": {
+          "relative_to_pivot_pico2d": [
+            -114,
+            9
+          ],
+          "top_left": [
+            50,
+            119
+          ],
+          "pico2d": [
+            50,
+            137
+          ]
+        },
+        "barrage": [
+          {
+            "relative_to_pivot_pico2d": [
+              -110,
+              19
+            ],
+            "top_left": [
+              54,
+              109
+            ],
+            "pico2d": [
+              54,
+              147
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -114,
+              9
+            ],
+            "top_left": [
+              50,
+              119
+            ],
+            "pico2d": [
+              50,
+              137
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -110,
+              -2
+            ],
+            "top_left": [
+              54,
+              130
+            ],
+            "pico2d": [
+              54,
+              126
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -112,
+              -26
+            ],
+            "top_left": [
+              52,
+              154
+            ],
+            "pico2d": [
+              52,
+              102
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -108,
+              -42
+            ],
+            "top_left": [
+              56,
+              170
+            ],
+            "pico2d": [
+              56,
+              86
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -70,
+              -68
+            ],
+            "top_left": [
+              94,
+              196
+            ],
+            "pico2d": [
+              94,
+              60
+            ]
+          }
+        ],
+        "homing": {
+          "relative_to_pivot_pico2d": [
+            -114,
+            9
+          ],
+          "top_left": [
+            50,
+            119
+          ],
+          "pico2d": [
+            50,
+            137
+          ]
+        }
+      },
+      "pivot": {
+        "relative_to_pivot_pico2d": [
+          0,
+          0
+        ],
+        "top_left": [
+          164,
+          128
+        ],
+        "pico2d": [
+          164,
+          128
+        ]
+      },
+      "rect_pico2d": [
+        256,
+        1024,
+        256,
+        256
+      ],
+      "rect_top_left": [
+        256,
+        1024,
+        256,
+        256
+      ],
+      "sheet": "boss1-body.png",
+      "socket_usage": {
+        "muzzle": false,
+        "barrage": false,
+        "homing": true,
+        "laser": false
+      }
+    },
+    "homing_launch_02": {
+      "source_transform": {
+        "translate": [
+          14.419999999999987,
+          -1.2800000000000011
+        ],
+        "scale": 1.08
+      },
+      "head_reference": {
+        "relative_to_pivot_pico2d": [
+          0,
+          64
+        ],
+        "top_left": [
+          164,
+          64
+        ],
+        "pico2d": [
+          164,
+          192
+        ]
+      },
+      "bounds_top_left": [
+        69,
+        15,
+        210,
+        225
+      ],
+      "sockets": {
+        "laser": {
+          "relative_to_pivot_pico2d": [
+            -95,
+            4
+          ],
+          "top_left": [
+            69,
+            124
+          ],
+          "pico2d": [
+            69,
+            132
+          ]
+        },
+        "muzzle": {
+          "relative_to_pivot_pico2d": [
+            -95,
+            4
+          ],
+          "top_left": [
+            69,
+            124
+          ],
+          "pico2d": [
+            69,
+            132
+          ]
+        },
+        "barrage": [
+          {
+            "relative_to_pivot_pico2d": [
+              -81,
+              19
+            ],
+            "top_left": [
+              83,
+              109
+            ],
+            "pico2d": [
+              83,
+              147
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -95,
+              4
+            ],
+            "top_left": [
+              69,
+              124
+            ],
+            "pico2d": [
+              69,
+              132
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -94,
+              -2
+            ],
+            "top_left": [
+              70,
+              130
+            ],
+            "pico2d": [
+              70,
+              126
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -90,
+              -23
+            ],
+            "top_left": [
+              74,
+              151
+            ],
+            "pico2d": [
+              74,
+              105
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -82,
+              -42
+            ],
+            "top_left": [
+              82,
+              170
+            ],
+            "pico2d": [
+              82,
+              86
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -80,
+              -67
+            ],
+            "top_left": [
+              84,
+              195
+            ],
+            "pico2d": [
+              84,
+              61
+            ]
+          }
+        ],
+        "homing": {
+          "relative_to_pivot_pico2d": [
+            -95,
+            4
+          ],
+          "top_left": [
+            69,
+            124
+          ],
+          "pico2d": [
+            69,
+            132
+          ]
+        }
+      },
+      "pivot": {
+        "relative_to_pivot_pico2d": [
+          0,
+          0
+        ],
+        "top_left": [
+          164,
+          128
+        ],
+        "pico2d": [
+          164,
+          128
+        ]
+      },
+      "rect_pico2d": [
+        512,
+        1024,
+        256,
+        256
+      ],
+      "rect_top_left": [
+        512,
+        1024,
+        256,
+        256
+      ],
+      "sheet": "boss1-body.png",
+      "socket_usage": {
+        "muzzle": false,
+        "barrage": false,
+        "homing": true,
+        "laser": false
+      }
+    },
+    "homing_launch_03": {
+      "source_transform": {
+        "translate": [
+          18.19999999999999,
+          -1.2800000000000011
+        ],
+        "scale": 1.08
+      },
+      "head_reference": {
+        "relative_to_pivot_pico2d": [
+          0,
+          64
+        ],
+        "top_left": [
+          164,
+          64
+        ],
+        "pico2d": [
+          164,
+          192
+        ]
+      },
+      "bounds_top_left": [
+        78,
+        16,
+        212,
+        225
+      ],
+      "sockets": {
+        "laser": {
+          "relative_to_pivot_pico2d": [
+            -86,
+            -33
+          ],
+          "top_left": [
+            78,
+            161
+          ],
+          "pico2d": [
+            78,
+            95
+          ]
+        },
+        "muzzle": {
+          "relative_to_pivot_pico2d": [
+            -86,
+            -33
+          ],
+          "top_left": [
+            78,
+            161
+          ],
+          "pico2d": [
+            78,
+            95
+          ]
+        },
+        "barrage": [
+          {
+            "relative_to_pivot_pico2d": [
+              -57,
+              38
+            ],
+            "top_left": [
+              107,
+              90
+            ],
+            "pico2d": [
+              107,
+              166
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -54,
+              -1
+            ],
+            "top_left": [
+              110,
+              129
+            ],
+            "pico2d": [
+              110,
+              127
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -79,
+              -21
+            ],
+            "top_left": [
+              85,
+              149
+            ],
+            "pico2d": [
+              85,
+              107
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -86,
+              -33
+            ],
+            "top_left": [
+              78,
+              161
+            ],
+            "pico2d": [
+              78,
+              95
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -85,
+              -42
+            ],
+            "top_left": [
+              79,
+              170
+            ],
+            "pico2d": [
+              79,
+              86
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -78,
+              -65
+            ],
+            "top_left": [
+              86,
+              193
+            ],
+            "pico2d": [
+              86,
+              63
+            ]
+          }
+        ],
+        "homing": {
+          "relative_to_pivot_pico2d": [
+            -86,
+            -33
+          ],
+          "top_left": [
+            78,
+            161
+          ],
+          "pico2d": [
+            78,
+            95
+          ]
+        }
+      },
+      "pivot": {
+        "relative_to_pivot_pico2d": [
+          0,
+          0
+        ],
+        "top_left": [
+          164,
+          128
+        ],
+        "pico2d": [
+          164,
+          128
+        ]
+      },
+      "rect_pico2d": [
+        768,
+        1024,
+        256,
+        256
+      ],
+      "rect_top_left": [
+        768,
+        1024,
+        256,
+        256
+      ],
+      "sheet": "boss1-body.png",
+      "socket_usage": {
+        "muzzle": false,
+        "barrage": false,
+        "homing": true,
+        "laser": false
+      }
+    },
+    "laser_charge_00": {
+      "source_transform": {
+        "translate": [
+          9.019999999999982,
+          -5.600000000000001
+        ],
+        "scale": 1.08
+      },
+      "head_reference": {
+        "relative_to_pivot_pico2d": [
+          0,
+          64
+        ],
+        "top_left": [
+          164,
+          64
+        ],
+        "pico2d": [
+          164,
+          192
+        ]
+      },
+      "bounds_top_left": [
+        79,
+        15,
+        225,
+        221
+      ],
+      "sockets": {
+        "laser": {
+          "relative_to_pivot_pico2d": [
+            -85,
+            -40
+          ],
+          "top_left": [
+            79,
+            168
+          ],
+          "pico2d": [
+            79,
+            88
+          ]
+        },
+        "muzzle": {
+          "relative_to_pivot_pico2d": [
+            -85,
+            -40
+          ],
+          "top_left": [
+            79,
+            168
+          ],
+          "pico2d": [
+            79,
+            88
+          ]
+        },
+        "barrage": [
+          {
+            "relative_to_pivot_pico2d": [
+              -48,
+              38
+            ],
+            "top_left": [
+              116,
+              90
+            ],
+            "pico2d": [
+              116,
+              166
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -48,
+              -1
+            ],
+            "top_left": [
+              116,
+              129
+            ],
+            "pico2d": [
+              116,
+              127
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -74,
+              -21
+            ],
+            "top_left": [
+              90,
+              149
+            ],
+            "pico2d": [
+              90,
+              107
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -85,
+              -40
+            ],
+            "top_left": [
+              79,
+              168
+            ],
+            "pico2d": [
+              79,
+              88
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -85,
+              -42
+            ],
+            "top_left": [
+              79,
+              170
+            ],
+            "pico2d": [
+              79,
+              86
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -75,
+              -62
+            ],
+            "top_left": [
+              89,
+              190
+            ],
+            "pico2d": [
+              89,
+              66
+            ]
+          }
+        ],
+        "homing": {
+          "relative_to_pivot_pico2d": [
+            -85,
+            -40
+          ],
+          "top_left": [
+            79,
+            168
+          ],
+          "pico2d": [
+            79,
+            88
+          ]
+        }
+      },
+      "pivot": {
+        "relative_to_pivot_pico2d": [
+          0,
+          0
+        ],
+        "top_left": [
+          164,
+          128
+        ],
+        "pico2d": [
+          164,
+          128
+        ]
+      },
+      "rect_pico2d": [
+        0,
+        768,
+        256,
+        256
+      ],
+      "rect_top_left": [
+        0,
+        1280,
+        256,
+        256
+      ],
+      "sheet": "boss1-body.png",
+      "socket_usage": {
+        "muzzle": false,
+        "barrage": false,
+        "homing": false,
+        "laser": true
+      }
+    },
+    "laser_charge_01": {
+      "source_transform": {
+        "translate": [
+          13.340000000000003,
+          -6.68
+        ],
+        "scale": 1.08
+      },
+      "head_reference": {
+        "relative_to_pivot_pico2d": [
+          0,
+          64
+        ],
+        "top_left": [
+          164,
+          64
+        ],
+        "pico2d": [
+          164,
+          192
+        ]
+      },
+      "bounds_top_left": [
+        76,
+        16,
+        215,
+        218
+      ],
+      "sockets": {
+        "laser": {
+          "relative_to_pivot_pico2d": [
+            -87,
+            -22
+          ],
+          "top_left": [
+            77,
+            150
+          ],
+          "pico2d": [
+            77,
+            106
+          ]
+        },
+        "muzzle": {
+          "relative_to_pivot_pico2d": [
+            -87,
+            -22
+          ],
+          "top_left": [
+            77,
+            150
+          ],
+          "pico2d": [
+            77,
+            106
+          ]
+        },
+        "barrage": [
+          {
+            "relative_to_pivot_pico2d": [
+              -50,
+              38
+            ],
+            "top_left": [
+              114,
+              90
+            ],
+            "pico2d": [
+              114,
+              166
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -65,
+              -1
+            ],
+            "top_left": [
+              99,
+              129
+            ],
+            "pico2d": [
+              99,
+              127
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -86,
+              -20
+            ],
+            "top_left": [
+              78,
+              148
+            ],
+            "pico2d": [
+              78,
+              108
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -87,
+              -22
+            ],
+            "top_left": [
+              77,
+              150
+            ],
+            "pico2d": [
+              77,
+              106
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -79,
+              -42
+            ],
+            "top_left": [
+              85,
+              170
+            ],
+            "pico2d": [
+              85,
+              86
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -76,
+              -62
+            ],
+            "top_left": [
+              88,
+              190
+            ],
+            "pico2d": [
+              88,
+              66
+            ]
+          }
+        ],
+        "homing": {
+          "relative_to_pivot_pico2d": [
+            -87,
+            -22
+          ],
+          "top_left": [
+            77,
+            150
+          ],
+          "pico2d": [
+            77,
+            106
+          ]
+        }
+      },
+      "pivot": {
+        "relative_to_pivot_pico2d": [
+          0,
+          0
+        ],
+        "top_left": [
+          164,
+          128
+        ],
+        "pico2d": [
+          164,
+          128
+        ]
+      },
+      "rect_pico2d": [
+        256,
+        768,
+        256,
+        256
+      ],
+      "rect_top_left": [
+        256,
+        1280,
+        256,
+        256
+      ],
+      "sheet": "boss1-body.png",
+      "socket_usage": {
+        "muzzle": false,
+        "barrage": false,
+        "homing": false,
+        "laser": true
+      }
+    },
+    "laser_charge_02": {
+      "source_transform": {
+        "translate": [
+          15.5,
+          -6.68
+        ],
+        "scale": 1.08
+      },
+      "head_reference": {
+        "relative_to_pivot_pico2d": [
+          0,
+          64
+        ],
+        "top_left": [
+          164,
+          64
+        ],
+        "pico2d": [
+          164,
+          192
+        ]
+      },
+      "bounds_top_left": [
+        72,
+        16,
+        207,
+        214
+      ],
+      "sockets": {
+        "laser": {
+          "relative_to_pivot_pico2d": [
+            -91,
+            -30
+          ],
+          "top_left": [
+            73,
+            158
+          ],
+          "pico2d": [
+            73,
+            98
+          ]
+        },
+        "muzzle": {
+          "relative_to_pivot_pico2d": [
+            -91,
+            -30
+          ],
+          "top_left": [
+            73,
+            158
+          ],
+          "pico2d": [
+            73,
+            98
+          ]
+        },
+        "barrage": [
+          {
+            "relative_to_pivot_pico2d": [
+              -54,
+              38
+            ],
+            "top_left": [
+              110,
+              90
+            ],
+            "pico2d": [
+              110,
+              166
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -59,
+              -1
+            ],
+            "top_left": [
+              105,
+              129
+            ],
+            "pico2d": [
+              105,
+              127
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -86,
+              -20
+            ],
+            "top_left": [
+              78,
+              148
+            ],
+            "pico2d": [
+              78,
+              108
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -91,
+              -30
+            ],
+            "top_left": [
+              73,
+              158
+            ],
+            "pico2d": [
+              73,
+              98
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -91,
+              -42
+            ],
+            "top_left": [
+              73,
+              170
+            ],
+            "pico2d": [
+              73,
+              86
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -76,
+              -62
+            ],
+            "top_left": [
+              88,
+              190
+            ],
+            "pico2d": [
+              88,
+              66
+            ]
+          }
+        ],
+        "homing": {
+          "relative_to_pivot_pico2d": [
+            -91,
+            -30
+          ],
+          "top_left": [
+            73,
+            158
+          ],
+          "pico2d": [
+            73,
+            98
+          ]
+        }
+      },
+      "pivot": {
+        "relative_to_pivot_pico2d": [
+          0,
+          0
+        ],
+        "top_left": [
+          164,
+          128
+        ],
+        "pico2d": [
+          164,
+          128
+        ]
+      },
+      "rect_pico2d": [
+        512,
+        768,
+        256,
+        256
+      ],
+      "rect_top_left": [
+        512,
+        1280,
+        256,
+        256
+      ],
+      "sheet": "boss1-body.png",
+      "socket_usage": {
+        "muzzle": false,
+        "barrage": false,
+        "homing": false,
+        "laser": true
+      }
+    },
+    "laser_charge_03": {
+      "source_transform": {
+        "translate": [
+          18.19999999999999,
+          -6.68
+        ],
+        "scale": 1.08
+      },
+      "head_reference": {
+        "relative_to_pivot_pico2d": [
+          0,
+          64
+        ],
+        "top_left": [
+          164,
+          64
+        ],
+        "pico2d": [
+          164,
+          192
+        ]
+      },
+      "bounds_top_left": [
+        66,
+        16,
+        212,
+        219
+      ],
+      "sockets": {
+        "laser": {
+          "relative_to_pivot_pico2d": [
+            -97,
+            -27
+          ],
+          "top_left": [
+            67,
+            155
+          ],
+          "pico2d": [
+            67,
+            101
+          ]
+        },
+        "muzzle": {
+          "relative_to_pivot_pico2d": [
+            -97,
+            -27
+          ],
+          "top_left": [
+            67,
+            155
+          ],
+          "pico2d": [
+            67,
+            101
+          ]
+        },
+        "barrage": [
+          {
+            "relative_to_pivot_pico2d": [
+              -57,
+              38
+            ],
+            "top_left": [
+              107,
+              90
+            ],
+            "pico2d": [
+              107,
+              166
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -63,
+              -1
+            ],
+            "top_left": [
+              101,
+              129
+            ],
+            "pico2d": [
+              101,
+              127
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -94,
+              -21
+            ],
+            "top_left": [
+              70,
+              149
+            ],
+            "pico2d": [
+              70,
+              107
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -97,
+              -27
+            ],
+            "top_left": [
+              67,
+              155
+            ],
+            "pico2d": [
+              67,
+              101
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -96,
+              -42
+            ],
+            "top_left": [
+              68,
+              170
+            ],
+            "pico2d": [
+              68,
+              86
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -85,
+              -62
+            ],
+            "top_left": [
+              79,
+              190
+            ],
+            "pico2d": [
+              79,
+              66
+            ]
+          }
+        ],
+        "homing": {
+          "relative_to_pivot_pico2d": [
+            -97,
+            -27
+          ],
+          "top_left": [
+            67,
+            155
+          ],
+          "pico2d": [
+            67,
+            101
+          ]
+        }
+      },
+      "pivot": {
+        "relative_to_pivot_pico2d": [
+          0,
+          0
+        ],
+        "top_left": [
+          164,
+          128
+        ],
+        "pico2d": [
+          164,
+          128
+        ]
+      },
+      "rect_pico2d": [
+        768,
+        768,
+        256,
+        256
+      ],
+      "rect_top_left": [
+        768,
+        1280,
+        256,
+        256
+      ],
+      "sheet": "boss1-body.png",
+      "socket_usage": {
+        "muzzle": false,
+        "barrage": false,
+        "homing": false,
+        "laser": true
+      }
+    },
+    "laser_hold_00": {
+      "source_transform": {
+        "translate": [
+          9.019999999999982,
+          -1.2800000000000011
+        ],
+        "scale": 1.08
+      },
+      "head_reference": {
+        "relative_to_pivot_pico2d": [
+          0,
+          64
+        ],
+        "top_left": [
+          164,
+          64
+        ],
+        "pico2d": [
+          164,
+          192
+        ]
+      },
+      "bounds_top_left": [
+        37,
+        15,
+        220,
+        224
+      ],
+      "sockets": {
+        "laser": {
+          "relative_to_pivot_pico2d": [
+            -127,
+            -17
+          ],
+          "top_left": [
+            37,
+            145
+          ],
+          "pico2d": [
+            37,
+            111
+          ]
+        },
+        "muzzle": {
+          "relative_to_pivot_pico2d": [
+            -127,
+            -17
+          ],
+          "top_left": [
+            37,
+            145
+          ],
+          "pico2d": [
+            37,
+            111
+          ]
+        },
+        "barrage": [
+          {
+            "relative_to_pivot_pico2d": [
+              -122,
+              19
+            ],
+            "top_left": [
+              42,
+              109
+            ],
+            "pico2d": [
+              42,
+              147
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -123,
+              17
+            ],
+            "top_left": [
+              41,
+              111
+            ],
+            "pico2d": [
+              41,
+              145
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -127,
+              -17
+            ],
+            "top_left": [
+              37,
+              145
+            ],
+            "pico2d": [
+              37,
+              111
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -126,
+              -22
+            ],
+            "top_left": [
+              38,
+              150
+            ],
+            "pico2d": [
+              38,
+              106
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -117,
+              -43
+            ],
+            "top_left": [
+              47,
+              171
+            ],
+            "pico2d": [
+              47,
+              85
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -95,
+              -65
+            ],
+            "top_left": [
+              69,
+              193
+            ],
+            "pico2d": [
+              69,
+              63
+            ]
+          }
+        ],
+        "homing": {
+          "relative_to_pivot_pico2d": [
+            -127,
+            -17
+          ],
+          "top_left": [
+            37,
+            145
+          ],
+          "pico2d": [
+            37,
+            111
+          ]
+        }
+      },
+      "pivot": {
+        "relative_to_pivot_pico2d": [
+          0,
+          0
+        ],
+        "top_left": [
+          164,
+          128
+        ],
+        "pico2d": [
+          164,
+          128
+        ]
+      },
+      "rect_pico2d": [
+        0,
+        512,
+        256,
+        256
+      ],
+      "rect_top_left": [
+        0,
+        1536,
+        256,
+        256
+      ],
+      "sheet": "boss1-body.png",
+      "socket_usage": {
+        "muzzle": false,
+        "barrage": false,
+        "homing": false,
+        "laser": true
+      }
+    },
+    "laser_hold_01": {
+      "source_transform": {
+        "translate": [
+          12.259999999999991,
+          -1.2800000000000011
+        ],
+        "scale": 1.08
+      },
+      "head_reference": {
+        "relative_to_pivot_pico2d": [
+          0,
+          64
+        ],
+        "top_left": [
+          164,
+          64
+        ],
+        "pico2d": [
+          164,
+          192
+        ]
+      },
+      "bounds_top_left": [
+        25,
+        15,
+        218,
+        225
+      ],
+      "sockets": {
+        "laser": {
+          "relative_to_pivot_pico2d": [
+            -139,
+            -15
+          ],
+          "top_left": [
+            25,
+            143
+          ],
+          "pico2d": [
+            25,
+            113
+          ]
+        },
+        "muzzle": {
+          "relative_to_pivot_pico2d": [
+            -139,
+            -15
+          ],
+          "top_left": [
+            25,
+            143
+          ],
+          "pico2d": [
+            25,
+            113
+          ]
+        },
+        "barrage": [
+          {
+            "relative_to_pivot_pico2d": [
+              -135,
+              21
+            ],
+            "top_left": [
+              29,
+              107
+            ],
+            "pico2d": [
+              29,
+              149
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -136,
+              18
+            ],
+            "top_left": [
+              28,
+              110
+            ],
+            "pico2d": [
+              28,
+              146
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -139,
+              -15
+            ],
+            "top_left": [
+              25,
+              143
+            ],
+            "pico2d": [
+              25,
+              113
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -137,
+              -22
+            ],
+            "top_left": [
+              27,
+              150
+            ],
+            "pico2d": [
+              27,
+              106
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -133,
+              -43
+            ],
+            "top_left": [
+              31,
+              171
+            ],
+            "pico2d": [
+              31,
+              85
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -107,
+              -67
+            ],
+            "top_left": [
+              57,
+              195
+            ],
+            "pico2d": [
+              57,
+              61
+            ]
+          }
+        ],
+        "homing": {
+          "relative_to_pivot_pico2d": [
+            -139,
+            -15
+          ],
+          "top_left": [
+            25,
+            143
+          ],
+          "pico2d": [
+            25,
+            113
+          ]
+        }
+      },
+      "pivot": {
+        "relative_to_pivot_pico2d": [
+          0,
+          0
+        ],
+        "top_left": [
+          164,
+          128
+        ],
+        "pico2d": [
+          164,
+          128
+        ]
+      },
+      "rect_pico2d": [
+        256,
+        512,
+        256,
+        256
+      ],
+      "rect_top_left": [
+        256,
+        1536,
+        256,
+        256
+      ],
+      "sheet": "boss1-body.png",
+      "socket_usage": {
+        "muzzle": false,
+        "barrage": false,
+        "homing": false,
+        "laser": true
+      }
+    },
+    "laser_hold_02": {
+      "source_transform": {
+        "translate": [
+          14.419999999999987,
+          -2.3599999999999994
+        ],
+        "scale": 1.08
+      },
+      "head_reference": {
+        "relative_to_pivot_pico2d": [
+          0,
+          64
+        ],
+        "top_left": [
+          164,
+          64
+        ],
+        "pico2d": [
+          164,
+          192
+        ]
+      },
+      "bounds_top_left": [
+        26,
+        15,
+        217,
+        223
+      ],
+      "sockets": {
+        "laser": {
+          "relative_to_pivot_pico2d": [
+            -137,
+            -12
+          ],
+          "top_left": [
+            27,
+            140
+          ],
+          "pico2d": [
+            27,
+            116
+          ]
+        },
+        "muzzle": {
+          "relative_to_pivot_pico2d": [
+            -137,
+            -12
+          ],
+          "top_left": [
+            27,
+            140
+          ],
+          "pico2d": [
+            27,
+            116
+          ]
+        },
+        "barrage": [
+          {
+            "relative_to_pivot_pico2d": [
+              -128,
+              21
+            ],
+            "top_left": [
+              36,
+              107
+            ],
+            "pico2d": [
+              36,
+              149
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -129,
+              18
+            ],
+            "top_left": [
+              35,
+              110
+            ],
+            "pico2d": [
+              35,
+              146
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -137,
+              -12
+            ],
+            "top_left": [
+              27,
+              140
+            ],
+            "pico2d": [
+              27,
+              116
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -135,
+              -22
+            ],
+            "top_left": [
+              29,
+              150
+            ],
+            "pico2d": [
+              29,
+              106
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -132,
+              -42
+            ],
+            "top_left": [
+              32,
+              170
+            ],
+            "pico2d": [
+              32,
+              86
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -107,
+              -62
+            ],
+            "top_left": [
+              57,
+              190
+            ],
+            "pico2d": [
+              57,
+              66
+            ]
+          }
+        ],
+        "homing": {
+          "relative_to_pivot_pico2d": [
+            -137,
+            -12
+          ],
+          "top_left": [
+            27,
+            140
+          ],
+          "pico2d": [
+            27,
+            116
+          ]
+        }
+      },
+      "pivot": {
+        "relative_to_pivot_pico2d": [
+          0,
+          0
+        ],
+        "top_left": [
+          164,
+          128
+        ],
+        "pico2d": [
+          164,
+          128
+        ]
+      },
+      "rect_pico2d": [
+        512,
+        512,
+        256,
+        256
+      ],
+      "rect_top_left": [
+        512,
+        1536,
+        256,
+        256
+      ],
+      "sheet": "boss1-body.png",
+      "socket_usage": {
+        "muzzle": false,
+        "barrage": false,
+        "homing": false,
+        "laser": true
+      }
+    },
+    "laser_hold_03": {
+      "source_transform": {
+        "translate": [
+          17.659999999999997,
+          -2.3599999999999994
+        ],
+        "scale": 1.08
+      },
+      "head_reference": {
+        "relative_to_pivot_pico2d": [
+          0,
+          64
+        ],
+        "top_left": [
+          164,
+          64
+        ],
+        "pico2d": [
+          164,
+          192
+        ]
+      },
+      "bounds_top_left": [
+        26,
+        15,
+        213,
+        224
+      ],
+      "sockets": {
+        "laser": {
+          "relative_to_pivot_pico2d": [
+            -138,
+            -14
+          ],
+          "top_left": [
+            26,
+            142
+          ],
+          "pico2d": [
+            26,
+            114
+          ]
+        },
+        "muzzle": {
+          "relative_to_pivot_pico2d": [
+            -138,
+            -14
+          ],
+          "top_left": [
+            26,
+            142
+          ],
+          "pico2d": [
+            26,
+            114
+          ]
+        },
+        "barrage": [
+          {
+            "relative_to_pivot_pico2d": [
+              -133,
+              19
+            ],
+            "top_left": [
+              31,
+              109
+            ],
+            "pico2d": [
+              31,
+              147
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -134,
+              17
+            ],
+            "top_left": [
+              30,
+              111
+            ],
+            "pico2d": [
+              30,
+              145
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -138,
+              -14
+            ],
+            "top_left": [
+              26,
+              142
+            ],
+            "pico2d": [
+              26,
+              114
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -137,
+              -22
+            ],
+            "top_left": [
+              27,
+              150
+            ],
+            "pico2d": [
+              27,
+              106
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -132,
+              -42
+            ],
+            "top_left": [
+              32,
+              170
+            ],
+            "pico2d": [
+              32,
+              86
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -108,
+              -66
+            ],
+            "top_left": [
+              56,
+              194
+            ],
+            "pico2d": [
+              56,
+              62
+            ]
+          }
+        ],
+        "homing": {
+          "relative_to_pivot_pico2d": [
+            -138,
+            -14
+          ],
+          "top_left": [
+            26,
+            142
+          ],
+          "pico2d": [
+            26,
+            114
+          ]
+        }
+      },
+      "pivot": {
+        "relative_to_pivot_pico2d": [
+          0,
+          0
+        ],
+        "top_left": [
+          164,
+          128
+        ],
+        "pico2d": [
+          164,
+          128
+        ]
+      },
+      "rect_pico2d": [
+        768,
+        512,
+        256,
+        256
+      ],
+      "rect_top_left": [
+        768,
+        1536,
+        256,
+        256
+      ],
+      "sheet": "boss1-body.png",
+      "socket_usage": {
+        "muzzle": false,
+        "barrage": false,
+        "homing": false,
+        "laser": true
+      }
+    },
+    "recover_00": {
+      "source_transform": {
+        "translate": [
+          9.560000000000002,
+          4.119999999999999
+        ],
+        "scale": 1.08
+      },
+      "head_reference": {
+        "relative_to_pivot_pico2d": [
+          0,
+          64
+        ],
+        "top_left": [
+          164,
+          64
+        ],
+        "pico2d": [
+          164,
+          192
+        ]
+      },
+      "bounds_top_left": [
+        83,
+        15,
+        216,
+        221
+      ],
+      "sockets": {
+        "laser": {
+          "relative_to_pivot_pico2d": [
+            -80,
+            -29
+          ],
+          "top_left": [
+            84,
+            157
+          ],
+          "pico2d": [
+            84,
+            99
+          ]
+        },
+        "muzzle": {
+          "relative_to_pivot_pico2d": [
+            -80,
+            -29
+          ],
+          "top_left": [
+            84,
+            157
+          ],
+          "pico2d": [
+            84,
+            99
+          ]
+        },
+        "barrage": [
+          {
+            "relative_to_pivot_pico2d": [
+              -46,
+              38
+            ],
+            "top_left": [
+              118,
+              90
+            ],
+            "pico2d": [
+              118,
+              166
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -48,
+              -1
+            ],
+            "top_left": [
+              116,
+              129
+            ],
+            "pico2d": [
+              116,
+              127
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -75,
+              -20
+            ],
+            "top_left": [
+              89,
+              148
+            ],
+            "pico2d": [
+              89,
+              108
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -80,
+              -29
+            ],
+            "top_left": [
+              84,
+              157
+            ],
+            "pico2d": [
+              84,
+              99
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -80,
+              -42
+            ],
+            "top_left": [
+              84,
+              170
+            ],
+            "pico2d": [
+              84,
+              86
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -71,
+              -65
+            ],
+            "top_left": [
+              93,
+              193
+            ],
+            "pico2d": [
+              93,
+              63
+            ]
+          }
+        ],
+        "homing": {
+          "relative_to_pivot_pico2d": [
+            -80,
+            -29
+          ],
+          "top_left": [
+            84,
+            157
+          ],
+          "pico2d": [
+            84,
+            99
+          ]
+        }
+      },
+      "pivot": {
+        "relative_to_pivot_pico2d": [
+          0,
+          0
+        ],
+        "top_left": [
+          164,
+          128
+        ],
+        "pico2d": [
+          164,
+          128
+        ]
+      },
+      "rect_pico2d": [
+        0,
+        256,
+        256,
+        256
+      ],
+      "rect_top_left": [
+        0,
+        1792,
+        256,
+        256
+      ],
+      "sheet": "boss1-body.png",
+      "socket_usage": {
+        "muzzle": false,
+        "barrage": false,
+        "homing": false,
+        "laser": false
+      }
+    },
+    "recover_01": {
+      "source_transform": {
+        "translate": [
+          13.340000000000003,
+          3.039999999999999
+        ],
+        "scale": 1.08
+      },
+      "head_reference": {
+        "relative_to_pivot_pico2d": [
+          0,
+          64
+        ],
+        "top_left": [
+          164,
+          64
+        ],
+        "pico2d": [
+          164,
+          192
+        ]
+      },
+      "bounds_top_left": [
+        71,
+        15,
+        221,
+        220
+      ],
+      "sockets": {
+        "laser": {
+          "relative_to_pivot_pico2d": [
+            -93,
+            -38
+          ],
+          "top_left": [
+            71,
+            166
+          ],
+          "pico2d": [
+            71,
+            90
+          ]
+        },
+        "muzzle": {
+          "relative_to_pivot_pico2d": [
+            -93,
+            -38
+          ],
+          "top_left": [
+            71,
+            166
+          ],
+          "pico2d": [
+            71,
+            90
+          ]
+        },
+        "barrage": [
+          {
+            "relative_to_pivot_pico2d": [
+              -50,
+              38
+            ],
+            "top_left": [
+              114,
+              90
+            ],
+            "pico2d": [
+              114,
+              166
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -46,
+              0
+            ],
+            "top_left": [
+              118,
+              128
+            ],
+            "pico2d": [
+              118,
+              128
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -80,
+              -21
+            ],
+            "top_left": [
+              84,
+              149
+            ],
+            "pico2d": [
+              84,
+              107
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -93,
+              -38
+            ],
+            "top_left": [
+              71,
+              166
+            ],
+            "pico2d": [
+              71,
+              90
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -93,
+              -42
+            ],
+            "top_left": [
+              71,
+              170
+            ],
+            "pico2d": [
+              71,
+              86
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -72,
+              -62
+            ],
+            "top_left": [
+              92,
+              190
+            ],
+            "pico2d": [
+              92,
+              66
+            ]
+          }
+        ],
+        "homing": {
+          "relative_to_pivot_pico2d": [
+            -93,
+            -38
+          ],
+          "top_left": [
+            71,
+            166
+          ],
+          "pico2d": [
+            71,
+            90
+          ]
+        }
+      },
+      "pivot": {
+        "relative_to_pivot_pico2d": [
+          0,
+          0
+        ],
+        "top_left": [
+          164,
+          128
+        ],
+        "pico2d": [
+          164,
+          128
+        ]
+      },
+      "rect_pico2d": [
+        256,
+        256,
+        256,
+        256
+      ],
+      "rect_top_left": [
+        256,
+        1792,
+        256,
+        256
+      ],
+      "sheet": "boss1-body.png",
+      "socket_usage": {
+        "muzzle": false,
+        "barrage": false,
+        "homing": false,
+        "laser": false
+      }
+    },
+    "recover_02": {
+      "source_transform": {
+        "translate": [
+          16.039999999999992,
+          4.119999999999999
+        ],
+        "scale": 1.08
+      },
+      "head_reference": {
+        "relative_to_pivot_pico2d": [
+          0,
+          64
+        ],
+        "top_left": [
+          164,
+          64
+        ],
+        "pico2d": [
+          164,
+          192
+        ]
+      },
+      "bounds_top_left": [
+        68,
+        16,
+        221,
+        226
+      ],
+      "sockets": {
+        "laser": {
+          "relative_to_pivot_pico2d": [
+            -95,
+            -47
+          ],
+          "top_left": [
+            69,
+            175
+          ],
+          "pico2d": [
+            69,
+            81
+          ]
+        },
+        "muzzle": {
+          "relative_to_pivot_pico2d": [
+            -95,
+            -47
+          ],
+          "top_left": [
+            69,
+            175
+          ],
+          "pico2d": [
+            69,
+            81
+          ]
+        },
+        "barrage": [
+          {
+            "relative_to_pivot_pico2d": [
+              -52,
+              38
+            ],
+            "top_left": [
+              112,
+              90
+            ],
+            "pico2d": [
+              112,
+              166
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -52,
+              0
+            ],
+            "top_left": [
+              112,
+              128
+            ],
+            "pico2d": [
+              112,
+              128
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -58,
+              -19
+            ],
+            "top_left": [
+              106,
+              147
+            ],
+            "pico2d": [
+              106,
+              109
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -88,
+              -41
+            ],
+            "top_left": [
+              76,
+              169
+            ],
+            "pico2d": [
+              76,
+              87
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -95,
+              -47
+            ],
+            "top_left": [
+              69,
+              175
+            ],
+            "pico2d": [
+              69,
+              81
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -90,
+              -62
+            ],
+            "top_left": [
+              74,
+              190
+            ],
+            "pico2d": [
+              74,
+              66
+            ]
+          }
+        ],
+        "homing": {
+          "relative_to_pivot_pico2d": [
+            -95,
+            -47
+          ],
+          "top_left": [
+            69,
+            175
+          ],
+          "pico2d": [
+            69,
+            81
+          ]
+        }
+      },
+      "pivot": {
+        "relative_to_pivot_pico2d": [
+          0,
+          0
+        ],
+        "top_left": [
+          164,
+          128
+        ],
+        "pico2d": [
+          164,
+          128
+        ]
+      },
+      "rect_pico2d": [
+        512,
+        256,
+        256,
+        256
+      ],
+      "rect_top_left": [
+        512,
+        1792,
+        256,
+        256
+      ],
+      "sheet": "boss1-body.png",
+      "socket_usage": {
+        "muzzle": false,
+        "barrage": false,
+        "homing": false,
+        "laser": false
+      }
+    },
+    "recover_03": {
+      "source_transform": {
+        "translate": [
+          18.19999999999999,
+          4.119999999999999
+        ],
+        "scale": 1.08
+      },
+      "head_reference": {
+        "relative_to_pivot_pico2d": [
+          0,
+          64
+        ],
+        "top_left": [
+          164,
+          64
+        ],
+        "pico2d": [
+          164,
+          192
+        ]
+      },
+      "bounds_top_left": [
+        76,
+        16,
+        213,
+        228
+      ],
+      "sockets": {
+        "laser": {
+          "relative_to_pivot_pico2d": [
+            -88,
+            -55
+          ],
+          "top_left": [
+            76,
+            183
+          ],
+          "pico2d": [
+            76,
+            73
+          ]
+        },
+        "muzzle": {
+          "relative_to_pivot_pico2d": [
+            -88,
+            -55
+          ],
+          "top_left": [
+            76,
+            183
+          ],
+          "pico2d": [
+            76,
+            73
+          ]
+        },
+        "barrage": [
+          {
+            "relative_to_pivot_pico2d": [
+              -56,
+              38
+            ],
+            "top_left": [
+              108,
+              90
+            ],
+            "pico2d": [
+              108,
+              166
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -53,
+              1
+            ],
+            "top_left": [
+              111,
+              127
+            ],
+            "pico2d": [
+              111,
+              129
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -56,
+              -12
+            ],
+            "top_left": [
+              108,
+              140
+            ],
+            "pico2d": [
+              108,
+              116
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -59,
+              -40
+            ],
+            "top_left": [
+              105,
+              168
+            ],
+            "pico2d": [
+              105,
+              88
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -88,
+              -55
+            ],
+            "top_left": [
+              76,
+              183
+            ],
+            "pico2d": [
+              76,
+              73
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -87,
+              -62
+            ],
+            "top_left": [
+              77,
+              190
+            ],
+            "pico2d": [
+              77,
+              66
+            ]
+          }
+        ],
+        "homing": {
+          "relative_to_pivot_pico2d": [
+            -88,
+            -55
+          ],
+          "top_left": [
+            76,
+            183
+          ],
+          "pico2d": [
+            76,
+            73
+          ]
+        }
+      },
+      "pivot": {
+        "relative_to_pivot_pico2d": [
+          0,
+          0
+        ],
+        "top_left": [
+          164,
+          128
+        ],
+        "pico2d": [
+          164,
+          128
+        ]
+      },
+      "rect_pico2d": [
+        768,
+        256,
+        256,
+        256
+      ],
+      "rect_top_left": [
+        768,
+        1792,
+        256,
+        256
+      ],
+      "sheet": "boss1-body.png",
+      "socket_usage": {
+        "muzzle": false,
+        "barrage": false,
+        "homing": false,
+        "laser": false
+      }
+    },
+    "death_00": {
+      "source_transform": {
+        "translate": [
+          17,
+          16
+        ],
+        "scale": 1.08
+      },
+      "head_reference": {
+        "relative_to_pivot_pico2d": [
+          0,
+          64
+        ],
+        "top_left": [
+          164,
+          64
+        ],
+        "pico2d": [
+          164,
+          192
+        ]
+      },
+      "bounds_top_left": [
+        95,
+        21,
+        230,
+        233
+      ],
+      "sockets": {
+        "laser": {
+          "relative_to_pivot_pico2d": [
+            -69,
+            -60
+          ],
+          "top_left": [
+            95,
+            188
+          ],
+          "pico2d": [
+            95,
+            68
+          ]
+        },
+        "muzzle": {
+          "relative_to_pivot_pico2d": [
+            -69,
+            -60
+          ],
+          "top_left": [
+            95,
+            188
+          ],
+          "pico2d": [
+            95,
+            68
+          ]
+        },
+        "barrage": [
+          {
+            "relative_to_pivot_pico2d": [
+              -40,
+              38
+            ],
+            "top_left": [
+              124,
+              90
+            ],
+            "pico2d": [
+              124,
+              166
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -33,
+              0
+            ],
+            "top_left": [
+              131,
+              128
+            ],
+            "pico2d": [
+              131,
+              128
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -36,
+              -16
+            ],
+            "top_left": [
+              128,
+              144
+            ],
+            "pico2d": [
+              128,
+              112
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -38,
+              -38
+            ],
+            "top_left": [
+              126,
+              166
+            ],
+            "pico2d": [
+              126,
+              90
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -69,
+              -60
+            ],
+            "top_left": [
+              95,
+              188
+            ],
+            "pico2d": [
+              95,
+              68
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -69,
+              -62
+            ],
+            "top_left": [
+              95,
+              190
+            ],
+            "pico2d": [
+              95,
+              66
+            ]
+          }
+        ],
+        "homing": {
+          "relative_to_pivot_pico2d": [
+            -69,
+            -60
+          ],
+          "top_left": [
+            95,
+            188
+          ],
+          "pico2d": [
+            95,
+            68
+          ]
+        }
+      },
+      "pivot": {
+        "relative_to_pivot_pico2d": [
+          0,
+          0
+        ],
+        "top_left": [
+          164,
+          128
+        ],
+        "pico2d": [
+          164,
+          128
+        ]
+      },
+      "rect_pico2d": [
+        0,
+        0,
+        256,
+        256
+      ],
+      "rect_top_left": [
+        0,
+        2048,
+        256,
+        256
+      ],
+      "sheet": "boss1-body.png",
+      "socket_usage": {
+        "muzzle": false,
+        "barrage": false,
+        "homing": false,
+        "laser": false
+      }
+    },
+    "death_01": {
+      "source_transform": {
+        "translate": [
+          17,
+          16
+        ],
+        "scale": 1.08
+      },
+      "head_reference": {
+        "relative_to_pivot_pico2d": [
+          0,
+          64
+        ],
+        "top_left": [
+          164,
+          64
+        ],
+        "pico2d": [
+          164,
+          192
+        ]
+      },
+      "bounds_top_left": [
+        78,
+        24,
+        224,
+        232
+      ],
+      "sockets": {
+        "laser": {
+          "relative_to_pivot_pico2d": [
+            -86,
+            -58
+          ],
+          "top_left": [
+            78,
+            186
+          ],
+          "pico2d": [
+            78,
+            70
+          ]
+        },
+        "muzzle": {
+          "relative_to_pivot_pico2d": [
+            -86,
+            -58
+          ],
+          "top_left": [
+            78,
+            186
+          ],
+          "pico2d": [
+            78,
+            70
+          ]
+        },
+        "barrage": [
+          {
+            "relative_to_pivot_pico2d": [
+              -50,
+              38
+            ],
+            "top_left": [
+              114,
+              90
+            ],
+            "pico2d": [
+              114,
+              166
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -44,
+              18
+            ],
+            "top_left": [
+              120,
+              110
+            ],
+            "pico2d": [
+              120,
+              146
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -42,
+              -16
+            ],
+            "top_left": [
+              122,
+              144
+            ],
+            "pico2d": [
+              122,
+              112
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -46,
+              -40
+            ],
+            "top_left": [
+              118,
+              168
+            ],
+            "pico2d": [
+              118,
+              88
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -86,
+              -58
+            ],
+            "top_left": [
+              78,
+              186
+            ],
+            "pico2d": [
+              78,
+              70
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -86,
+              -62
+            ],
+            "top_left": [
+              78,
+              190
+            ],
+            "pico2d": [
+              78,
+              66
+            ]
+          }
+        ],
+        "homing": {
+          "relative_to_pivot_pico2d": [
+            -86,
+            -58
+          ],
+          "top_left": [
+            78,
+            186
+          ],
+          "pico2d": [
+            78,
+            70
+          ]
+        }
+      },
+      "pivot": {
+        "relative_to_pivot_pico2d": [
+          0,
+          0
+        ],
+        "top_left": [
+          164,
+          128
+        ],
+        "pico2d": [
+          164,
+          128
+        ]
+      },
+      "rect_pico2d": [
+        256,
+        0,
+        256,
+        256
+      ],
+      "rect_top_left": [
+        256,
+        2048,
+        256,
+        256
+      ],
+      "sheet": "boss1-body.png",
+      "socket_usage": {
+        "muzzle": false,
+        "barrage": false,
+        "homing": false,
+        "laser": false
+      }
+    },
+    "death_02": {
+      "source_transform": {
+        "translate": [
+          17,
+          16
+        ],
+        "scale": 1.08
+      },
+      "head_reference": {
+        "relative_to_pivot_pico2d": [
+          0,
+          64
+        ],
+        "top_left": [
+          164,
+          64
+        ],
+        "pico2d": [
+          164,
+          192
+        ]
+      },
+      "bounds_top_left": [
+        53,
+        35,
+        215,
+        231
+      ],
+      "sockets": {
+        "laser": {
+          "relative_to_pivot_pico2d": [
+            -110,
+            -71
+          ],
+          "top_left": [
+            54,
+            199
+          ],
+          "pico2d": [
+            54,
+            57
+          ]
+        },
+        "muzzle": {
+          "relative_to_pivot_pico2d": [
+            -110,
+            -71
+          ],
+          "top_left": [
+            54,
+            199
+          ],
+          "pico2d": [
+            54,
+            57
+          ]
+        },
+        "barrage": [
+          {
+            "relative_to_pivot_pico2d": [
+              -75,
+              23
+            ],
+            "top_left": [
+              89,
+              105
+            ],
+            "pico2d": [
+              89,
+              151
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -75,
+              18
+            ],
+            "top_left": [
+              89,
+              110
+            ],
+            "pico2d": [
+              89,
+              146
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -63,
+              -2
+            ],
+            "top_left": [
+              101,
+              130
+            ],
+            "pico2d": [
+              101,
+              126
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -62,
+              -41
+            ],
+            "top_left": [
+              102,
+              169
+            ],
+            "pico2d": [
+              102,
+              87
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -105,
+              -61
+            ],
+            "top_left": [
+              59,
+              189
+            ],
+            "pico2d": [
+              59,
+              67
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -110,
+              -71
+            ],
+            "top_left": [
+              54,
+              199
+            ],
+            "pico2d": [
+              54,
+              57
+            ]
+          }
+        ],
+        "homing": {
+          "relative_to_pivot_pico2d": [
+            -110,
+            -71
+          ],
+          "top_left": [
+            54,
+            199
+          ],
+          "pico2d": [
+            54,
+            57
+          ]
+        }
+      },
+      "pivot": {
+        "relative_to_pivot_pico2d": [
+          0,
+          0
+        ],
+        "top_left": [
+          164,
+          128
+        ],
+        "pico2d": [
+          164,
+          128
+        ]
+      },
+      "rect_pico2d": [
+        512,
+        0,
+        256,
+        256
+      ],
+      "rect_top_left": [
+        512,
+        2048,
+        256,
+        256
+      ],
+      "sheet": "boss1-body.png",
+      "socket_usage": {
+        "muzzle": false,
+        "barrage": false,
+        "homing": false,
+        "laser": false
+      }
+    },
+    "death_03": {
+      "source_transform": {
+        "translate": [
+          17,
+          16
+        ],
+        "scale": 1.08
+      },
+      "head_reference": {
+        "relative_to_pivot_pico2d": [
+          0,
+          64
+        ],
+        "top_left": [
+          164,
+          64
+        ],
+        "pico2d": [
+          164,
+          192
+        ]
+      },
+      "bounds_top_left": [
+        27,
+        99,
+        213,
+        230
+      ],
+      "sockets": {
+        "laser": {
+          "relative_to_pivot_pico2d": [
+            -135,
+            -76
+          ],
+          "top_left": [
+            29,
+            204
+          ],
+          "pico2d": [
+            29,
+            52
+          ]
+        },
+        "muzzle": {
+          "relative_to_pivot_pico2d": [
+            -135,
+            -76
+          ],
+          "top_left": [
+            29,
+            204
+          ],
+          "pico2d": [
+            29,
+            52
+          ]
+        },
+        "barrage": [
+          {
+            "relative_to_pivot_pico2d": [
+              -75,
+              19
+            ],
+            "top_left": [
+              89,
+              109
+            ],
+            "pico2d": [
+              89,
+              147
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -95,
+              -1
+            ],
+            "top_left": [
+              69,
+              129
+            ],
+            "pico2d": [
+              69,
+              127
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -102,
+              -19
+            ],
+            "top_left": [
+              62,
+              147
+            ],
+            "pico2d": [
+              62,
+              109
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -105,
+              -37
+            ],
+            "top_left": [
+              59,
+              165
+            ],
+            "pico2d": [
+              59,
+              91
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -115,
+              -61
+            ],
+            "top_left": [
+              49,
+              189
+            ],
+            "pico2d": [
+              49,
+              67
+            ]
+          },
+          {
+            "relative_to_pivot_pico2d": [
+              -136,
+              -79
+            ],
+            "top_left": [
+              28,
+              207
+            ],
+            "pico2d": [
+              28,
+              49
+            ]
+          }
+        ],
+        "homing": {
+          "relative_to_pivot_pico2d": [
+            -135,
+            -76
+          ],
+          "top_left": [
+            29,
+            204
+          ],
+          "pico2d": [
+            29,
+            52
+          ]
+        }
+      },
+      "pivot": {
+        "relative_to_pivot_pico2d": [
+          0,
+          0
+        ],
+        "top_left": [
+          164,
+          128
+        ],
+        "pico2d": [
+          164,
+          128
+        ]
+      },
+      "rect_pico2d": [
+        768,
+        0,
+        256,
+        256
+      ],
+      "rect_top_left": [
+        768,
+        2048,
+        256,
+        256
+      ],
+      "sheet": "boss1-body.png",
+      "socket_usage": {
+        "muzzle": false,
+        "barrage": false,
+        "homing": false,
+        "laser": false
+      }
+    },
+    "bullet_00": {
+      "sheet": "boss1-effects.png",
+      "rect_top_left": [
+        0,
+        0,
+        256,
+        256
+      ],
+      "rect_pico2d": [
+        0,
+        1024,
+        256,
+        256
+      ],
+      "bounds_top_left": [
+        106,
+        117,
+        172,
+        155
+      ],
+      "pivot": {
+        "pico2d": [
+          128,
+          128
+        ],
+        "top_left": [
+          128,
+          128
+        ]
+      }
+    },
+    "bullet_01": {
+      "sheet": "boss1-effects.png",
+      "rect_top_left": [
+        256,
+        0,
+        256,
+        256
+      ],
+      "rect_pico2d": [
+        256,
+        1024,
+        256,
+        256
+      ],
+      "bounds_top_left": [
+        88,
+        115,
+        184,
+        158
+      ],
+      "pivot": {
+        "pico2d": [
+          128,
+          128
+        ],
+        "top_left": [
+          128,
+          128
+        ]
+      }
+    },
+    "bullet_02": {
+      "sheet": "boss1-effects.png",
+      "rect_top_left": [
+        512,
+        0,
+        256,
+        256
+      ],
+      "rect_pico2d": [
+        512,
+        1024,
+        256,
+        256
+      ],
+      "bounds_top_left": [
+        63,
+        114,
+        192,
+        158
+      ],
+      "pivot": {
+        "pico2d": [
+          128,
+          128
+        ],
+        "top_left": [
+          128,
+          128
+        ]
+      }
+    },
+    "bullet_03": {
+      "sheet": "boss1-effects.png",
+      "rect_top_left": [
+        768,
+        0,
+        256,
+        256
+      ],
+      "rect_pico2d": [
+        768,
+        1024,
+        256,
+        256
+      ],
+      "bounds_top_left": [
+        45,
+        114,
+        188,
+        158
+      ],
+      "pivot": {
+        "pico2d": [
+          128,
+          128
+        ],
+        "top_left": [
+          128,
+          128
+        ]
+      }
+    },
+    "homing_missile_00": {
+      "sheet": "boss1-effects.png",
+      "rect_top_left": [
+        0,
+        256,
+        256,
+        256
+      ],
+      "rect_pico2d": [
+        0,
+        768,
+        256,
+        256
+      ],
+      "bounds_top_left": [
+        77,
+        101,
+        200,
+        172
+      ],
+      "pivot": {
+        "pico2d": [
+          128,
+          128
+        ],
+        "top_left": [
+          128,
+          128
+        ]
+      }
+    },
+    "homing_missile_01": {
+      "sheet": "boss1-effects.png",
+      "rect_top_left": [
+        256,
+        256,
+        256,
+        256
+      ],
+      "rect_pico2d": [
+        256,
+        768,
+        256,
+        256
+      ],
+      "bounds_top_left": [
+        66,
+        101,
+        197,
+        172
+      ],
+      "pivot": {
+        "pico2d": [
+          128,
+          128
+        ],
+        "top_left": [
+          128,
+          128
+        ]
+      }
+    },
+    "homing_missile_02": {
+      "sheet": "boss1-effects.png",
+      "rect_top_left": [
+        512,
+        256,
+        256,
+        256
+      ],
+      "rect_pico2d": [
+        512,
+        768,
+        256,
+        256
+      ],
+      "bounds_top_left": [
+        53,
+        101,
+        202,
+        171
+      ],
+      "pivot": {
+        "pico2d": [
+          128,
+          128
+        ],
+        "top_left": [
+          128,
+          128
+        ]
+      }
+    },
+    "homing_missile_03": {
+      "sheet": "boss1-effects.png",
+      "rect_top_left": [
+        768,
+        256,
+        256,
+        256
+      ],
+      "rect_pico2d": [
+        768,
+        768,
+        256,
+        256
+      ],
+      "bounds_top_left": [
+        48,
+        101,
+        197,
+        172
+      ],
+      "pivot": {
+        "pico2d": [
+          128,
+          128
+        ],
+        "top_left": [
+          128,
+          128
+        ]
+      }
+    },
+    "laser_tile_00": {
+      "sheet": "boss1-effects.png",
+      "rect_top_left": [
+        0,
+        512,
+        256,
+        256
+      ],
+      "rect_pico2d": [
+        0,
+        512,
+        256,
+        256
+      ],
+      "bounds_top_left": [
+        44,
+        112,
+        229,
+        140
+      ],
+      "pivot": {
+        "pico2d": [
+          128,
+          128
+        ],
+        "top_left": [
+          128,
+          128
+        ]
+      }
+    },
+    "laser_tile_01": {
+      "sheet": "boss1-effects.png",
+      "rect_top_left": [
+        256,
+        512,
+        256,
+        256
+      ],
+      "rect_pico2d": [
+        256,
+        512,
+        256,
+        256
+      ],
+      "bounds_top_left": [
+        37,
+        107,
+        227,
+        143
+      ],
+      "pivot": {
+        "pico2d": [
+          128,
+          128
+        ],
+        "top_left": [
+          128,
+          128
+        ]
+      }
+    },
+    "laser_tile_02": {
+      "sheet": "boss1-effects.png",
+      "rect_top_left": [
+        512,
+        512,
+        256,
+        256
+      ],
+      "rect_pico2d": [
+        512,
+        512,
+        256,
+        256
+      ],
+      "bounds_top_left": [
+        27,
+        105,
+        222,
+        204
+      ],
+      "pivot": {
+        "pico2d": [
+          128,
+          128
+        ],
+        "top_left": [
+          128,
+          128
+        ]
+      }
+    },
+    "laser_tile_03": {
+      "sheet": "boss1-effects.png",
+      "rect_top_left": [
+        768,
+        512,
+        256,
+        256
+      ],
+      "rect_pico2d": [
+        768,
+        512,
+        256,
+        256
+      ],
+      "bounds_top_left": [
+        24,
+        112,
+        216,
+        141
+      ],
+      "pivot": {
+        "pico2d": [
+          128,
+          128
+        ],
+        "top_left": [
+          128,
+          128
+        ]
+      }
+    },
+    "explosion_00": {
+      "sheet": "boss1-effects.png",
+      "rect_top_left": [
+        0,
+        768,
+        256,
+        256
+      ],
+      "rect_pico2d": [
+        0,
+        256,
+        256,
+        256
+      ],
+      "bounds_top_left": [
+        117,
+        86,
+        156,
+        127
+      ],
+      "pivot": {
+        "pico2d": [
+          128,
+          128
+        ],
+        "top_left": [
+          128,
+          128
+        ]
+      }
+    },
+    "explosion_01": {
+      "sheet": "boss1-effects.png",
+      "rect_top_left": [
+        256,
+        768,
+        256,
+        256
+      ],
+      "rect_pico2d": [
+        256,
+        256,
+        256,
+        256
+      ],
+      "bounds_top_left": [
+        77,
+        60,
+        188,
+        151
+      ],
+      "pivot": {
+        "pico2d": [
+          128,
+          128
+        ],
+        "top_left": [
+          128,
+          128
+        ]
+      }
+    },
+    "explosion_02": {
+      "sheet": "boss1-effects.png",
+      "rect_top_left": [
+        512,
+        768,
+        256,
+        256
+      ],
+      "rect_pico2d": [
+        512,
+        256,
+        256,
+        256
+      ],
+      "bounds_top_left": [
+        31,
+        53,
+        202,
+        167
+      ],
+      "pivot": {
+        "pico2d": [
+          128,
+          128
+        ],
+        "top_left": [
+          128,
+          128
+        ]
+      }
+    },
+    "explosion_03": {
+      "sheet": "boss1-effects.png",
+      "rect_top_left": [
+        768,
+        768,
+        256,
+        256
+      ],
+      "rect_pico2d": [
+        768,
+        256,
+        256,
+        256
+      ],
+      "bounds_top_left": [
+        49,
+        53,
+        188,
+        162
+      ],
+      "pivot": {
+        "pico2d": [
+          128,
+          128
+        ],
+        "top_left": [
+          128,
+          128
+        ]
+      }
+    },
+    "hit_overlay_00": {
+      "sheet": "boss1-effects.png",
+      "rect_top_left": [
+        0,
+        1024,
+        256,
+        256
+      ],
+      "rect_pico2d": [
+        0,
+        0,
+        256,
+        256
+      ],
+      "bounds_top_left": [
+        106,
+        94,
+        137,
+        134
+      ],
+      "pivot": {
+        "pico2d": [
+          128,
+          128
+        ],
+        "top_left": [
+          128,
+          128
+        ]
+      }
+    },
+    "hit_overlay_01": {
+      "sheet": "boss1-effects.png",
+      "rect_top_left": [
+        256,
+        1024,
+        256,
+        256
+      ],
+      "rect_pico2d": [
+        256,
+        0,
+        256,
+        256
+      ],
+      "bounds_top_left": [
+        90,
+        71,
+        162,
+        145
+      ],
+      "pivot": {
+        "pico2d": [
+          128,
+          128
+        ],
+        "top_left": [
+          128,
+          128
+        ]
+      }
+    },
+    "hit_overlay_02": {
+      "sheet": "boss1-effects.png",
+      "rect_top_left": [
+        512,
+        1024,
+        256,
+        256
+      ],
+      "rect_pico2d": [
+        512,
+        0,
+        256,
+        256
+      ],
+      "bounds_top_left": [
+        66,
+        66,
+        170,
+        158
+      ],
+      "pivot": {
+        "pico2d": [
+          128,
+          128
+        ],
+        "top_left": [
+          128,
+          128
+        ]
+      }
+    },
+    "hit_overlay_03": {
+      "sheet": "boss1-effects.png",
+      "rect_top_left": [
+        768,
+        1024,
+        256,
+        256
+      ],
+      "rect_pico2d": [
+        768,
+        0,
+        256,
+        256
+      ],
+      "bounds_top_left": [
+        84,
+        74,
+        153,
+        151
+      ],
+      "pivot": {
+        "pico2d": [
+          128,
+          128
+        ],
+        "top_left": [
+          128,
+          128
+        ]
+      }
+    }
+  },
+  "code_reference": {
+    "files": [
+      "docs/PRD.md",
+      "boss1.py",
+      "enemy.py",
+      "bullet.py",
+      "homing_missile.py",
+      "sweep_laser.py"
+    ],
+    "collision_size": [
+      144,
+      112
+    ],
+    "rest_collision_height": 56,
+    "default_world": {
+      "width": 960,
+      "height": 540,
+      "ground_y": 80
+    },
+    "pattern_order": "Starts normal, then shuffled groups without immediate repeats. shuffle_patterns=False uses barrage -> normal -> homing -> laser.",
+    "states": {
+      "attack": {
+        "animation": "barrage_fire",
+        "duration_seconds": 2.7,
+        "fire_interval_seconds": 0.45,
+        "shot_times_seconds": [
+          0,
+          0.45,
+          0.9,
+          1.35,
+          1.8,
+          2.25
+        ],
+        "simultaneous_rows": [
+          8,
+          24,
+          40,
+          56,
+          72,
+          88
+        ]
+      },
+      "rest": {
+        "animation": "rest_upper_fire",
+        "duration_seconds": 4,
+        "fire_interval_random_seconds": [
+          0.08,
+          0.14
+        ],
+        "height_random_above_ground": [
+          72,
+          152
+        ],
+        "code_body_height": 56
+      },
+      "normal_burst": {
+        "animation": "normal_fire",
+        "duration_seconds": 0.54,
+        "fire_interval_seconds": 0.18,
+        "shot_times_seconds": [
+          0,
+          0.18,
+          0.36
+        ],
+        "cycles": 2
+      },
+      "normal_pause": {
+        "animation": "idle",
+        "duration_seconds": 0.9
+      },
+      "normal_parry": {
+        "animation": "normal_fire",
+        "duration_seconds": 2.5,
+        "animation_trigger": "single shot at state entry, then idle",
+        "shot_times_seconds": [
+          0
+        ],
+        "rewards_by_cycle": [
+          "doodle",
+          "eraser"
+        ]
+      },
+      "homing_launch": {
+        "animation": "homing_launch",
+        "duration_seconds": 1.4,
+        "fire_interval_seconds": 0.7,
+        "shot_times_seconds": [
+          0,
+          0.7
+        ]
+      },
+      "homing_wait": {
+        "animation": "idle",
+        "end_condition": "has_hostile_projectiles() == false"
+      },
+      "homing_parry": {
+        "animation": "homing_launch",
+        "animation_trigger": "single shot at state entry, then idle",
+        "shot_times_seconds": [
+          0
+        ],
+        "end_condition": "has_hostile_projectiles() == false"
+      },
+      "homing_recover": {
+        "animation": "recover",
+        "duration_seconds": 1
+      },
+      "laser_charge": {
+        "animation": "laser_charge",
+        "duration_seconds": 3,
+        "loop_count": 3
+      },
+      "laser_sweep": {
+        "animation": "laser_hold",
+        "end_condition": "laser.active == false",
+        "default_world_duration_seconds": 5.022222222222222
+      },
+      "laser_recover": {
+        "animation": "recover",
+        "duration_seconds": 1
+      },
+      "dead": {
+        "animation": "death",
+        "duration_seconds": 0.8,
+        "hold_last": true,
+        "authoring_choice": true
+      }
+    },
+    "spawn_rules": {
+      "normal": {
+        "x": "boss.x - boss.WIDTH/2 - Bullet.WIDTH/2",
+        "y": "boss.y - boss.HEIGHT/2 + 28",
+        "parry_y": "clamp(normal_y, ground_y+90, ground_y+130)"
+      },
+      "barrage": {
+        "x": "boss.x - boss.WIDTH/2 - Bullet.WIDTH/2",
+        "y": "ground_y + each BARRAGE_HEIGHTS value"
+      },
+      "rest": {
+        "x": "boss.x - boss.WIDTH/2 - Bullet.WIDTH/2",
+        "y": "ground_y + uniform(72,152)"
+      },
+      "homing": {
+        "x": "boss.x - boss.WIDTH/2 - 14",
+        "y": "ground_y + (90 if reward else 70)"
+      },
+      "laser": {
+        "x_span": "[48, world_width]",
+        "initial_y": "ground_y - 8",
+        "upper_y": "world_height + 8",
+        "final_y": "ground_y + 40",
+        "speed": 180,
+        "thickness": 16,
+        "attachment": "independent world sweep after spawn"
+      }
+    }
+  },
+  "authoring": {
+    "tool": "built-in image_gen",
+    "animation_frame_count": 4,
+    "death_seconds": 0.8,
+    "visual_alignment": "Living frames share a fixed pivot and head placement, with a uniform 1.08 source scale. Pencil contours and tentacle shapes retain small hand-drawn variation.",
+    "sockets": "Cell-local visual attachment points. muzzle/homing/laser use the left-facing colored contour. Six barrage contour attachment points are sampled at successive height bands. These are visual anchors. Existing code uses the independent world spawn_rules above.",
+    "bounds": "bounds_top_left stores [left,top,right,bottom], exclusive right/bottom, alpha > 32",
+    "integration": "Art and metadata package. Current code removes the boss immediately on death, so a future integration must keep a visual actor alive to play and hold death.",
+    "parry_colors": "Ordinary bullet and missile assets are plum. Reward projectile variants require pink for doodle and sky blue for eraser at integration. They are not supplied as separate variants in this package.",
+    "effects": "All effect assets are independent. The laser tile is an isolated beam segment with a transparent margin. Stretching its visible content to the world span and 16px collision thickness is a renderer choice."
+  },
+  "generation_prompts": {
+    "pose": "Create a character pose reference image for Python/pico2d game Doodle Wars. Use the user's attached pink squid alien as identity reference: tall oval bulbous pink head, glossy dark eyes, six long soft tentacles, burgundy colored-pencil outlines, dense pink pencil scribble shading. Transparent background PNG. Exactly THREE full-body poses arranged side by side with generous spacing, no text. All face LEFT in a three-quarter view toward an offscreen player. Pose one neutral idle, long hanging curled tentacles. Pose two normal gunfire body pose, one low front tentacle extended horizontally LEFT as an organic firing nozzle, remaining tentacles hanging, alert eyes. Pose three laser charge body pose, tentacles curl inward and brace, concentrated eyes, subtle teal pencil shading INSIDE the pink body. Same head shape, size, anatomy, outline thickness and pink pencil texture across poses. Keep entire characters inside image with transparent margins. No paper, no scenery, no grid, no captions, no weapons, no projectiles, no beam, no external effects. Charming hand-drawn notebook alien, faithful to reference rather than redesign.\n",
+    "atlas": "Production sprite animation atlas, transparent PNG, EXACT 4 COLUMNS by 9 ROWS, 36 individual full-body sprites, equal square cells, no labels/grid. Use previous three-pose image as identity reference. Pink colored-pencil squid alien, tall oval head, burgundy pencil outline, dark glossy eyes, six long pink tentacles. All face LEFT clearly with both eyes looking left. Same head size and head center (55% cell width, 28% cell height), same line thickness and anatomy in every living frame. Character occupies within central 85% of each square cell, transparent padding. 4 sequential frames per row, left to right. Row1 IDLE tentacles gently curl, no whole-body bob. Row2 NORMAL SHOOT low front tentacle aimed straight LEFT, recoil then return. Row3 BARRAGE six tentacle ends fanned and aimed LEFT at different heights, open/recoil/settle, body size constant. Row4 UPPER REST SHOOT one tentacle raised to upper LEFT, relaxed hanging others, no body squash. Row5 HOMING LAUNCH paired left-facing curled tentacles form open launch cradle, recoil/return. Row6 LASER CHARGE inward curled tense tentacles, subtle cyan pencil highlights within pink body, seamless loop. Row7 LASER HOLD tentacles braced aimed LEFT, concentrated eyes, subtle cyan internal highlights, seamless loop. Row8 RECOVERY tense to relaxed neutral over four frames. Row9 DEATH eyes lose focus then shut, head droops, tentacles wilt then collapse intact at bottom of cell, last frame inert pink heap. Separate cell images, no overlaps. NO projectiles, beam, rockets, gun, explosion, glow, particles, captions, shadows, scenery, paper, checkerboard. Preserve colored-pencil grain. Output tall canvas ratio 4:9 with perfectly regular cell placement.\n",
+    "fx": "Create a transparent game effects sprite atlas with EXACT FOUR columns and FIVE rows of equal square cells, 20 effects. Colored-pencil scribble texture and dark burgundy pencil outlines matching the pink squid alien reference. Each effect isolated inside own cell with generous transparent padding. No alien body. Row1 four left-facing small ordinary hostile bullet animation frames, dark plum/purple seed-shaped energy pellets, no pink or cyan parry color. Row2 four left-facing homing missiles, compact hand-drawn purple organic dart rockets with small tail fins and orange propulsion, consistent size. Row3 four horizontal thin cyan laser beam repeating tile frames, cyan pencil outer streak and nearly white inner core, horizontal centered, suitable for stretching horizontally. Row4 four explosion frames, tiny orange spark grows into pink-orange pencil starburst then dissipating short strokes, no smoke background. Row5 four HIT REACTION OVERLAY frames, just sparse small red/burgundy pencil impact stress strokes and short white glints near cell center, transparent everywhere else, NO head, no face, no silhouette, intended to overlay any attack animation without interrupting it. Equal regular cells. No grid lines, text, paper, scenery, shadows, checkerboard. Real transparent alpha PNG.\n",
+    "clean": "Edit the FIRST attached image, the 4 column by 9 row pink squid animation atlas. Preserve all 36 poses, exact 4x9 cell layout, character identity, pencil grain INSIDE characters, and pink/dark-burgundy contours. Clean the transparency meticulously: remove ALL stray white paper scraps, white halos, loose flecks and colored noise OUTSIDE each alien silhouette, leaving fully transparent pixels outside the clean pencil outline. No exterior white outline. Every full character must stay fully inside its own cell with padding. Make the head of every living sprite the same size, including raised-arm poses. Keep the original tall 4:9 composition, regular equal square cells. No labels, background, effects, grid. Output clean transparent RGBA sprite atlas.\n"
+  }
+}
