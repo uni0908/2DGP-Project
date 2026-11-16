@@ -1,4 +1,4 @@
-"""바닥만 있는 긴 횡스크롤 맵. 오른쪽 끝에서 보스1 전투로 전환한다."""
+"""숲 시안을 한 화면에서 비교하는 횡스크롤 맵."""
 
 from pathlib import Path
 
@@ -13,6 +13,9 @@ from player import Player
 WINDOW_WIDTH, WINDOW_HEIGHT = 960, 540
 WORLD_WIDTH = 3600
 GROUND_Y = 80
+PLAYER_START_X = WINDOW_WIDTH * 0.4
+BACKGROUND_PATH = Path(__file__).resolve().parent / 'assets' / 'images' / 'forest-sample' / 'background.png'
+background = None
 player = None
 camera = None
 font = None
@@ -22,16 +25,17 @@ transition_requested = False
 def enter():
     global player, camera, transition_requested
     game_world.clear()
-    player = Player(120, GROUND_Y, WORLD_WIDTH)
+    player = Player(PLAYER_START_X, GROUND_Y, WORLD_WIDTH)
     camera = Camera(WINDOW_WIDTH, WORLD_WIDTH)
     game_world.add_object(player, game_world.ACTORS)
     transition_requested = False
 
 
 def exit():
-    global player, camera, font
+    global player, camera, font, background
     game_world.clear()
     player = camera = font = None
+    background = None
 
 
 def handle_events(events=None):
@@ -73,24 +77,21 @@ def update(dt):
 
 
 def draw():
-    global font
+    global font, background
     if font is None:
         font = pico2d.load_font(str(Path(pico2d.__file__).parent / 'data' / 'ConsolaMalgun.ttf'), 18)
     pico2d.clear_canvas()
     pico2d.draw_rectangle(0, 0, WINDOW_WIDTH - 1, WINDOW_HEIGHT - 1,
                           247, 247, 239, filled=True)
-    pico2d.draw_rectangle(0, 0, WINDOW_WIDTH - 1, GROUND_Y,
-                          215, 214, 201, filled=True)
-    pico2d.draw_line(0, GROUND_Y, WINDOW_WIDTH, GROUND_Y, 65, 70, 60)
-    # 바닥 이음새만 월드 좌표에 맞춰 그려 스크롤을 확인한다.
-    first = int(camera.x // 96) * 96
-    for x in range(first, first + WINDOW_WIDTH + 96, 96):
-        sx = game_world.screen_x(x)
-        pico2d.draw_line(sx, 0, sx, GROUND_Y, 185, 184, 171)
+    if background is None:
+        background = pico2d.load_image(str(BACKGROUND_PATH))
+    scale = min(WINDOW_WIDTH / background.w, WINDOW_HEIGHT / background.h)
+    background.draw(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2,
+                    background.w * scale, background.h * scale)
     game_world.draw()
-    font.draw(22, WINDOW_HEIGHT - 28, '횡스크롤 맵 1  |  오른쪽 끝에 도착하면 보스1 전투', (45, 60, 50))
-    font.draw(22, WINDOW_HEIGHT - 55, '방향키 이동·웅크림 / Space 점프 / A 사격 / S 낙서 / D 지우개', (60, 70, 60))
-    font.draw(22, WINDOW_HEIGHT - 82, '아래+S 발밑 생성 / 아래+D 발판 삭제 / R 처음부터 / Esc 종료', (60, 70, 60))
-    font.draw(22, 30, f'거리 {int(player.x)} / {WORLD_WIDTH}   낙서 {player.doodle_count}   지우개 {player.eraser_count}',
+    font.draw(520, WINDOW_HEIGHT - 28, '방향키 이동 / Space 점프 / A 사격', (45, 60, 50))
+    font.draw(520, WINDOW_HEIGHT - 55, 'S 낙서 / D 지우개 / R 재시작', (60, 70, 60))
+    font.draw(520, WINDOW_HEIGHT - 82, '아래+S 발밑 생성 / 아래+D 삭제', (60, 70, 60))
+    font.draw(520, WINDOW_HEIGHT - 109, f'거리 {int(player.x)} / {WORLD_WIDTH}   낙서 {player.doodle_count}   지우개 {player.eraser_count}',
               (60, 70, 60))
     pico2d.update_canvas()

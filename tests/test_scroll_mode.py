@@ -80,7 +80,7 @@ class ScrollModeTests(unittest.TestCase):
         scroll_mode.update(.01)
         scroll_mode.handle_events([self.event(pico2d.SDLK_s)])
         scroll_mode.handle_events([self.event(pico2d.SDLK_r)])
-        self.assertEqual(scroll_mode.player.x, 120)
+        self.assertEqual(scroll_mode.player.x, scroll_mode.PLAYER_START_X)
         self.assertEqual(game_world.camera_x, 0)
         self.assertFalse(game_world.objects(game_world.TERRAIN))
 
