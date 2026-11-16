@@ -9,7 +9,7 @@ import game_world
 
 ASSET_DIR = Path(__file__).resolve().parent / 'output' / 'player-sprites-v1'
 DATA = json.loads((ASSET_DIR / 'player-sprites.json').read_text(encoding='utf-8-sig'))
-DISPLAY_HEIGHT = 64.0
+DISPLAY_HEIGHT = 80.0
 RENDER_SCALE = DISPLAY_HEIGHT / DATA['render_reference']['standing_source_height']
 CHARACTER_IMAGE = 'player-character-refined.png'
 CORRECTED_DIR = ASSET_DIR.parent / 'player-sprites-v2'

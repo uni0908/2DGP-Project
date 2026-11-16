@@ -12,7 +12,7 @@ from player import Player
 
 WINDOW_WIDTH, WINDOW_HEIGHT = 960, 540
 WORLD_WIDTH = 3600
-GROUND_Y = 80
+GROUND_Y = 144
 PLAYER_START_X = WINDOW_WIDTH * 0.4
 BACKGROUND_PATH = Path(__file__).resolve().parent / 'assets' / 'images' / 'forest-sample' / 'background.png'
 background = None
