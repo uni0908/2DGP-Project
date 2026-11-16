@@ -2,7 +2,7 @@
 
 import unittest
 from types import SimpleNamespace
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 import pico2d
 import game_framework
@@ -91,3 +91,22 @@ class ScrollModeTests(unittest.TestCase):
         x = scroll_mode.player.x
         scroll_mode.update(.1)
         self.assertEqual(scroll_mode.player.x, x)
+
+    def test_map_layers_keep_camera_alignment_and_foreground_order(self):
+        order = []
+        images = []
+        for name in scroll_mode.MAP_LAYERS:
+            image = Mock()
+            image.clip_draw.side_effect = lambda *args, layer=name: order.append(layer)
+            images.append(image)
+        scroll_mode.player.x = 1800
+        scroll_mode.update(0)
+        with patch.object(scroll_mode, 'map_images', tuple(images)), \
+                patch.object(scroll_mode, 'font', Mock()), \
+                patch.object(game_world, 'draw', side_effect=lambda: order.append('actors')), \
+                patch('pico2d.clear_canvas'), patch('pico2d.draw_rectangle'), \
+                patch('pico2d.update_canvas'):
+            scroll_mode.draw()
+        self.assertEqual(order, [*scroll_mode.MAP_LAYERS[:-1], 'actors', 'foreground.png'])
+        for image in images:
+            self.assertEqual(image.clip_draw.call_args.args[:4], (1416, 0, 960, 540))

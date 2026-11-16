@@ -1,4 +1,4 @@
-"""숲 시안을 한 화면에서 비교하는 횡스크롤 맵."""
+"""다섯 레이어의 숲을 가로로 스크롤하는 맵."""
 
 from pathlib import Path
 
@@ -14,8 +14,10 @@ WINDOW_WIDTH, WINDOW_HEIGHT = 960, 540
 WORLD_WIDTH = 3600
 GROUND_Y = 144
 PLAYER_START_X = WINDOW_WIDTH * 0.4
-BACKGROUND_PATH = Path(__file__).resolve().parent / 'assets' / 'images' / 'forest-sample' / 'background.png'
-background = None
+MAP_DIR = Path(__file__).resolve().parent / 'assets' / 'images' / 'forest-scroll'
+MAP_LAYERS = ('paper_background.png', 'background.png', 'midground.png',
+              'terrain.png', 'foreground.png')
+map_images = None
 player = None
 camera = None
 font = None
@@ -32,10 +34,10 @@ def enter():
 
 
 def exit():
-    global player, camera, font, background
+    global player, camera, font, map_images
     game_world.clear()
     player = camera = font = None
-    background = None
+    map_images = None
 
 
 def handle_events(events=None):
@@ -77,18 +79,20 @@ def update(dt):
 
 
 def draw():
-    global font, background
+    global font, map_images
     if font is None:
         font = pico2d.load_font(str(Path(pico2d.__file__).parent / 'data' / 'ConsolaMalgun.ttf'), 18)
     pico2d.clear_canvas()
     pico2d.draw_rectangle(0, 0, WINDOW_WIDTH - 1, WINDOW_HEIGHT - 1,
                           247, 247, 239, filled=True)
-    if background is None:
-        background = pico2d.load_image(str(BACKGROUND_PATH))
-    scale = min(WINDOW_WIDTH / background.w, WINDOW_HEIGHT / background.h)
-    background.draw(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2,
-                    background.w * scale, background.h * scale)
+    if map_images is None:
+        map_images = tuple(pico2d.load_image(str(MAP_DIR / name)) for name in MAP_LAYERS)
+    for image in map_images[:-1]:
+        image.clip_draw(int(camera.x), 0, WINDOW_WIDTH, WINDOW_HEIGHT,
+                        WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
     game_world.draw()
+    map_images[-1].clip_draw(int(camera.x), 0, WINDOW_WIDTH, WINDOW_HEIGHT,
+                             WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
     font.draw(520, WINDOW_HEIGHT - 28, '방향키 이동 / Space 점프 / A 사격', (45, 60, 50))
     font.draw(520, WINDOW_HEIGHT - 55, 'S 낙서 / D 지우개 / R 재시작', (60, 70, 60))
     font.draw(520, WINDOW_HEIGHT - 82, '아래+S 발밑 생성 / 아래+D 삭제', (60, 70, 60))
