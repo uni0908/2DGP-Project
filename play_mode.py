@@ -7,6 +7,9 @@ import game_world
 from player import Player
 import player_actions
 from boss1 import Boss1
+from player_hud import PlayerHealthBar
+
+health_bar = PlayerHealthBar()
 
 WINDOW_WIDTH = 960
 WINDOW_HEIGHT = 540
@@ -47,6 +50,7 @@ def exit():
     enemy = None
     game_over = False
     background_images = None
+    health_bar.image = None
 
 
 def handle_events(events=None):
@@ -115,13 +119,14 @@ def draw():
         image.clip_draw(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT,
                         WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
     game_world.draw()
-    font.draw(20, WINDOW_HEIGHT - 30,
-              f'체력: {player.hp}/5   [S] 낙서: {player.doodle_count}   [D] 지우개: {player.eraser_count}',
+    health_bar.draw(player.hp)
+    font.draw(250, WINDOW_HEIGHT - 30,
+              f'[S] 낙서: {player.doodle_count}   [D] 지우개: {player.eraser_count}',
               (30, 30, 30))
-    font.draw(20, WINDOW_HEIGHT - 58, '좌우: 이동  아래: 웅크리기  Space: 점프  A: 연사  Esc: 종료',
+    font.draw(20, WINDOW_HEIGHT - 100, '좌우: 이동  아래: 웅크리기  Space: 점프  A: 연사  Esc: 종료',
               (30, 30, 30))
-    font.draw(20, WINDOW_HEIGHT - 84, '아래 + S: 발밑 낙서 생성 / 아래 + D: 발판 지우기', (30, 30, 30))
-    font.draw(20, WINDOW_HEIGHT - 112, f'{enemy.NAME} · {enemy.attack_name}', (90, 50, 70))
+    font.draw(20, WINDOW_HEIGHT - 126, '아래 + S: 발밑 낙서 생성 / 아래 + D: 발판 지우기', (30, 30, 30))
+    font.draw(20, WINDOW_HEIGHT - 154, f'{enemy.NAME} · {enemy.attack_name}', (90, 50, 70))
     font.draw(20, 45, 'Space: 짧게/길게 점프  |  공중 재입력: 분홍·하늘탄 패링',
               (30, 30, 30))
     if player.parry_feedback_timer > 0:

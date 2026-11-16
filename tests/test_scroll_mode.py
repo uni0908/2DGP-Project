@@ -102,6 +102,7 @@ class ScrollModeTests(unittest.TestCase):
         scroll_mode.player.x = 1800
         scroll_mode.update(0)
         with patch.object(scroll_mode, 'map_images', tuple(images)), \
+                patch.object(scroll_mode.health_bar, 'draw'), \
                 patch.object(scroll_mode, 'font', Mock()), \
                 patch.object(game_world, 'draw', side_effect=lambda: order.append('actors')), \
                 patch('pico2d.clear_canvas'), patch('pico2d.draw_rectangle'), \

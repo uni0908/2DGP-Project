@@ -9,6 +9,9 @@ import player_actions
 import play_mode
 from camera import Camera
 from player import Player
+from player_hud import PlayerHealthBar
+
+health_bar = PlayerHealthBar()
 
 WINDOW_WIDTH, WINDOW_HEIGHT = 960, 540
 WORLD_WIDTH = 3600
@@ -38,6 +41,7 @@ def exit():
     game_world.clear()
     player = camera = font = None
     map_images = None
+    health_bar.image = None
 
 
 def handle_events(events=None):
@@ -93,6 +97,7 @@ def draw():
     game_world.draw()
     map_images[-1].clip_draw(int(camera.x), 0, WINDOW_WIDTH, WINDOW_HEIGHT,
                              WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
+    health_bar.draw(player.hp)
     font.draw(520, WINDOW_HEIGHT - 28, '방향키 이동 / Space 점프 / A 사격', (45, 60, 50))
     font.draw(520, WINDOW_HEIGHT - 55, 'S 낙서 / D 지우개 / R 재시작', (60, 70, 60))
     font.draw(520, WINDOW_HEIGHT - 82, '아래+S 발밑 생성 / 아래+D 삭제', (60, 70, 60))
