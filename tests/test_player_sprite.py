@@ -80,6 +80,11 @@ class PlayerSpriteTests(unittest.TestCase):
                              PlayerSprite.frame(DATA['animations'][drawing_name], .21))
 
     def test_revised_crouch_plays_supplied_frames_and_keeps_anchors(self):
+        for name in ('crouch_lowered', 'crouch_horizontal',
+                     'crouch_walk_lowered', 'crouch_walk_horizontal'):
+            for frame in DATA['animations'][name]['frames']:
+                self.assertAlmostEqual(frame['head_bounds'][2],
+                                       DATA['normalization']['crouch_head_width'], places=4)
         player = self.player
         player.crouching = True
         player.height = player.CROUCH_HEIGHT
