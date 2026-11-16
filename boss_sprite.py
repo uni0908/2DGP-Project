@@ -54,3 +54,29 @@ class BossSprite:
         self.image(frame['sheet']).clip_draw(
             *frame['rect_pico2d'], game_world.screen_x(center_x), center_y,
             width * scale, height * scale)
+
+    def draw_effect(self, name, elapsed, x, y, width, height, angle=0):
+        frame = animation_frame(name, elapsed)
+        animation = DATA['animations'][name]
+        rectangles = [DATA['frames'][key]['bounds_top_left'] for key in animation['frames']]
+        left = min(rect[0] for rect in rectangles)
+        top = min(rect[1] for rect in rectangles)
+        right = max(rect[2] for rect in rectangles)
+        bottom = max(rect[3] for rect in rectangles)
+        cell_x, cell_y, _, cell_h = frame['rect_pico2d']
+        self.image(frame['sheet']).clip_composite_draw(
+            cell_x + left, cell_y + cell_h - bottom, right - left, bottom - top,
+            angle, '', game_world.screen_x(x), y, width, height)
+
+
+class BossDeath:
+    def __init__(self, sprite, bounds):
+        self.sprite = sprite
+        self.bounds = bounds
+        self.elapsed = 0.0
+
+    def update(self, dt):
+        self.elapsed += max(0, dt)
+
+    def draw(self):
+        self.sprite.draw_body('death', self.elapsed, self.bounds)

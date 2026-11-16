@@ -8,7 +8,7 @@ from bullet import Bullet
 from enemy import TestEnemy
 from homing_missile import HomingMissile
 from sweep_laser import SweepLaser
-from boss_sprite import BossSprite, animation_for
+from boss_sprite import BossSprite, BossDeath, animation_for
 
 
 class Boss1(TestEnemy):
@@ -42,6 +42,7 @@ class Boss1(TestEnemy):
                  shuffle_patterns=True):
         super().__init__(world_width, world_height, ground_y)
         self.sprite = BossSprite()
+        self.hit_elapsed = 1.0
         self.ground_y = ground_y
         self.y = ground_y + self.HEIGHT / 2
         self.state = 'attack'
@@ -84,6 +85,14 @@ class Boss1(TestEnemy):
         self.homing_shots = 0
         self.homing_parry_fired = False
         self.laser = None
+
+    def take_damage(self, amount):
+        if self.hp <= 0 or amount <= 0:
+            return
+        self.hit_elapsed = 0.0
+        super().take_damage(amount)
+        if self.hp == 0:
+            game_world.add_object(BossDeath(self.sprite, self.get_bb()), game_world.EFFECTS)
 
     def choose_next_pattern(self):
         if self.laser_only:
@@ -218,6 +227,7 @@ class Boss1(TestEnemy):
     def update(self, dt):
         if self.hp <= 0:
             return
+        self.hit_elapsed += max(0, dt)
         remaining = max(0, dt)
         while remaining > 0:
             if self.pattern == 'laser' and self.state == 'laser_sweep':
@@ -270,6 +280,9 @@ class Boss1(TestEnemy):
     def draw(self):
         left, bottom, right, top = self.get_bb()
         self.sprite.draw_body(animation_for(self), self.state_time, self.get_bb())
+        if self.hit_elapsed < 1 / 3:
+            self.sprite.draw_effect('hit_overlay', self.hit_elapsed,
+                                    self.x, (bottom + top) / 2, 48, 40)
         pico2d.draw_rectangle(left, top + 8,
                               left + self.WIDTH * self.hp / self.MAX_HP,
                               top + 14, 180, 40, 40, filled=True)

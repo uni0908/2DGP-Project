@@ -3,7 +3,8 @@
 TERRAIN = 0
 ACTORS = 1
 PROJECTILES = 2
-_layers = [[], [], []]
+EFFECTS = 3
+_layers = [[], [], [], []]
 camera_x = 0.0
 
 
