@@ -115,7 +115,7 @@ class ItemTests(unittest.TestCase):
         self.assertLess(player.y, 204)
         self.assertFalse(player.grounded)
         player.update(1)
-        self.assertAlmostEqual(player.y, 108)
+        self.assertAlmostEqual(player.y, play_mode.GROUND_Y + player.height / 2)
 
     def test_other_actors_and_non_doodle_terrain_are_not_damaged(self):
         class Target:
@@ -184,7 +184,7 @@ class ItemTests(unittest.TestCase):
             with self.subTest(direction=direction):
                 player.x = 400
                 player.facing = direction
-                target = Doodle(player.x + direction * 100, 108)
+                target = Doodle(player.x + direction * 100, play_mode.GROUND_Y + 28)
                 game_world.add_object(target, game_world.TERRAIN)
                 before = player.eraser_count
                 eraser = play_mode.throw_eraser()

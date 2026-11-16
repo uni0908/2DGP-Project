@@ -10,7 +10,14 @@ from boss1 import Boss1
 
 WINDOW_WIDTH = 960
 WINDOW_HEIGHT = 540
-GROUND_Y = 80
+GROUND_Y = 144
+IMAGE_DIR = Path(__file__).resolve().parent / 'assets' / 'images'
+BACKGROUND_LAYERS = (
+    IMAGE_DIR / 'forest-scroll' / 'paper_background.png',
+    IMAGE_DIR / 'forest-scroll' / 'background.png',
+    IMAGE_DIR / 'boss-arena' / 'terrain_flat_960x540.png',
+)
+background_images = None
 LASER_TEST_MODE = False  # True로 바꾸면 레이저만 반복하는 테스트 모드다.
 player = None
 font = None
@@ -33,12 +40,13 @@ def enter(player_state=None):
 
 
 def exit():
-    global player, font, enemy, game_over
+    global player, font, enemy, game_over, background_images
     game_world.clear()
     player = None
     font = None
     enemy = None
     game_over = False
+    background_images = None
 
 
 def handle_events(events=None):
@@ -96,12 +104,16 @@ def throw_eraser():
 
 
 def draw():
-    global font
+    global font, background_images
     if font is None:
         font_path = Path(pico2d.__file__).parent / 'data' / 'ConsolaMalgun.ttf'
         font = pico2d.load_font(str(font_path), 20)
     pico2d.clear_canvas()
-    pico2d.draw_rectangle(0, 0, WINDOW_WIDTH - 1, GROUND_Y)
+    if background_images is None:
+        background_images = tuple(pico2d.load_image(str(path)) for path in BACKGROUND_LAYERS)
+    for image in background_images:
+        image.clip_draw(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT,
+                        WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
     game_world.draw()
     font.draw(20, WINDOW_HEIGHT - 30,
               f'체력: {player.hp}/5   [S] 낙서: {player.doodle_count}   [D] 지우개: {player.eraser_count}',
