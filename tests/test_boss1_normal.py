@@ -25,10 +25,10 @@ class Boss1NormalTests(unittest.TestCase):
         for _ in range(700):
             self.boss.update(.01)
             heights.append(self.boss.y)
-            self.assertEqual(self.boss.x, 864)
+            self.assertEqual(self.boss.x, 828)
             self.assertGreaterEqual(self.boss.y, self.boss.min_y)
             self.assertLessEqual(self.boss.y, self.boss.max_y)
-        self.assertGreater(max(heights) - min(heights), 200)
+        self.assertGreater(max(heights) - min(heights), (self.boss.max_y - self.boss.min_y) * .9)
 
     def test_three_shots_then_single_color_bullet_and_recovery_gap(self):
         emissions = []

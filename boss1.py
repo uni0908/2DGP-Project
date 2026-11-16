@@ -17,8 +17,11 @@ class Boss1(TestEnemy):
     NORMAL_ATTACK_NAME = '일반 공격'
     HOMING_ATTACK_NAME = '유도탄 공격'
     LASER_ATTACK_NAME = '레이저 공격'
-    BARRAGE_HEIGHTS = (8, 24, 40, 56, 72, 88)
-    REST_HEIGHT = TestEnemy.HEIGHT / 2
+    WIDTH = 216
+    HEIGHT = 168
+    PROJECTILE_SCALE = 1.5
+    BARRAGE_HEIGHTS = (12, 36, 60, 84, 108, 132)
+    REST_HEIGHT = HEIGHT / 2
     FIRE_INTERVAL = 0.45
     VOLLEYS_PER_BURST = 6
     PHASE_DURATIONS = {'attack': FIRE_INTERVAL * VOLLEYS_PER_BURST, 'rest': 4.0}
@@ -180,6 +183,9 @@ class Boss1(TestEnemy):
         height = self.ground_y + (90 if reward else 70)
         missile = HomingMissile(self.x - self.WIDTH / 2 - 14, height,
                                 target, self.world_width, parry_reward=reward)
+        missile.WIDTH *= self.PROJECTILE_SCALE
+        missile.HEIGHT *= self.PROJECTILE_SCALE
+        missile.x = self.x - self.WIDTH / 2 - missile.WIDTH / 2
         missile.sprite_bank = self.sprite
         game_world.add_object(missile, game_world.PROJECTILES)
         return missile
@@ -206,6 +212,9 @@ class Boss1(TestEnemy):
             height = min(self.ground_y + 130, max(self.ground_y + 90, height))
         bullet = Bullet(self.x - self.WIDTH / 2 - Bullet.WIDTH / 2,
                         height, -1, self.team, self.world_width, parry_reward=reward)
+        bullet.WIDTH *= self.PROJECTILE_SCALE
+        bullet.HEIGHT *= self.PROJECTILE_SCALE
+        bullet.x = self.x - self.WIDTH / 2 - bullet.WIDTH / 2
         bullet.sprite_bank = self.sprite
         game_world.add_object(bullet, game_world.PROJECTILES)
 
@@ -223,7 +232,9 @@ class Boss1(TestEnemy):
             bullet = Bullet(self.x - self.WIDTH / 2 - Bullet.WIDTH / 2,
                             self.ground_y + height, -1, self.team,
                             self.world_width)
-            bullet.HEIGHT = 14
+            bullet.WIDTH *= self.PROJECTILE_SCALE
+            bullet.HEIGHT = 14 * self.PROJECTILE_SCALE
+            bullet.x = self.x - self.WIDTH / 2 - bullet.WIDTH / 2
             bullet.sprite_bank = self.sprite
             bullet.speed = speed
             game_world.add_object(bullet, game_world.PROJECTILES)

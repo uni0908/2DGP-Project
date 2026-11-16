@@ -170,7 +170,7 @@ class BossTests(unittest.TestCase):
         for layers, expected_hp in ((2, 4), (3, 5)):
             game_world.clear()
             player = Player(120, 80, 960)
-            player.y = 140
+            player.y = 164
             game_world.add_object(player, game_world.ACTORS)
             for i in range(layers):
                 game_world.add_object(Doodle(250, 108 + i * 32), game_world.TERRAIN)
@@ -180,17 +180,17 @@ class BossTests(unittest.TestCase):
             self.assertEqual(player.hp, expected_hp)
 
     def test_rest_halves_height_with_feet_fixed_and_restores_afterwards(self):
-        self.assertEqual(self.boss.get_bb()[3] - self.boss.get_bb()[1], 112)
+        self.assertEqual(self.boss.get_bb()[3] - self.boss.get_bb()[1], 168)
         self.boss.state = 'attack'
         self.boss.advance_phase()
         self.assertEqual(self.boss.state, 'rest')
         self.assertEqual(self.boss.get_bb()[1], 80)
-        self.assertEqual(self.boss.get_bb()[3], 136)
-        self.assertEqual(self.boss.y, 108)
+        self.assertEqual(self.boss.get_bb()[3], 164)
+        self.assertEqual(self.boss.y, 122)
         self.shoot(170)
         self.assertEqual(self.boss.hp, 30)
         self.shoot(108)
         self.assertEqual(self.boss.hp, 29)
         self.boss.advance_phase()
         self.assertEqual(self.boss.state, 'normal_burst')
-        self.assertEqual(self.boss.get_bb()[3], 192)
+        self.assertEqual(self.boss.get_bb()[3], 248)

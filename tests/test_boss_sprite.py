@@ -58,6 +58,10 @@ class BossSpriteTests(unittest.TestCase):
         self.boss.fire_normal_bullet()
         self.boss.fire_normal_bullet('eraser')
         normal, parry = game_world.objects(game_world.PROJECTILES)
+        self.assertEqual((normal.WIDTH, normal.HEIGHT), (18, 9))
+        self.assertEqual((parry.WIDTH, parry.HEIGHT), (30, 21))
+        for projectile in (normal, parry):
+            self.assertEqual(projectile.get_bb()[2], self.boss.get_bb()[0])
         self.boss.sprite.draw_effect = Mock()
         normal.draw()
         self.assertEqual(self.boss.sprite.draw_effect.call_args.args[0], 'bullet')
@@ -67,6 +71,7 @@ class BossSpriteTests(unittest.TestCase):
 
     def test_missile_impact_plays_temporary_explosion(self):
         missile = self.boss.fire_homing_missile()
+        self.assertEqual((missile.WIDTH, missile.HEIGHT), (30, 18))
         game_world.add_object(Doodle(missile.x - 40, missile.y), game_world.TERRAIN)
         missile.update(.5)
         self.assertFalse(missile.active)

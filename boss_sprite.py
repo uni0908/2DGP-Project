@@ -7,7 +7,7 @@ import pico2d
 import game_world
 
 
-ASSET_DIR = Path(__file__).resolve().parent / 'output' / 'boss1-sprites-v1'
+ASSET_DIR = Path(__file__).resolve().parent / 'output' / 'boss1-sprites-v2'
 DATA = json.loads((ASSET_DIR / 'boss1-animations.json').read_text(encoding='utf-8-sig'))
 
 
