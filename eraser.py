@@ -11,15 +11,20 @@ class Eraser:
     SPEED = 520.0
     MAX_DISTANCE = 700.0
 
-    def __init__(self, x, y, direction, world_width, downward=False, ground_y=0):
+    def __init__(self, x, y, direction, world_width, downward=False, ground_y=0,
+                 owner=None):
         self.x, self.y = x, y
         self.direction = direction
         self.world_width = world_width
         self.travelled = 0.0
         self.downward = downward
         self.ground_y = ground_y
+        self.owner = owner
+        self.active = True
 
     def update(self, dt):
+        if not self.active:
+            return
         distance = min(self.SPEED * max(0, dt), self.MAX_DISTANCE - self.travelled)
         next_x = self.x + self.direction * distance
         next_y = self.y
@@ -47,7 +52,10 @@ class Eraser:
                 hits.append((entry, obj))
         if hits:
             target = min(hits, key=lambda hit: hit[0])[1]
+            self.active = False
             game_world.remove_object(target)
+            if self.owner is not None:
+                self.owner.doodle_count += 1
             game_world.remove_object(self)
             return
         self.x = next_x
@@ -56,6 +64,7 @@ class Eraser:
         if (self.travelled >= self.MAX_DISTANCE or self.x + self.WIDTH / 2 < 0
                 or self.x - self.WIDTH / 2 > self.world_width
                 or (self.downward and self.y <= self.ground_y)):
+            self.active = False
             game_world.remove_object(self)
 
     def draw(self):

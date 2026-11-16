@@ -42,6 +42,45 @@ class ItemTests(unittest.TestCase):
         self.assertIsNone(play_mode.throw_eraser())
         self.assertEqual(player.eraser_count, 0)
 
+    def test_eraser_recovers_one_doodle_in_both_directions(self):
+        player = play_mode.player
+        for facing in (1, -1):
+            with self.subTest(facing=facing):
+                game_world.clear()
+                player.x, player.y, player.facing = 500, 200, facing
+                player.doodle_count = 0
+                near = Doodle(500 + facing * 100, 200)
+                far = Doodle(500 + facing * 250, 200)
+                for doodle in (far, near):
+                    game_world.add_object(doodle, game_world.TERRAIN)
+                before = player.eraser_count
+                eraser = play_mode.throw_eraser()
+                eraser.update(1)
+                self.assertEqual(player.doodle_count, 1)
+                self.assertEqual(player.eraser_count, before - 1)
+                self.assertIn(far, game_world.objects(game_world.TERRAIN))
+                eraser.update(1)
+                self.assertEqual(player.doodle_count, 1)
+                self.assertIn(far, game_world.objects(game_world.TERRAIN))
+
+    def test_missed_eraser_does_not_recover_doodle(self):
+        player = play_mode.player
+        before = player.doodle_count
+        eraser = play_mode.throw_eraser()
+        eraser.update(2)
+        self.assertEqual(player.doodle_count, before)
+        target = Doodle(500, 108)
+        game_world.add_object(target, game_world.TERRAIN)
+        eraser.update(2)
+        self.assertEqual(player.doodle_count, before)
+
+    def test_bullet_destruction_does_not_recover_doodle(self):
+        player = play_mode.player
+        target = play_mode.spawn_doodle()
+        before = player.doodle_count
+        target.take_damage(target.MAX_HP)
+        self.assertEqual(player.doodle_count, before)
+
     def test_first_hit_in_both_directions_even_when_added_out_of_order(self):
         for direction in (1, -1):
             with self.subTest(direction=direction):
@@ -110,11 +149,13 @@ class ItemTests(unittest.TestCase):
         player.pressed_keys.add(pico2d.SDLK_DOWN)
         player.update(.01)
         eraser = play_mode.throw_eraser()
+        before = player.doodle_count
         self.assertTrue(eraser.downward)
         self.assertEqual(player.eraser_count, player.INITIAL_ERASERS - 1)
         eraser.update(.5)
         self.assertNotIn(platform, game_world.objects(game_world.TERRAIN))
         self.assertIn(lower, game_world.objects(game_world.TERRAIN))
+        self.assertEqual(player.doodle_count, before + 1)
         player.update(.02)
         self.assertFalse(player.grounded)
         self.assertLess(player.get_bb()[1], 176)

@@ -34,7 +34,7 @@ def throw_eraser(player, world_width, ground_y):
     downward = (pico2d.SDLK_DOWN in player.pressed_keys
                 and player.get_bb()[1] > ground_y + 0.001)
     eraser = Eraser(player.x, player.y, player.facing, world_width,
-                    downward=downward, ground_y=ground_y)
+                    downward=downward, ground_y=ground_y, owner=player)
     game_world.add_object(eraser, game_world.PROJECTILES)
     player.eraser_count -= 1
     return eraser
