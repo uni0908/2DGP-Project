@@ -128,6 +128,7 @@ class Boss1(TestEnemy):
             if self.state == 'laser_charge':
                 self.state = 'laser_sweep'
                 self.laser = SweepLaser(self.world_width, self.world_height, self.ground_y)
+                self.laser.sprite_bank = self.sprite
                 game_world.add_object(self.laser, game_world.PROJECTILES)
             elif self.state == 'laser_sweep':
                 self.state = 'laser_recover'
@@ -179,6 +180,7 @@ class Boss1(TestEnemy):
         height = self.ground_y + (90 if reward else 70)
         missile = HomingMissile(self.x - self.WIDTH / 2 - 14, height,
                                 target, self.world_width, parry_reward=reward)
+        missile.sprite_bank = self.sprite
         game_world.add_object(missile, game_world.PROJECTILES)
         return missile
 
@@ -204,6 +206,7 @@ class Boss1(TestEnemy):
             height = min(self.ground_y + 130, max(self.ground_y + 90, height))
         bullet = Bullet(self.x - self.WIDTH / 2 - Bullet.WIDTH / 2,
                         height, -1, self.team, self.world_width, parry_reward=reward)
+        bullet.sprite_bank = self.sprite
         game_world.add_object(bullet, game_world.PROJECTILES)
 
     def fire_volley(self):
@@ -221,6 +224,7 @@ class Boss1(TestEnemy):
                             self.ground_y + height, -1, self.team,
                             self.world_width)
             bullet.HEIGHT = 14
+            bullet.sprite_bank = self.sprite
             bullet.speed = speed
             game_world.add_object(bullet, game_world.PROJECTILES)
 

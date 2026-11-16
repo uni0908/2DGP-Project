@@ -63,6 +63,9 @@ class BossSprite:
         top = min(rect[1] for rect in rectangles)
         right = max(rect[2] for rect in rectangles)
         bottom = max(rect[3] for rect in rectangles)
+        if name == 'laser_tile':
+            # The third tile includes a stray mark below the actual beam.
+            left, top, right, bottom = 24, 105, 229, 144
         cell_x, cell_y, _, cell_h = frame['rect_pico2d']
         self.image(frame['sheet']).clip_composite_draw(
             cell_x + left, cell_y + cell_h - bottom, right - left, bottom - top,
@@ -80,3 +83,21 @@ class BossDeath:
 
     def draw(self):
         self.sprite.draw_body('death', self.elapsed, self.bounds)
+
+
+class BossEffect:
+    def __init__(self, sprite, name, x, y, width, height):
+        self.sprite, self.name = sprite, name
+        self.x, self.y = x, y
+        self.width, self.height = width, height
+        self.elapsed = 0.0
+
+    def update(self, dt):
+        self.elapsed += max(0, dt)
+        animation = DATA['animations'][self.name]
+        if self.elapsed >= len(animation['frames']) / animation['fps']:
+            game_world.remove_object(self)
+
+    def draw(self):
+        self.sprite.draw_effect(self.name, self.elapsed, self.x, self.y,
+                                self.width, self.height)

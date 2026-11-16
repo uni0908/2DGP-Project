@@ -20,8 +20,11 @@ class SweepLaser:
         self.y = self.bottom_y
         self.direction = 1
         self.active = True
+        self.sprite_bank = None
+        self.animation_time = 0.0
 
     def update(self, dt):
+        self.animation_time += max(0, dt)
         remaining = max(0, dt)
         while self.active and remaining > 0:
             destination = self.top_y if self.direction > 0 else self.descent_end_y
@@ -52,6 +55,11 @@ class SweepLaser:
 
     def draw(self):
         if not self.active:
+            return
+        if self.sprite_bank is not None:
+            self.sprite_bank.draw_effect('laser_tile', self.animation_time,
+                                         (self.left + self.right) / 2, self.y,
+                                         self.right - self.left, self.THICKNESS)
             return
         pico2d.draw_rectangle(self.left, self.y - self.THICKNESS / 2,
                               self.right, self.y + self.THICKNESS / 2,

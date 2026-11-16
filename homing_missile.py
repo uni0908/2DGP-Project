@@ -6,6 +6,7 @@ import pico2d
 import game_world
 from bullet import Bullet
 from doodle import Doodle
+from boss_sprite import BossEffect
 
 
 def segment_box_entry(x, y, dx, dy, bounds):
@@ -35,6 +36,7 @@ class HomingMissile(Bullet):
         self.turn_speed = math.radians(90 if parry_reward else 110)
 
     def update(self, dt):
+        self.animation_time += max(0, dt)
         remaining = max(0, dt)
         while self.active and remaining > 0:
             step = min(remaining, 1 / 120)
@@ -72,12 +74,20 @@ class HomingMissile(Bullet):
                 target.take_damage(self.DAMAGE)
             self.active = False
             game_world.remove_object(self)
+            if self.sprite_bank is not None:
+                game_world.add_object(BossEffect(self.sprite_bank, 'explosion',
+                                                self.x, self.y, 40, 40), game_world.EFFECTS)
         else:
             self.x += dx
             self.y += dy
         # 시간 제한이나 화면 밖 이탈로는 삭제하지 않는다.
 
     def draw(self):
+        if self.sprite_bank is not None and self.parry_reward is None:
+            self.sprite_bank.draw_effect('homing_missile', self.animation_time,
+                                         self.x, self.y, self.WIDTH, self.HEIGHT,
+                                         self.angle - math.pi)
+            return
         color = (230, 120, 30)
         if self.parry_reward == 'doodle':
             color = (240, 70, 160)

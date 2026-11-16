@@ -4,6 +4,7 @@ from unittest.mock import Mock, patch
 import game_world
 from boss1 import Boss1
 from boss_sprite import DATA, BossDeath, animation_for, animation_frame
+from doodle import Doodle
 
 
 class BossSpriteTests(unittest.TestCase):
@@ -51,4 +52,25 @@ class BossSpriteTests(unittest.TestCase):
         self.assertEqual(animation_frame('death', visuals[0].elapsed), last)
         self.assertFalse(game_world.objects(game_world.PROJECTILES))
         game_world.clear()
+        self.assertFalse(game_world.objects(game_world.EFFECTS))
+
+    def test_normal_projectile_art_and_parry_colors(self):
+        self.boss.fire_normal_bullet()
+        self.boss.fire_normal_bullet('eraser')
+        normal, parry = game_world.objects(game_world.PROJECTILES)
+        self.boss.sprite.draw_effect = Mock()
+        normal.draw()
+        self.assertEqual(self.boss.sprite.draw_effect.call_args.args[0], 'bullet')
+        with patch('pico2d.draw_rectangle') as rectangle:
+            parry.draw()
+        self.assertEqual(rectangle.call_args.args[4:7], (30, 180, 240))
+
+    def test_missile_impact_plays_temporary_explosion(self):
+        missile = self.boss.fire_homing_missile()
+        game_world.add_object(Doodle(missile.x - 40, missile.y), game_world.TERRAIN)
+        missile.update(.5)
+        self.assertFalse(missile.active)
+        effects = game_world.objects(game_world.EFFECTS)
+        self.assertEqual(len(effects), 1)
+        effects[0].update(1)
         self.assertFalse(game_world.objects(game_world.EFFECTS))

@@ -24,6 +24,8 @@ class Bullet:
         self.speed = 650 if team == 'player' else 240
         self.world_width = world_width
         self.active = True
+        self.sprite_bank = None
+        self.animation_time = 0.0
         self.parry_reward = parry_reward if team == 'enemy' else None
         if self.parry_reward is not None:
             self.WIDTH, self.HEIGHT = 20, 14
@@ -35,6 +37,7 @@ class Bullet:
     def update(self, dt):
         if not self.active:
             return
+        self.animation_time += max(0, dt)
         next_x = self.x + self.velocity_x * self.speed * max(0, dt)
         next_y = self.y + self.velocity_y * self.speed * max(0, dt)
         hits = []
@@ -84,6 +87,10 @@ class Bullet:
             game_world.remove_object(self)
 
     def draw(self):
+        if self.sprite_bank is not None and self.parry_reward is None:
+            self.sprite_bank.draw_effect('bullet', self.animation_time,
+                                         self.x, self.y, self.WIDTH * 1.5, self.HEIGHT)
+            return
         color = (40, 100, 220) if self.team == 'player' else (220, 70, 40)
         if self.parry_reward == 'doodle':
             color = (240, 70, 160)
