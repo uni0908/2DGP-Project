@@ -38,7 +38,8 @@ class ScrollModeTests(unittest.TestCase):
 
     def test_walking_to_actual_right_boundary_requests_boss_once(self):
         scroll_mode.handle_events([self.event(pico2d.SDLK_RIGHT)])
-        with patch.object(game_framework, 'change_mode') as transition:
+        with patch.object(game_framework, 'change_mode') as transition, \
+                patch.object(scroll_mode.spawner, 'update'):
             for _ in range(300):
                 scroll_mode.update(.05)
             self.assertAlmostEqual(scroll_mode.player.x, 3582)
