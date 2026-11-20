@@ -44,6 +44,10 @@ class ScrollModeTests(unittest.TestCase):
         self.assertEqual(scroll_mode.player.get_bb()[1], scroll_mode.GROUND_Y)
 
     def test_walking_to_actual_right_boundary_requests_boss_once(self):
+        # 이동·구간 전환 검사는 새 로봇의 공격과 분리한다.
+        for obj in game_world.objects(game_world.ACTORS):
+            if isinstance(obj, CatRobot):
+                game_world.remove_object(obj)
         scroll_mode.handle_events([self.event(pico2d.SDLK_RIGHT)])
         with patch.object(game_framework, 'change_mode') as transition, \
                 patch.object(scroll_mode.spawner, 'update'):
