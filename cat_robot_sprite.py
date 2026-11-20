@@ -11,6 +11,7 @@ IMAGE_PATH = Path(__file__).resolve().parent / 'output' / 'basic-enemy' / 'outpu
 SHEET_HEIGHT = 887
 DISPLAY_HEIGHT = 112.0
 SCALE = DISPLAY_HEIGHT / 172
+HIT_FLASH_OPACITY = 0.20
 IDLE_FPS = 6
 FIRE_FPS = 16
 FIRE_DURATION = 8 / FIRE_FPS
@@ -56,11 +57,6 @@ class CatRobotSprite:
     def draw(self, name, elapsed, x, baseline_y, direction, flash=False, scale_factor=1.0):
         if self.image is None:
             self.image = pico2d.load_image(str(IMAGE_PATH))
-        image = self.image
-        if flash and name != 'death':
-            if self.white_image is None:
-                self.white_image = white_silhouette(IMAGE_PATH)
-            image = self.white_image
         index, (left, top, right, base) = frame_for(name, elapsed)
         origin = ORIGINS[index + 1 if name == 'death' else index]
         source_x = origin + 110  # 포신을 제외한 몸 중심을 고정한다.
@@ -69,10 +65,19 @@ class CatRobotSprite:
         scale = SCALE * scale_factor
         center_x = x + direction * ((left + right) / 2 - source_x) * scale
         center_y = baseline_y + (source_y - (top + base) / 2) * scale
-        image.clip_composite_draw(
+        draw_args = (
             left - 2, SHEET_HEIGHT - base - 2, width, height, 0,
             'h' if direction < 0 else '', game_world.screen_x(center_x), center_y,
             width * scale, height * scale)
+        self.image.clip_composite_draw(*draw_args)
+        if flash and name != 'death':
+            if self.white_image is None:
+                self.white_image = white_silhouette(IMAGE_PATH)
+            self.white_image.opacify(HIT_FLASH_OPACITY)
+            try:
+                self.white_image.clip_composite_draw(*draw_args)
+            finally:
+                self.white_image.opacify(1.0)
         return baseline_y + (source_y - top) * scale
 
 

@@ -55,3 +55,15 @@ class RobotSpriteTests(unittest.TestCase):
             self.assertEqual(call.kwargs['scale_factor'], 1)
         self.assertEqual([call.args[2:4] for call in calls],
                          [(3382, 200), (3458, 200), (3420, 236)])
+
+    def test_hit_draws_original_with_twenty_percent_white_overlay(self):
+        sprite = CatRobotSprite()
+        with patch('pico2d.load_image') as load, patch('cat_robot_sprite.white_silhouette') as white:
+            sprite.draw('idle', 0, 3420, 144, -1, flash=True)
+            load.return_value.clip_composite_draw.assert_called_once()
+            self.assertEqual(white.return_value.clip_composite_draw.call_args,
+                             load.return_value.clip_composite_draw.call_args)
+            self.assertEqual([call.args[0] for call in white.return_value.opacify.call_args_list],
+                             [.2, 1.0])
+            sprite.draw('death', 0, 3420, 200, -1, flash=True)
+            self.assertEqual(white.return_value.clip_composite_draw.call_count, 1)
