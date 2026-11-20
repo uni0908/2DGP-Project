@@ -103,9 +103,15 @@ class OctopusTests(unittest.TestCase):
     def test_draw_uses_camera_coordinates(self):
         enemy = self.enemy(1800)
         game_world.camera_x = 1400
-        with patch('pico2d.draw_rectangle') as draw:
+        with patch('pico2d.load_image') as load, patch('pico2d.draw_rectangle'):
             enemy.draw()
-        self.assertEqual(draw.call_args_list[0].args[0], 400 - enemy.WIDTH / 2)
+            args = load.return_value.clip_draw.call_args.args
+            self.assertEqual(args[:4], (80, 2077, 147, 211))
+            self.assertEqual(args[4], 400)
+            self.assertEqual(args[5] - args[7] / 2, enemy.get_bb()[1])
+            self.assertAlmostEqual(args[6] / args[7], 147 / 211)
+            enemy.draw()
+            load.assert_called_once()
 
 
 class ScrollEnemyIntegrationTests(unittest.TestCase):

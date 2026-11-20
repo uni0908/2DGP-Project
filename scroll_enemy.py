@@ -1,6 +1,7 @@
-"""횡스크롤 문어의 하강·지상 추적과 화면 기준 등장. 그림은 임시 도형이다."""
+"""횡스크롤 문어의 하강·지상 추적과 화면 기준 등장."""
 
 import random
+from pathlib import Path
 
 import pico2d
 import game_world
@@ -8,6 +9,11 @@ import game_world
 
 class OctopusEnemy:
     WIDTH, HEIGHT = 48, 88
+    IMAGE_PATH = Path(__file__).resolve().parent / 'output' / 'boss1-sprites-v1' / 'boss1-body.png'
+    # JSON의 idle_00(첫 행·첫 열) bounds_top_left=(80, 16, 227, 227).
+    # 시트 높이 2304에서 pico2d의 왼쪽 아래 기준으로 변환한 실제 그림 영역.
+    FRAME_RECT = (80, 2077, 147, 211)
+    DISPLAY_HEIGHT = 88
     MAX_HP = 3
     FALL_SPEED = 160.0
     MOVE_SPEED = 110.0
@@ -20,6 +26,7 @@ class OctopusEnemy:
         self.ground_y = ground_y
         self.hp = self.MAX_HP
         self.grounded = False
+        self.image = None
 
     def get_bb(self):
         return (self.x - self.WIDTH / 2, self.y - self.HEIGHT / 2,
@@ -48,15 +55,11 @@ class OctopusEnemy:
 
     def draw(self):
         left, bottom, right, top = game_world.screen_bb(self.get_bb())
-        # 둥근 머리와 짧은 다리를 대신하는 임시 실루엣. 에셋 적용 전이다.
-        pico2d.draw_rectangle(left, bottom + 20, right, top, 150, 90, 190, filled=True)
-        for index in range(4):
-            x = left + index * 12
-            pico2d.draw_rectangle(x, bottom, x + 8, bottom + 24,
-                                  150, 90, 190, filled=True)
-        for x in (left + 10, right - 16):
-            pico2d.draw_rectangle(x, top - 24, x + 6, top - 14,
-                                  35, 25, 45, filled=True)
+        if self.image is None:
+            self.image = pico2d.load_image(str(self.IMAGE_PATH))
+        width = self.FRAME_RECT[2] * self.DISPLAY_HEIGHT / self.FRAME_RECT[3]
+        self.image.clip_draw(*self.FRAME_RECT, game_world.screen_x(self.x),
+                             bottom + self.DISPLAY_HEIGHT / 2, width, self.DISPLAY_HEIGHT)
         pico2d.draw_rectangle(left, top + 6,
                               left + self.WIDTH * self.hp / self.MAX_HP,
                               top + 10, 180, 40, 40, filled=True)
