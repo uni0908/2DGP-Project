@@ -9,6 +9,7 @@ from player import Player
 from bullet import Bullet
 from cat_robot import CatRobot
 from enemy_bomb import ArcBomb, BombExplosion
+from cat_robot_sprite import CatRobotDeath, FIRE_DURATION
 
 
 class CatRobotTests(unittest.TestCase):
@@ -33,6 +34,8 @@ class CatRobotTests(unittest.TestCase):
             self.assertEqual(self.robot in game_world.objects(game_world.ACTORS), count < 100)
         self.robot.take_damage(1)
         self.assertEqual(self.robot.hp, 0)
+        self.assertEqual(len(game_world.objects(game_world.EFFECTS)), 1)
+        self.assertIsInstance(game_world.objects(game_world.EFFECTS)[0], CatRobotDeath)
 
     def test_offscreen_bullets_pass_without_damage_then_visible_hits_count(self):
         game_world.camera_x = 0
@@ -84,9 +87,26 @@ class CatRobotTests(unittest.TestCase):
 
     def test_draw_uses_camera_coordinates(self):
         game_world.camera_x = 2640
-        with patch('pico2d.draw_rectangle') as draw:
+        with patch('pico2d.load_image') as load, patch('pico2d.draw_rectangle'):
             self.robot.draw()
-        self.assertEqual(draw.call_args_list[0].args[0], 3420 - 48 - 2640 + 8)
+        args = load.return_value.clip_composite_draw.call_args.args
+        self.assertEqual(args[5], 'h')
+        self.assertLess(abs(args[6] - (3420 - 2640)), 15)
+
+    def test_actual_launch_starts_recoil_and_direction_is_locked_until_idle(self):
+        self.robot.update(.81)
+        self.assertEqual(self.robot.shot_elapsed, 0)
+        self.assertEqual(self.robot.shot_direction, -1)
+        self.player.x = 3500
+        with patch.object(self.robot.sprite, 'draw', return_value=256) as draw, \
+                patch('pico2d.draw_rectangle'):
+            self.robot.draw()
+            self.assertEqual(draw.call_args.args[0], 'fire')
+            self.assertEqual(draw.call_args.args[-1], -1)
+            self.robot.update(FIRE_DURATION + .01)
+            self.robot.draw()
+            self.assertEqual(draw.call_args.args[0], 'idle')
+            self.assertEqual(draw.call_args.args[-1], 1)
 
     def test_distance_activation_first_shot_and_interval(self):
         self.player.x = 2000
