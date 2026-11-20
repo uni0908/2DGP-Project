@@ -12,6 +12,7 @@ import play_mode
 from doodle import Doodle
 from bullet import Bullet
 from frog_enemy import FrogEnemy
+from cat_robot import CatRobot
 
 
 class ScrollModeTests(unittest.TestCase):
@@ -33,9 +34,10 @@ class ScrollModeTests(unittest.TestCase):
     def test_map_initially_contains_player_hidden_frogs_and_continuous_floor(self):
         actors = game_world.objects(game_world.ACTORS)
         self.assertIs(actors[0], scroll_mode.player)
-        self.assertEqual(len(actors), 4)
+        self.assertEqual(len(actors), 5)
         self.assertTrue(all(isinstance(obj, FrogEnemy) and obj.state == 'hidden'
-                            for obj in actors[1:]))
+                            for obj in actors[1:4]))
+        self.assertIsInstance(actors[4], CatRobot)
         self.assertFalse(game_world.objects(game_world.TERRAIN))
         self.assertFalse(game_world.objects(game_world.PROJECTILES))
         self.assertEqual(scroll_mode.player.world_width, 3600)

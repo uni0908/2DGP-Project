@@ -11,6 +11,7 @@ from player import Player
 from player_hud import PlayerHealthBar
 from scroll_enemy import OctopusSpawner
 from frog_enemy import FrogEnemy
+from cat_robot import CatRobot
 
 health_bar = PlayerHealthBar()
 
@@ -19,6 +20,7 @@ WORLD_WIDTH = 3600
 GROUND_Y = 144
 PLAYER_START_X = WINDOW_WIDTH * 0.4
 FROG_PATROLS = ((680, 960), (1580, 1860), (2600, 2880))
+ROBOT_X = WORLD_WIDTH - 180
 MAP_DIR = Path(__file__).resolve().parent / 'assets' / 'images' / 'forest-scroll'
 MAP_LAYERS = ('paper_background.png', 'background.png', 'midground.png',
               'terrain.png', 'foreground.png')
@@ -39,6 +41,7 @@ def enter():
     game_world.add_object(player, game_world.ACTORS)
     for left, right in FROG_PATROLS:
         game_world.add_object(FrogEnemy(left, right, player, GROUND_Y), game_world.ACTORS)
+    game_world.add_object(CatRobot(ROBOT_X, player, GROUND_Y), game_world.ACTORS)
     transition_requested = False
     spawner = OctopusSpawner(player, GROUND_Y, WINDOW_WIDTH, WINDOW_HEIGHT)
     game_over = False
