@@ -42,15 +42,22 @@ class FrogTests(unittest.TestCase):
     def test_approach_exposes_frog_and_one_bullet_kills(self):
         self.player.x = self.frog.x - self.frog.ACTIVE_DISTANCE
         self.frog.update(.01)
-        self.assertTrue(self.frog.bullet_vulnerable)
+        self.assertFalse(self.frog.bullet_vulnerable)
         self.assertEqual(self.frog.get_bb()[3] - self.frog.get_bb()[1], 44)
+        self.assertTrue(self.shoot(176).active)
+        self.assertEqual(self.frog.hp, 1)
+        self.frog.HOP_PAUSE = 10  # 점프와 분리해 보호 종료 후 1발 처치를 확인한다.
+        self.frog.update(.51)
+        self.assertTrue(self.frog.bullet_vulnerable)
         self.assertFalse(self.shoot(176).active)
         self.assertEqual(self.frog.hp, 0)
         self.assertNotIn(self.frog, game_world.objects(game_world.ACTORS))
 
     def test_actual_standing_player_shot_can_hit_awake_frog(self):
         self.player.x = self.frog.x - 180
+        self.frog.HOP_PAUSE = 10
         self.frog.update(.01)
+        self.frog.update(.51)
         self.player.pressed_keys.add(pico2d.SDLK_a)
         self.player.update(.01)
         shot = game_world.objects(game_world.PROJECTILES)[0]
@@ -68,7 +75,41 @@ class FrogTests(unittest.TestCase):
             self.assertLessEqual(self.frog.x, 960)
             self.assertGreaterEqual(self.frog.bottom, 144)
         self.assertEqual(directions, {-1, 1})
-        self.assertAlmostEqual(max_bottom - 144, 37.5, delta=.1)
+        self.assertAlmostEqual(max_bottom - 144, 80, delta=.1)
+
+    def test_wake_protection_cannot_be_bypassed_and_resets_after_hiding(self):
+        self.player.x = self.frog.x - 220
+        self.frog.HOP_PAUSE = 10
+        self.frog.update(.01)
+        self.frog.take_damage(100)
+        self.assertEqual(self.frog.hp, 1)
+        self.frog.update(.49)
+        self.assertFalse(self.frog.bullet_vulnerable)
+        self.frog.update(.02)
+        self.assertTrue(self.frog.bullet_vulnerable)
+        self.player.x = 0
+        self.frog.update(.01)
+        self.assertEqual(self.frog.state, 'hidden')
+        self.player.x = self.frog.x - 220
+        self.frog.update(.01)
+        self.assertAlmostEqual(self.frog.wake_timer, self.frog.WAKE_PROTECTION, delta=.01)
+        self.assertFalse(self.frog.bullet_vulnerable)
+
+    def test_walk_and_auto_fire_cannot_kill_frog_during_wake_protection(self):
+        scroll_mode.enter()
+        frog = next(obj for obj in game_world.objects(game_world.ACTORS)
+                    if isinstance(obj, FrogEnemy))
+        scroll_mode.player.pressed_keys.update((pico2d.SDLK_RIGHT, pico2d.SDLK_a))
+        for _ in range(200):
+            scroll_mode.update(1 / 120)
+            if frog.state != 'hidden':
+                break
+        self.assertNotEqual(frog.state, 'hidden')
+        for _ in range(54):  # 실제 연사·이동을 유지한 채 활성화 후 0.45초 경과.
+            scroll_mode.update(1 / 120)
+            self.assertEqual(frog.hp, 1)
+        self.assertGreater(frog.wake_timer, 0)
+        scroll_mode.exit()
 
     def test_leaving_range_finishes_current_hop_before_hiding(self):
         self.player.x = self.frog.x

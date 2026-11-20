@@ -1,5 +1,7 @@
 """통나무 배치 전 고정 구간을 왕복하는 개구리 프로토타입."""
 
+import math
+
 import pico2d
 import game_world
 from doodle import overlaps
@@ -11,8 +13,10 @@ class FrogEnemy:
     MAX_HP = 1
     ACTIVE_DISTANCE = 240
     MOVE_SPEED = 120.0
-    JUMP_SPEED = 300.0
     GRAVITY = 1200.0
+    JUMP_HEIGHT = 80.0  # 주인공의 서 있는 표시 높이만큼 도약한다.
+    JUMP_SPEED = math.sqrt(2 * GRAVITY * JUMP_HEIGHT)
+    WAKE_PROTECTION = 0.5
     HOP_PAUSE = 0.4
     ATTACK_DISTANCE = 180
     WINDUP_TIME = 0.4
@@ -37,10 +41,11 @@ class FrogEnemy:
         self.state_time = 0.0
         self.attack_direction = self.direction
         self.attack_cooldown = 0.7
+        self.wake_timer = 0.0
 
     @property
     def bullet_vulnerable(self):
-        return self.state != 'hidden'
+        return self.state != 'hidden' and self.wake_timer <= 0
 
     def get_bb(self):
         height = self.HIDDEN_HEIGHT if self.state == 'hidden' else self.HEIGHT
@@ -83,6 +88,7 @@ class FrogEnemy:
 
     def update_step(self, dt):
         nearby = abs(self.player.x - self.x) <= self.ACTIVE_DISTANCE
+        self.wake_timer = max(0, self.wake_timer - dt)
         self.attack_cooldown = max(0, self.attack_cooldown - dt)
         self.state_time += dt
         if self.state == 'windup':
@@ -116,6 +122,7 @@ class FrogEnemy:
         if not nearby:
             self.set_state('hidden')
         elif self.state == 'hidden':
+            self.wake_timer = self.WAKE_PROTECTION
             self.set_state('idle')
         elif (abs(self.player.x - self.x) <= self.ATTACK_DISTANCE
               and self.attack_cooldown <= 0):
@@ -130,6 +137,8 @@ class FrogEnemy:
         color = (75, 115, 70) if self.state == 'hidden' else (75, 175, 85)
         if self.state == 'windup':
             color = (195, 155, 50)
+        if self.state != 'hidden' and self.wake_timer > 0:
+            color = (135, 220, 145)
         pico2d.draw_rectangle(left, bottom, right, top, *color, filled=True)
         # 몸의 낮은 모양과 올라온 눈으로 잠복/활성 상태를 구분한다.
         for x in (left + 5, right - 11):
