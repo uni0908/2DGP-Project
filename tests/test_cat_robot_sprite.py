@@ -5,7 +5,7 @@ from unittest.mock import Mock, patch
 
 import game_world
 from cat_robot_sprite import (CatRobotSprite, CatRobotDeath, frame_for,
-                              IDLE_BOUNDS, FIRE_BOUNDS, DEATH_BOUNDS, DEATH_DURATION, SCALE)
+                              IDLE_BOUNDS, FIRE_BOUNDS, DEATH_BOUNDS, DEATH_TOTAL_DURATION, SCALE)
 
 
 class RobotSpriteTests(unittest.TestCase):
@@ -40,5 +40,5 @@ class RobotSpriteTests(unittest.TestCase):
         game_world.add_object(effect, game_world.EFFECTS)
         effect.draw()
         self.assertEqual(sprite.draw.call_args.args[:2], ('death', 0))
-        effect.update(DEATH_DURATION)
+        effect.update(DEATH_TOTAL_DURATION)
         self.assertNotIn(effect, game_world.objects(game_world.EFFECTS))

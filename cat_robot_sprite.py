@@ -4,6 +4,7 @@ from pathlib import Path
 
 import pico2d
 import game_world
+from sprite_effects import white_silhouette
 
 
 IMAGE_PATH = Path(__file__).resolve().parent / 'output' / 'basic-enemy' / 'outputs' / 'robotcat-animationsheet.png'
@@ -15,6 +16,10 @@ FIRE_FPS = 16
 FIRE_DURATION = 8 / FIRE_FPS
 DEATH_FPS = 12
 DEATH_DURATION = 7 / DEATH_FPS
+DEATH_SCALE = 1.6
+DEATH_GAP = 110.0
+DEATH_STAGGER = 0.16
+DEATH_TOTAL_DURATION = DEATH_DURATION + DEATH_STAGGER
 ORIGINS = (0, 222, 444, 665, 887, 1109, 1330, 1552)
 IDLE_BOUNDS = (
     (29, 25, 214, 197), (253, 20, 436, 195), (474, 30, 659, 197),
@@ -46,22 +51,29 @@ def frame_for(name, elapsed):
 class CatRobotSprite:
     def __init__(self):
         self.image = None
+        self.white_image = None
 
-    def draw(self, name, elapsed, x, baseline_y, direction):
+    def draw(self, name, elapsed, x, baseline_y, direction, flash=False, scale_factor=1.0):
         if self.image is None:
             self.image = pico2d.load_image(str(IMAGE_PATH))
+        image = self.image
+        if flash and name != 'death':
+            if self.white_image is None:
+                self.white_image = white_silhouette(IMAGE_PATH)
+            image = self.white_image
         index, (left, top, right, base) = frame_for(name, elapsed)
         origin = ORIGINS[index + 1 if name == 'death' else index]
         source_x = origin + 110  # 포신을 제외한 몸 중심을 고정한다.
         source_y = 776 if name == 'death' else base
         width, height = right - left + 4, base - top + 4
-        center_x = x + direction * ((left + right) / 2 - source_x) * SCALE
-        center_y = baseline_y + (source_y - (top + base) / 2) * SCALE
-        self.image.clip_composite_draw(
+        scale = SCALE * scale_factor
+        center_x = x + direction * ((left + right) / 2 - source_x) * scale
+        center_y = baseline_y + (source_y - (top + base) / 2) * scale
+        image.clip_composite_draw(
             left - 2, SHEET_HEIGHT - base - 2, width, height, 0,
             'h' if direction < 0 else '', game_world.screen_x(center_x), center_y,
-            width * SCALE, height * SCALE)
-        return baseline_y + (source_y - top) * SCALE
+            width * scale, height * scale)
+        return baseline_y + (source_y - top) * scale
 
 
 class CatRobotDeath:
@@ -71,8 +83,12 @@ class CatRobotDeath:
 
     def update(self, dt):
         self.elapsed += max(0, dt)
-        if self.elapsed >= DEATH_DURATION:
+        if self.elapsed >= DEATH_TOTAL_DURATION:
             game_world.remove_object(self)
 
     def draw(self):
-        self.sprite.draw('death', self.elapsed, self.x, self.y, self.direction)
+        for offset, delay in ((-DEATH_GAP / 2, 0), (DEATH_GAP / 2, DEATH_STAGGER)):
+            elapsed = self.elapsed - delay
+            if 0 <= elapsed < DEATH_DURATION:
+                self.sprite.draw('death', elapsed, self.x + offset, self.y, self.direction,
+                                 scale_factor=DEATH_SCALE)

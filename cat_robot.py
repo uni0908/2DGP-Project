@@ -13,6 +13,8 @@ class CatRobot:
     FIRST_SHOT_DELAY = 0.8
     FIRE_INTERVAL = 2.4
     CHARGE_TIME = 0.45
+    HIT_DURATION = 0.24
+    HIT_BLINK_INTERVAL = 0.06
     team = 'enemy'
 
     def __init__(self, x, player, ground_y, view_width=960):
@@ -25,6 +27,7 @@ class CatRobot:
         self.animation_time = 0.0
         self.shot_elapsed = FIRE_DURATION
         self.shot_direction = -1
+        self.hit_elapsed = self.HIT_DURATION
 
     @property
     def bullet_vulnerable(self):
@@ -40,6 +43,7 @@ class CatRobot:
         if not self.bullet_vulnerable or amount <= 0:
             return
         self.hp = max(0, self.hp - amount)
+        self.hit_elapsed = 0.0
         if self.hp == 0:
             game_world.remove_object(self)
             direction = (self.shot_direction if self.shot_elapsed < FIRE_DURATION
@@ -53,6 +57,7 @@ class CatRobot:
             return
         self.animation_time += max(0, dt)
         self.shot_elapsed += max(0, dt)
+        self.hit_elapsed += max(0, dt)
         self.engaged = abs(self.player.x - self.x) <= self.ACTIVE_DISTANCE
         if not self.engaged:
             self.fire_timer = self.FIRST_SHOT_DELAY
@@ -71,9 +76,11 @@ class CatRobot:
         left, bottom, right, top = game_world.screen_bb(self.get_bb())
         firing = self.shot_elapsed < FIRE_DURATION
         direction = self.shot_direction if firing else -1 if self.player.x < self.x else 1
+        flash = (self.hit_elapsed < self.HIT_DURATION
+                 and int(self.hit_elapsed / self.HIT_BLINK_INTERVAL) % 2 == 0)
         drawn_top = self.sprite.draw('fire' if firing else 'idle',
                                      self.shot_elapsed if firing else self.animation_time,
-                                     self.x, bottom, direction)
+                                     self.x, bottom, direction, flash=flash)
         top = max(top, drawn_top)
         if self.engaged and self.fire_timer <= self.CHARGE_TIME:
             muzzle_x = game_world.screen_x(self.x + direction * 60)
