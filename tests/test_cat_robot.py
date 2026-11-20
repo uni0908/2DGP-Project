@@ -108,11 +108,11 @@ class CatRobotTests(unittest.TestCase):
             self.assertEqual(draw.call_args.args[0], 'idle')
             self.assertEqual(draw.call_args.args[-1], 1)
 
-    def test_hit_flash_finishes_in_eighty_milliseconds(self):
+    def test_hit_flash_finishes_in_thirty_milliseconds(self):
         self.robot.take_damage(1)
         with patch.object(self.robot.sprite, 'draw', return_value=256) as draw, \
                 patch('pico2d.draw_rectangle'):
-            for dt, expected in ((0, True), (.03, False), (.02, True), (.04, False)):
+            for dt, expected in ((0, True), (.02, True), (.02, False), (.03, False)):
                 self.robot.update(dt)
                 self.robot.draw()
                 self.assertEqual(draw.call_args.kwargs['flash'], expected)

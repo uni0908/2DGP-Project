@@ -13,8 +13,8 @@ class CatRobot:
     FIRST_SHOT_DELAY = 0.8
     FIRE_INTERVAL = 2.4
     CHARGE_TIME = 0.45
-    HIT_DURATION = 0.08
-    HIT_BLINK_INTERVAL = 0.02
+    HIT_DURATION = 0.03
+    HIT_BLINK_INTERVAL = 0.03
     team = 'enemy'
 
     def __init__(self, x, player, ground_y, view_width=960):
