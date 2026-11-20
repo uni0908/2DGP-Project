@@ -42,3 +42,16 @@ class RobotSpriteTests(unittest.TestCase):
         self.assertEqual(sprite.draw.call_args.args[:2], ('death', 0))
         effect.update(DEATH_TOTAL_DURATION)
         self.assertNotIn(effect, game_world.objects(game_world.EFFECTS))
+
+    def test_three_original_size_explosions_overlap_with_staggered_starts(self):
+        sprite = Mock()
+        effect = CatRobotDeath(sprite, 3420, 200, -1)
+        effect.elapsed = .25
+        effect.draw()
+        self.assertEqual(sprite.draw.call_count, 3)
+        calls = sprite.draw.call_args_list
+        for call, elapsed in zip(calls, (.25, .13, .01)):
+            self.assertAlmostEqual(call.args[1], elapsed)
+            self.assertEqual(call.kwargs['scale_factor'], 1)
+        self.assertEqual([call.args[2:4] for call in calls],
+                         [(3382, 200), (3458, 200), (3420, 236)])

@@ -16,10 +16,10 @@ FIRE_FPS = 16
 FIRE_DURATION = 8 / FIRE_FPS
 DEATH_FPS = 12
 DEATH_DURATION = 7 / DEATH_FPS
-DEATH_SCALE = 1.6
-DEATH_GAP = 110.0
-DEATH_STAGGER = 0.16
-DEATH_TOTAL_DURATION = DEATH_DURATION + DEATH_STAGGER
+DEATH_SCALE = 1.0
+DEATH_GAP = 76.0
+DEATH_STAGGER = 0.12
+DEATH_TOTAL_DURATION = DEATH_DURATION + 2 * DEATH_STAGGER
 ORIGINS = (0, 222, 444, 665, 887, 1109, 1330, 1552)
 IDLE_BOUNDS = (
     (29, 25, 214, 197), (253, 20, 436, 195), (474, 30, 659, 197),
@@ -87,8 +87,9 @@ class CatRobotDeath:
             game_world.remove_object(self)
 
     def draw(self):
-        for offset, delay in ((-DEATH_GAP / 2, 0), (DEATH_GAP / 2, DEATH_STAGGER)):
-            elapsed = self.elapsed - delay
+        offsets = ((-DEATH_GAP / 2, 0), (DEATH_GAP / 2, 0), (0, 36))
+        for index, (offset_x, offset_y) in enumerate(offsets):
+            elapsed = self.elapsed - index * DEATH_STAGGER
             if 0 <= elapsed < DEATH_DURATION:
-                self.sprite.draw('death', elapsed, self.x + offset, self.y, self.direction,
+                self.sprite.draw('death', elapsed, self.x + offset_x, self.y + offset_y, self.direction,
                                  scale_factor=DEATH_SCALE)
