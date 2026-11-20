@@ -11,7 +11,7 @@ from player import Player
 from enemy import TestEnemy
 from bullet import Bullet
 from scroll_enemy import OctopusEnemy, OctopusSpawner
-from octopus_sprite import OctopusDeath, DEATH_DURATION, SCALE, frame_bounds
+from octopus_sprite import OctopusDeath, OctopusSprite, DEATH_DURATION, SCALE, frame_bounds
 
 
 class OctopusTests(unittest.TestCase):
@@ -128,6 +128,37 @@ class OctopusTests(unittest.TestCase):
         self.assertFalse(enemy.grounded)
         self.assertEqual(frame_bounds(1), frame_bounds(0))
         self.assertEqual(frame_bounds(10, dying=True), (1825, 428, 2098, 665))
+
+    def test_hit_flash_alternates_and_does_not_grant_enemy_invincibility(self):
+        enemy = self.enemy()
+        with patch.object(enemy.sprite, 'draw') as draw, patch('pico2d.draw_rectangle'):
+            enemy.take_damage(1)
+            enemy.draw()
+            self.assertTrue(draw.call_args.kwargs['flash'])
+            enemy.update(.07)
+            enemy.draw()
+            self.assertFalse(draw.call_args.kwargs['flash'])
+            enemy.update(.06)
+            enemy.draw()
+            self.assertTrue(draw.call_args.kwargs['flash'])
+            enemy.take_damage(1)
+            self.assertEqual(enemy.hp, 1)
+            enemy.update(enemy.HIT_DURATION)
+            enemy.draw()
+            self.assertFalse(draw.call_args.kwargs['flash'])
+
+    def test_white_texture_reused_with_same_frame_and_death_uses_original(self):
+        sprite = OctopusSprite()
+        with patch('pico2d.load_image') as load, patch('octopus_sprite.white_silhouette') as white:
+            sprite.draw(500, 144, .13)
+            normal_args = load.return_value.clip_draw.call_args.args
+            sprite.draw(500, 144, .13, flash=True)
+            self.assertEqual(white.return_value.clip_draw.call_args.args, normal_args)
+            sprite.draw(500, 144, .13, flash=True)
+            white.assert_called_once()
+            sprite.draw(500, 144, .13, dying=True, flash=True)
+            self.assertEqual(white.return_value.clip_draw.call_count, 2)
+            self.assertEqual(load.return_value.clip_draw.call_count, 2)
 
 
 class ScrollEnemyIntegrationTests(unittest.TestCase):

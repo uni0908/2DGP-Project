@@ -12,6 +12,8 @@ class OctopusEnemy:
     MAX_HP = 3
     FALL_SPEED = 160.0
     MOVE_SPEED = 110.0
+    HIT_DURATION = 0.24
+    HIT_BLINK_INTERVAL = 0.06
     team = 'enemy'
 
     def __init__(self, x, player, ground_y, world_height=540):
@@ -23,6 +25,7 @@ class OctopusEnemy:
         self.grounded = False
         self.sprite = OctopusSprite()
         self.animation_time = 0.0
+        self.hit_elapsed = self.HIT_DURATION
 
     def get_bb(self):
         return (self.x - self.WIDTH / 2, self.y - self.HEIGHT / 2,
@@ -32,6 +35,7 @@ class OctopusEnemy:
         if self.hp <= 0 or amount <= 0:
             return
         self.hp = max(0, self.hp - amount)
+        self.hit_elapsed = 0.0
         if self.hp == 0:
             game_world.remove_object(self)
             game_world.add_object(OctopusDeath(self.sprite, self.x, self.get_bb()[1]),
@@ -42,6 +46,7 @@ class OctopusEnemy:
             return
         dt = max(0, dt)
         self.animation_time += dt
+        self.hit_elapsed += dt
         if not self.grounded:
             floor = self.ground_y + self.HEIGHT / 2
             fall_time = max(0, (self.y - floor) / self.FALL_SPEED)
@@ -56,7 +61,9 @@ class OctopusEnemy:
 
     def draw(self):
         left, bottom, right, top = game_world.screen_bb(self.get_bb())
-        self.sprite.draw(self.x, bottom, self.animation_time)
+        flash = (self.hit_elapsed < self.HIT_DURATION
+                 and int(self.hit_elapsed / self.HIT_BLINK_INTERVAL) % 2 == 0)
+        self.sprite.draw(self.x, bottom, self.animation_time, flash=flash)
         top = max(top, bottom + DISPLAY_HEIGHT + 4)
         pico2d.draw_rectangle(left, top + 6,
                               left + self.WIDTH * self.hp / self.MAX_HP,

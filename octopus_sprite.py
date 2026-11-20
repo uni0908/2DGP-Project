@@ -1,6 +1,7 @@
 """사용자 문어 v2 시트의 이동·죽기 프레임. 원본 픽셀은 변경하지 않는다."""
 
 from pathlib import Path
+import ctypes
 
 import pico2d
 import game_world
@@ -33,19 +34,51 @@ def frame_bounds(elapsed, dying=False):
     return frames[min(index, len(frames) - 1) if dying else index % len(frames)]
 
 
+def white_silhouette():
+    """SDL 메모리에서 RGB만 흰색으로 바꾸고 원본 알파는 보존한다."""
+    original = pico2d.IMG_Load(str(IMAGE_PATH).encode('utf-8'))
+    if not original:
+        raise RuntimeError('문어 피격 효과의 원본 시트를 불러오지 못했습니다.')
+    try:
+        surface = pico2d.SDL_ConvertSurfaceFormat(original, pico2d.SDL_PIXELFORMAT_RGBA32, 0)
+    finally:
+        pico2d.SDL_FreeSurface(original)
+    if not surface:
+        raise RuntimeError('문어 피격 효과의 RGBA 변환에 실패했습니다.')
+    try:
+        size = surface.contents.pitch * surface.contents.h
+        pixels = bytearray(ctypes.string_at(surface.contents.pixels, size))
+        for channel in range(3):
+            pixels[channel::4] = b'\xff' * (size // 4)
+        ctypes.memmove(surface.contents.pixels, bytes(pixels), size)
+        renderer = pico2d.load_image.__globals__['renderer']
+        texture = pico2d.SDL_CreateTextureFromSurface(renderer, surface)
+        if not texture:
+            raise RuntimeError('문어 피격 효과의 텍스처 생성에 실패했습니다.')
+        return pico2d.Image(texture)
+    finally:
+        pico2d.SDL_FreeSurface(surface)
+
+
 class OctopusSprite:
     def __init__(self):
         self.image = None
+        self.white_image = None
 
-    def draw(self, x, bottom, elapsed, dying=False):
+    def draw(self, x, bottom, elapsed, dying=False, flash=False):
         if self.image is None:
             self.image = pico2d.load_image(str(IMAGE_PATH))
+        image = self.image
+        if flash and not dying:
+            if self.white_image is None:
+                self.white_image = white_silhouette()
+            image = self.white_image
         left, top, right, base = frame_bounds(elapsed, dying)
         # 선 가장자리 여유 2px. 모든 프레임은 같은 배율로 꿈틀거림을 유지한다.
         clip_left, clip_top = left - 2, top - 2
         width, height = right - left + 4, base - top + 4
         baseline = 706 if dying else base
-        self.image.clip_draw(clip_left, SHEET_HEIGHT - clip_top - height, width, height,
+        image.clip_draw(clip_left, SHEET_HEIGHT - clip_top - height, width, height,
                              game_world.screen_x(x),
                              bottom + (baseline - clip_top - height / 2) * SCALE,
                              width * SCALE, height * SCALE)
