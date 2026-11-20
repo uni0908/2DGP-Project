@@ -10,7 +10,7 @@ from frog_sprite import FrogSprite, FrogDeath
 class FrogEnemy:
     WIDTH, HEIGHT = 36, 44
     HIDDEN_HEIGHT = 16
-    MAX_HP = 1
+    MAX_HP = 2
     ACTIVE_DISTANCE = 240
     MOVE_SPEED = 120.0
     GRAVITY = 1200.0
