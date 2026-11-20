@@ -7,25 +7,32 @@ from enemy_bomb import ArcBomb
 
 class CatRobot:
     WIDTH, HEIGHT = 96, 112
-    MAX_HP = 50
+    MAX_HP = 100
     ACTIVE_DISTANCE = 600
     FIRST_SHOT_DELAY = 0.8
     FIRE_INTERVAL = 2.4
     CHARGE_TIME = 0.45
     team = 'enemy'
 
-    def __init__(self, x, player, ground_y):
+    def __init__(self, x, player, ground_y, view_width=960):
         self.x, self.player, self.ground_y = x, player, ground_y
         self.hp = self.MAX_HP
         self.fire_timer = self.FIRST_SHOT_DELAY
         self.engaged = False
+        self.view_width = view_width
+
+    @property
+    def bullet_vulnerable(self):
+        left, _, right, _ = self.get_bb()
+        return (self.hp > 0 and right > game_world.camera_x
+                and left < game_world.camera_x + self.view_width)
 
     def get_bb(self):
         return (self.x - self.WIDTH / 2, self.ground_y,
                 self.x + self.WIDTH / 2, self.ground_y + self.HEIGHT)
 
     def take_damage(self, amount):
-        if self.hp <= 0 or amount <= 0:
+        if not self.bullet_vulnerable or amount <= 0:
             return
         self.hp = max(0, self.hp - amount)
         if self.hp == 0:

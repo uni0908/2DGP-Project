@@ -41,7 +41,7 @@ def enter():
     game_world.add_object(player, game_world.ACTORS)
     for left, right in FROG_PATROLS:
         game_world.add_object(FrogEnemy(left, right, player, GROUND_Y), game_world.ACTORS)
-    game_world.add_object(CatRobot(ROBOT_X, player, GROUND_Y), game_world.ACTORS)
+    game_world.add_object(CatRobot(ROBOT_X, player, GROUND_Y, WINDOW_WIDTH), game_world.ACTORS)
     transition_requested = False
     spawner = OctopusSpawner(player, GROUND_Y, WINDOW_WIDTH, WINDOW_HEIGHT)
     game_over = False

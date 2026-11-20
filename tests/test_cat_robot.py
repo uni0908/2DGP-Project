@@ -1,4 +1,4 @@
-"""고양이 로봇의 고정 배치·50발 체력·접촉과 재시작 검사."""
+"""고양이 로봇의 고정 배치·화면 내 100발 체력·폭탄 검사."""
 
 import unittest
 from unittest.mock import patch
@@ -18,20 +18,47 @@ class CatRobotTests(unittest.TestCase):
         self.robot = CatRobot(3420, self.player, 144)
         game_world.add_object(self.player, game_world.ACTORS)
         game_world.add_object(self.robot, game_world.ACTORS)
+        game_world.camera_x = 2640
 
     def tearDown(self):
         game_world.clear()
 
-    def test_fifty_actual_player_bullets_destroy_robot(self):
-        for count in range(1, 51):
+    def test_hundred_actual_player_bullets_destroy_visible_robot(self):
+        for count in range(1, 101):
             bullet = Bullet(self.robot.x - 100, 144 + 41.5, 1, 'player', 3600)
             game_world.add_object(bullet, game_world.PROJECTILES)
             bullet.update(.2)
             self.assertFalse(bullet.active)
-            self.assertEqual(self.robot.hp, 50 - count)
-            self.assertEqual(self.robot in game_world.objects(game_world.ACTORS), count < 50)
+            self.assertEqual(self.robot.hp, 100 - count)
+            self.assertEqual(self.robot in game_world.objects(game_world.ACTORS), count < 100)
         self.robot.take_damage(1)
         self.assertEqual(self.robot.hp, 0)
+
+    def test_offscreen_bullets_pass_without_damage_then_visible_hits_count(self):
+        game_world.camera_x = 0
+        for _ in range(5):
+            bullet = Bullet(self.robot.x - 100, 185.5, 1, 'player', 3600)
+            bullet.update(.2)
+            self.assertTrue(bullet.active)
+        self.robot.take_damage(100)
+        self.assertEqual(self.robot.hp, 100)
+        game_world.camera_x = 2640
+        bullet = Bullet(self.robot.x - 100, 185.5, 1, 'player', 3600)
+        bullet.update(.2)
+        self.assertFalse(bullet.active)
+        self.assertEqual(self.robot.hp, 99)
+        game_world.camera_x = 0
+        self.robot.take_damage(1)
+        self.assertEqual(self.robot.hp, 99)
+
+    def test_visibility_requires_body_overlap_with_current_view(self):
+        left, _, right, _ = self.robot.get_bb()
+        game_world.camera_x = left - 960
+        self.assertFalse(self.robot.bullet_vulnerable)
+        game_world.camera_x += 1
+        self.assertTrue(self.robot.bullet_vulnerable)
+        game_world.camera_x = right
+        self.assertFalse(self.robot.bullet_vulnerable)
 
     def test_stays_still_and_body_contact_respects_invincibility(self):
         self.player.x = self.robot.x
@@ -45,11 +72,13 @@ class CatRobotTests(unittest.TestCase):
         scroll_mode.enter()
         robots = [obj for obj in game_world.objects(game_world.ACTORS) if isinstance(obj, CatRobot)]
         self.assertEqual(len(robots), 1)
-        robots[0].take_damage(50)
+        game_world.camera_x = 2640
+        robots[0].take_damage(100)
         scroll_mode.enter()
         robots = [obj for obj in game_world.objects(game_world.ACTORS) if isinstance(obj, CatRobot)]
         self.assertEqual(len(robots), 1)
-        self.assertEqual((robots[0].x, robots[0].hp), (3420, 50))
+        self.assertEqual((robots[0].x, robots[0].hp), (3420, 100))
+        self.assertFalse(robots[0].bullet_vulnerable)
         scroll_mode.exit()
         self.assertFalse(game_world.objects(game_world.ACTORS))
 
@@ -76,7 +105,7 @@ class CatRobotTests(unittest.TestCase):
     def test_destruction_stops_new_shots_but_existing_bombs_remain(self):
         self.robot.update(.81)
         bomb = game_world.objects(game_world.PROJECTILES)[0]
-        self.robot.take_damage(50)
+        self.robot.take_damage(100)
         self.robot.update(10)
         self.assertEqual(game_world.objects(game_world.PROJECTILES), (bomb,))
 
