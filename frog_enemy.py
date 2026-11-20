@@ -19,7 +19,6 @@ class FrogEnemy:
     WAKE_PROTECTION = 0.5
     HOP_PAUSE = 0.4
     ATTACK_DISTANCE = 180
-    WINDUP_TIME = 0.4
     TONGUE_TIME = 0.3
     RECOVER_TIME = 0.45
     ATTACK_COOLDOWN = 1.4
@@ -96,10 +95,6 @@ class FrogEnemy:
         self.wake_timer = max(0, self.wake_timer - dt)
         self.attack_cooldown = max(0, self.attack_cooldown - dt)
         self.state_time += dt
-        if self.state == 'windup':
-            if self.state_time >= self.WINDUP_TIME:
-                self.set_state('tongue')
-            return
         if self.state == 'tongue':
             bounds = self.tongue_bb()
             if bounds is not None and overlaps(bounds, self.player.get_bb()):
@@ -134,7 +129,7 @@ class FrogEnemy:
         elif (abs(self.player.x - self.x) <= self.ATTACK_DISTANCE
               and self.attack_cooldown <= 0):
             self.attack_direction = 1 if self.player.x > self.x else -1
-            self.set_state('windup')
+            self.set_state('tongue')
         elif self.state_time >= self.HOP_PAUSE:
             self.velocity_y = self.JUMP_SPEED
             self.set_state('hop')

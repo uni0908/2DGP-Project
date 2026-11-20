@@ -163,34 +163,35 @@ class FrogTests(unittest.TestCase):
 
     def prepare_attack(self, direction=-1):
         self.player.x = self.frog.x + direction * 120
+        self.frog.attack_cooldown = 10
         self.frog.update(.76)  # 기상 즉시 하는 첫 점프를 착지까지 진행한다.
         self.frog.set_state('idle')
+        self.player.x = self.frog.x + direction * 120
         self.frog.attack_cooldown = 0
         self.frog.update(.01)
-        self.assertEqual(self.frog.state, 'windup')
+        self.assertEqual(self.frog.state, 'tongue')
 
-    def test_tongue_warns_then_hits_both_directions_and_respects_invincibility(self):
+    def test_tongue_starts_immediately_hits_both_directions_and_respects_invincibility(self):
         for direction in (-1, 1):
             with self.subTest(direction=direction):
                 self.player.hp = 5
                 self.player.invincibility_timer = 0
                 self.frog.state = 'hidden'
                 self.prepare_attack(direction)
-                self.frog.update(.39)
                 self.assertEqual(self.player.hp, 5)
-                self.assertIsNone(self.frog.tongue_bb())
-                self.frog.update(.16)
+                self.assertIsNotNone(self.frog.tongue_bb())
+                self.frog.update(.15)
                 self.assertEqual(self.player.hp, 4)
                 self.frog.update(.05)
                 self.assertEqual(self.player.hp, 4)
-                self.frog.update(.5)
+                self.frog.update(.2)
                 self.assertEqual(self.frog.state, 'recover')
                 self.assertIsNone(self.frog.tongue_bb())
 
     def test_tongue_direction_locks_and_jump_avoids_low_attack_but_crouch_is_hit(self):
         self.prepare_attack(-1)
         self.player.y += 100
-        self.frog.update(.55)
+        self.frog.update(.15)
         self.assertEqual(self.player.hp, 5)
         self.assertEqual(self.frog.attack_direction, -1)
         self.player.x = self.frog.x + 120
@@ -205,7 +206,7 @@ class FrogTests(unittest.TestCase):
 
     def test_tongue_retracts_and_dying_cancels_attack(self):
         self.prepare_attack()
-        self.frog.update(.55)
+        self.frog.update(.15)
         bounds = self.frog.tongue_bb()
         self.assertIsNotNone(bounds)
         self.assertAlmostEqual(bounds[2] - bounds[0], self.frog.TONGUE_LENGTH)
@@ -220,7 +221,7 @@ class FrogTests(unittest.TestCase):
 
     def test_tongue_draw_uses_world_to_screen_conversion(self):
         self.prepare_attack()
-        self.frog.update(.55)
+        self.frog.update(.15)
         game_world.camera_x = 400
         with patch('pico2d.load_image') as load:
             self.frog.draw()
