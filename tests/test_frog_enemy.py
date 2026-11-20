@@ -46,8 +46,8 @@ class FrogTests(unittest.TestCase):
         self.assertEqual(self.frog.get_bb()[3] - self.frog.get_bb()[1], 44)
         self.assertTrue(self.shoot(176).active)
         self.assertEqual(self.frog.hp, 1)
-        self.frog.HOP_PAUSE = 10  # 점프와 분리해 보호 종료 후 1발 처치를 확인한다.
-        self.frog.update(.51)
+        self.frog.HOP_PAUSE = 10  # 첫 점프 착지 후 두 번째 점프 없이 피격을 확인한다.
+        self.frog.update(.75)
         self.assertTrue(self.frog.bullet_vulnerable)
         self.assertFalse(self.shoot(176).active)
         self.assertEqual(self.frog.hp, 0)
@@ -57,7 +57,7 @@ class FrogTests(unittest.TestCase):
         self.player.x = self.frog.x - 180
         self.frog.HOP_PAUSE = 10
         self.frog.update(.01)
-        self.frog.update(.51)
+        self.frog.update(.75)
         self.player.pressed_keys.add(pico2d.SDLK_a)
         self.player.update(.01)
         shot = game_world.objects(game_world.PROJECTILES)[0]
@@ -77,6 +77,18 @@ class FrogTests(unittest.TestCase):
         self.assertEqual(directions, {-1, 1})
         self.assertAlmostEqual(max_bottom - 144, 80, delta=.1)
 
+    def test_waking_immediately_jumps_and_can_dodge_bullet_without_protection(self):
+        self.player.x = self.frog.x - 220
+        self.frog.update(1 / 120)
+        self.assertEqual(self.frog.state, 'hop')
+        self.assertEqual(self.frog.velocity_y, self.frog.JUMP_SPEED)
+        self.frog.update(.2)
+        self.assertGreater(self.frog.bottom, 144 + 44)
+        self.frog.wake_timer = 0  # 무적 판정이 아니라 높이 차이로 피하는지 확인한다.
+        self.assertTrue(self.frog.bullet_vulnerable)
+        self.assertTrue(self.shoot(144 + 41.5).active)
+        self.assertEqual(self.frog.hp, 1)
+
     def test_wake_protection_cannot_be_bypassed_and_resets_after_hiding(self):
         self.player.x = self.frog.x - 220
         self.frog.HOP_PAUSE = 10
@@ -88,7 +100,7 @@ class FrogTests(unittest.TestCase):
         self.frog.update(.02)
         self.assertTrue(self.frog.bullet_vulnerable)
         self.player.x = 0
-        self.frog.update(.01)
+        self.frog.update(1)
         self.assertEqual(self.frog.state, 'hidden')
         self.player.x = self.frog.x - 220
         self.frog.update(.01)
@@ -141,7 +153,8 @@ class FrogTests(unittest.TestCase):
 
     def prepare_attack(self, direction=-1):
         self.player.x = self.frog.x + direction * 120
-        self.frog.update(.01)
+        self.frog.update(.76)  # 기상 즉시 하는 첫 점프를 착지까지 진행한다.
+        self.frog.set_state('idle')
         self.frog.attack_cooldown = 0
         self.frog.update(.01)
         self.assertEqual(self.frog.state, 'windup')

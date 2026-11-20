@@ -123,7 +123,8 @@ class FrogEnemy:
             self.set_state('hidden')
         elif self.state == 'hidden':
             self.wake_timer = self.WAKE_PROTECTION
-            self.set_state('idle')
+            self.velocity_y = self.JUMP_SPEED
+            self.set_state('hop')
         elif (abs(self.player.x - self.x) <= self.ATTACK_DISTANCE
               and self.attack_cooldown <= 0):
             self.attack_direction = 1 if self.player.x > self.x else -1
