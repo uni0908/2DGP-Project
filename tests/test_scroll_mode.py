@@ -73,6 +73,9 @@ class ScrollModeTests(unittest.TestCase):
             self.assertEqual((player.doodle_count, player.eraser_count), before)
 
     def test_boss_transition_preserves_hp_inventory_and_clears_old_world(self):
+        robot = next(obj for obj in game_world.objects(game_world.ACTORS) if isinstance(obj, CatRobot))
+        game_world.camera_x = 2640
+        robot.take_damage(robot.MAX_HP)
         player = scroll_mode.player
         player.x, player.hp = 3582, 3
         player.doodle_count, player.eraser_count = 7, 4
@@ -90,6 +93,39 @@ class ScrollModeTests(unittest.TestCase):
         self.assertFalse(game_world.objects(game_world.TERRAIN))
         self.assertFalse(game_world.objects(game_world.PROJECTILES))
         self.assertEqual(play_mode.enemy.pattern, 'normal')
+
+    def test_living_robot_blocks_only_boss_transition_at_right_edge(self):
+        scroll_mode.player.x = 3582
+        scroll_mode.update(.01)
+        self.assertEqual(scroll_mode.player.x, 3582)
+        self.assertTrue(scroll_mode.robot_is_alive())
+        self.assertIsNone(game_framework.next_mode)
+        self.assertFalse(scroll_mode.transition_requested)
+        robot = next(obj for obj in game_world.objects(game_world.ACTORS) if isinstance(obj, CatRobot))
+        robot.take_damage(robot.MAX_HP)
+        scroll_mode.update(.01)
+        self.assertIs(game_framework.next_mode, play_mode)
+        self.assertTrue(scroll_mode.transition_requested)
+
+    def test_player_can_still_walk_through_robot_while_taking_contact_damage(self):
+        robot = next(obj for obj in game_world.objects(game_world.ACTORS) if isinstance(obj, CatRobot))
+        scroll_mode.player.x = robot.x - 40
+        scroll_mode.handle_events([self.event(pico2d.SDLK_RIGHT)])
+        scroll_mode.update(.6)
+        self.assertGreater(scroll_mode.player.get_bb()[0], robot.get_bb()[2])
+        self.assertEqual(scroll_mode.player.hp, 4)
+        self.assertEqual(robot.hp, 100)
+
+    def test_restart_restores_robot_boss_entry_requirement(self):
+        robot = next(obj for obj in game_world.objects(game_world.ACTORS) if isinstance(obj, CatRobot))
+        game_world.camera_x = 2640
+        robot.take_damage(robot.MAX_HP)
+        self.assertFalse(scroll_mode.robot_is_alive())
+        scroll_mode.enter()
+        scroll_mode.player.x = 3582
+        scroll_mode.update(.01)
+        self.assertTrue(scroll_mode.robot_is_alive())
+        self.assertIsNone(game_framework.next_mode)
 
     def test_restart_clears_camera_and_constructed_objects(self):
         scroll_mode.player.x = 1800

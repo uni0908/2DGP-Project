@@ -75,6 +75,11 @@ def handle_events(events=None):
     return True
 
 
+def robot_is_alive():
+    return any(isinstance(obj, CatRobot) and obj.hp > 0
+               for obj in game_world.objects(game_world.ACTORS))
+
+
 def update(dt):
     global transition_requested, game_over
     if game_over:
@@ -96,7 +101,7 @@ def update(dt):
     camera.follow(player.x)
     game_world.camera_x = camera.x
     if (not game_over and player.x >= WORLD_WIDTH - player.WIDTH / 2 - 0.001
-            and not transition_requested):
+            and not transition_requested and not robot_is_alive()):
         transition_requested = True
         state = {'hp': player.hp, 'doodle_count': player.doodle_count,
                  'eraser_count': player.eraser_count}
@@ -126,4 +131,6 @@ def draw():
               (60, 70, 60))
     if game_over:
         font.draw(300, WINDOW_HEIGHT / 2, '게임 오버! R: 재시작 / Esc: 종료', (180, 30, 30))
+    elif player.x >= WORLD_WIDTH - player.WIDTH / 2 - 0.001 and robot_is_alive():
+        font.draw(260, 40, '고양이 로봇을 처치해야 보스전으로 이동할 수 있어요', (140, 60, 40))
     pico2d.update_canvas()
