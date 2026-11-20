@@ -11,6 +11,7 @@ from player import Player
 from enemy import TestEnemy
 from bullet import Bullet
 from scroll_enemy import OctopusEnemy, OctopusSpawner
+from octopus_sprite import OctopusDeath, DEATH_DURATION, SCALE, frame_bounds
 
 
 class OctopusTests(unittest.TestCase):
@@ -59,6 +60,13 @@ class OctopusTests(unittest.TestCase):
             self.assertFalse(bullet.active)
             self.assertEqual(enemy.hp, remaining_hp)
         self.assertNotIn(enemy, game_world.objects(game_world.ACTORS))
+        effects = game_world.objects(game_world.EFFECTS)
+        self.assertEqual(len(effects), 1)
+        self.assertIsInstance(effects[0], OctopusDeath)
+        enemy.take_damage(1)
+        self.assertEqual(len(game_world.objects(game_world.EFFECTS)), 1)
+        effects[0].update(DEATH_DURATION)
+        self.assertFalse(game_world.objects(game_world.EFFECTS))
 
     def test_common_body_contact_respects_invincibility_and_dead_enemies(self):
         # 공통 경로가 보스의 부모 클래스인 기존 적에도 적용되는지 확인한다.
@@ -106,12 +114,20 @@ class OctopusTests(unittest.TestCase):
         with patch('pico2d.load_image') as load, patch('pico2d.draw_rectangle'):
             enemy.draw()
             args = load.return_value.clip_draw.call_args.args
-            self.assertEqual(args[:4], (80, 2077, 147, 211))
+            self.assertEqual(args[:4], (16, 371, 245, 333))
             self.assertEqual(args[4], 400)
-            self.assertEqual(args[5] - args[7] / 2, enemy.get_bb()[1])
-            self.assertAlmostEqual(args[6] / args[7], 147 / 211)
+            self.assertAlmostEqual(args[5] - args[7] / 2 + 2 * SCALE, enemy.get_bb()[1])
+            self.assertAlmostEqual(args[6] / args[7], 245 / 333)
             enemy.draw()
             load.assert_called_once()
+
+    def test_move_animation_loops_without_changing_physics_and_death_does_not_loop(self):
+        enemy = self.enemy()
+        enemy.update(.125)
+        self.assertEqual(frame_bounds(enemy.animation_time), (286, 74, 536, 347))
+        self.assertFalse(enemy.grounded)
+        self.assertEqual(frame_bounds(1), frame_bounds(0))
+        self.assertEqual(frame_bounds(10, dying=True), (1825, 428, 2098, 665))
 
 
 class ScrollEnemyIntegrationTests(unittest.TestCase):

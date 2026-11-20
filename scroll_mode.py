@@ -72,6 +72,8 @@ def update(dt):
     global transition_requested, game_over
     if game_over:
         player.update(max(0, dt))
+        for effect in game_world.objects(game_world.EFFECTS):
+            effect.update(max(0, dt))
         return
     remaining = max(0, dt)
     while remaining > 0:
