@@ -46,15 +46,19 @@ class ScrollModeTests(unittest.TestCase):
             self.assertEqual(transition.call_count, 1)
             self.assertIs(transition.call_args.args[0], play_mode)
 
-    def test_scroll_world_coordinates_and_doodle_creation(self):
+    def test_scroll_world_coordinates_and_items_cannot_be_used(self):
         scroll_mode.player.x = 1800
         scroll_mode.update(.01)
         self.assertEqual(game_world.camera_x, 1416)
-        scroll_mode.handle_events([self.event(pico2d.SDLK_s)])
-        platform = game_world.objects(game_world.TERRAIN)[0]
-        self.assertIsInstance(platform, Doodle)
-        self.assertEqual(platform.x, 1874)
-        self.assertEqual(game_world.screen_x(platform.x), 458)
+        player = scroll_mode.player
+        before = (player.doodle_count, player.eraser_count)
+        for keys in ((pico2d.SDLK_s, pico2d.SDLK_d),
+                     (pico2d.SDLK_DOWN, pico2d.SDLK_s, pico2d.SDLK_d)):
+            player.clear_input()
+            scroll_mode.handle_events([self.event(key) for key in keys])
+            self.assertFalse(game_world.objects(game_world.TERRAIN))
+            self.assertFalse(game_world.objects(game_world.PROJECTILES))
+            self.assertEqual((player.doodle_count, player.eraser_count), before)
 
     def test_boss_transition_preserves_hp_inventory_and_clears_old_world(self):
         player = scroll_mode.player

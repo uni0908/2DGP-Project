@@ -5,7 +5,6 @@ from pathlib import Path
 import pico2d
 import game_framework
 import game_world
-import player_actions
 import play_mode
 from camera import Camera
 from player import Player
@@ -54,11 +53,6 @@ def handle_events(events=None):
             if event.key == pico2d.SDLK_r:
                 enter()
                 continue
-            if event.key not in player.pressed_keys:
-                if event.key == pico2d.SDLK_s:
-                    player_actions.spawn_doodle(player, WORLD_WIDTH, WINDOW_HEIGHT, GROUND_Y)
-                elif event.key == pico2d.SDLK_d:
-                    player_actions.throw_eraser(player, WORLD_WIDTH, GROUND_Y)
         if (event.type == pico2d.SDL_WINDOWEVENT
                 and event.event == pico2d.SDL_WINDOWEVENT_FOCUS_LOST):
             player.clear_input()
@@ -99,8 +93,8 @@ def draw():
                              WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
     health_bar.draw(player.hp)
     font.draw(520, WINDOW_HEIGHT - 28, '방향키 이동 / Space 점프 / A 사격', (45, 60, 50))
-    font.draw(520, WINDOW_HEIGHT - 55, 'S 낙서 / D 지우개 / R 재시작', (60, 70, 60))
-    font.draw(520, WINDOW_HEIGHT - 82, '아래+S 발밑 생성 / 아래+D 삭제', (60, 70, 60))
+    font.draw(520, WINDOW_HEIGHT - 55, 'R 재시작 / Esc 종료', (60, 70, 60))
+    font.draw(520, WINDOW_HEIGHT - 82, '낙서·지우개: 획득만 가능 / 보스전에서 사용', (60, 70, 60))
     font.draw(520, WINDOW_HEIGHT - 109, f'거리 {int(player.x)} / {WORLD_WIDTH}   낙서 {player.doodle_count}   지우개 {player.eraser_count}',
               (60, 70, 60))
     pico2d.update_canvas()
