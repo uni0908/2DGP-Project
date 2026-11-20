@@ -2,9 +2,9 @@
 
 import math
 
-import pico2d
 import game_world
 from doodle import overlaps
+from frog_sprite import FrogSprite, FrogDeath
 
 
 class FrogEnemy:
@@ -25,7 +25,7 @@ class FrogEnemy:
     ATTACK_COOLDOWN = 1.4
     TONGUE_LENGTH = 160
     TONGUE_HEIGHT = 8
-    MOUTH_HEIGHT = 34
+    MOUTH_HEIGHT = 20  # 새 그림의 입 위치를 발에서 약 20px에 맞춘다.
     team = 'enemy'
 
     def __init__(self, patrol_left, patrol_right, player, ground_y):
@@ -42,6 +42,7 @@ class FrogEnemy:
         self.attack_direction = self.direction
         self.attack_cooldown = 0.7
         self.wake_timer = 0.0
+        self.sprite = FrogSprite()
 
     @property
     def bullet_vulnerable(self):
@@ -58,6 +59,10 @@ class FrogEnemy:
         self.hp = max(0, self.hp - amount)
         if self.hp == 0:
             game_world.remove_object(self)
+            direction = (self.attack_direction if self.state in ('windup', 'tongue', 'recover')
+                         else self.direction)
+            game_world.add_object(FrogDeath(self.sprite, self.x, self.bottom, direction),
+                                  game_world.EFFECTS)
 
     def set_state(self, state):
         self.state, self.state_time = state, 0.0
@@ -120,7 +125,8 @@ class FrogEnemy:
                 self.set_state('idle' if nearby else 'hidden')
             return
         if not nearby:
-            self.set_state('hidden')
+            if self.state != 'hidden':
+                self.set_state('hidden')
         elif self.state == 'hidden':
             self.wake_timer = self.WAKE_PROTECTION
             self.velocity_y = self.JUMP_SPEED
@@ -134,21 +140,4 @@ class FrogEnemy:
             self.set_state('hop')
 
     def draw(self):
-        left, bottom, right, top = game_world.screen_bb(self.get_bb())
-        color = (75, 115, 70) if self.state == 'hidden' else (75, 175, 85)
-        if self.state == 'windup':
-            color = (195, 155, 50)
-        if self.state != 'hidden' and self.wake_timer > 0:
-            color = (135, 220, 145)
-        pico2d.draw_rectangle(left, bottom, right, top, *color, filled=True)
-        # 몸의 낮은 모양과 올라온 눈으로 잠복/활성 상태를 구분한다.
-        for x in (left + 5, right - 11):
-            pico2d.draw_rectangle(x, top - 8, x + 6, top - 2, 25, 40, 25, filled=True)
-        bounds = self.tongue_bb()
-        if bounds is not None:
-            pico2d.draw_rectangle(*game_world.screen_bb(bounds), 220, 80, 120, filled=True)
-        elif self.state == 'windup':
-            mouth_x = game_world.screen_x(self.x + self.attack_direction * self.WIDTH / 2)
-            mouth_y = self.bottom + self.MOUTH_HEIGHT
-            pico2d.draw_rectangle(mouth_x - 3, mouth_y - 4, mouth_x + 3, mouth_y + 4,
-                                  220, 80, 120, filled=True)
+        self.sprite.draw(self)

@@ -39,6 +39,11 @@ class FrogTests(unittest.TestCase):
         self.assertEqual(other.hp, 0)
         self.assertEqual(self.frog.hp, 1)
 
+    def test_hidden_animation_time_advances_without_restarting_each_update(self):
+        self.frog.update(.4)
+        self.assertEqual(self.frog.state, 'hidden')
+        self.assertAlmostEqual(self.frog.state_time, .4)
+
     def test_approach_exposes_frog_and_one_bullet_kills(self):
         self.player.x = self.frog.x - self.frog.ACTIVE_DISTANCE
         self.frog.update(.01)
@@ -177,7 +182,7 @@ class FrogTests(unittest.TestCase):
                 self.assertEqual(self.frog.state, 'recover')
                 self.assertIsNone(self.frog.tongue_bb())
 
-    def test_tongue_direction_locks_and_jump_or_crouch_avoids_it(self):
+    def test_tongue_direction_locks_and_jump_avoids_low_attack_but_crouch_is_hit(self):
         self.prepare_attack(-1)
         self.player.y += 100
         self.frog.update(.55)
@@ -191,7 +196,7 @@ class FrogTests(unittest.TestCase):
         self.player.height = self.player.CROUCH_HEIGHT
         self.player.y = 144 + self.player.height / 2
         self.frog.update(.02)
-        self.assertEqual(self.player.hp, 5)
+        self.assertEqual(self.player.hp, 4)
 
     def test_tongue_retracts_and_dying_cancels_attack(self):
         self.prepare_attack()
@@ -212,6 +217,10 @@ class FrogTests(unittest.TestCase):
         self.prepare_attack()
         self.frog.update(.55)
         game_world.camera_x = 400
-        with patch('pico2d.draw_rectangle') as draw:
+        with patch('pico2d.load_image') as load:
             self.frog.draw()
-        self.assertEqual(draw.call_args.args[:4], game_world.screen_bb(self.frog.tongue_bb()))
+        args = load.return_value.clip_composite_draw.call_args.args
+        left, bottom, right, top = self.frog.tongue_bb()
+        self.assertEqual(args[5], 'h')
+        self.assertEqual(args[6:8], ((left + right) / 2 - 400, (bottom + top) / 2))
+        self.assertEqual(args[8:], (right - left, top - bottom))
