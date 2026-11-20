@@ -168,9 +168,11 @@ class ScrollEnemyIntegrationTests(unittest.TestCase):
     def test_mode_spawns_and_restart_resets_timer(self):
         scroll_mode.enter()
         scroll_mode.update(3.1)
-        self.assertEqual(len(game_world.objects(game_world.ACTORS)), 2)
+        self.assertEqual(sum(isinstance(obj, OctopusEnemy)
+                             for obj in game_world.objects(game_world.ACTORS)), 1)
         scroll_mode.enter()
-        self.assertEqual(len(game_world.objects(game_world.ACTORS)), 1)
+        self.assertFalse(any(isinstance(obj, OctopusEnemy)
+                             for obj in game_world.objects(game_world.ACTORS)))
         self.assertEqual(scroll_mode.spawner.timer, OctopusSpawner.SPAWN_INTERVAL)
 
     def test_lethal_contact_stops_spawning_and_prevents_boss_transition(self):

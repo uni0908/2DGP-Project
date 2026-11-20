@@ -11,6 +11,7 @@ import scroll_mode
 import play_mode
 from doodle import Doodle
 from bullet import Bullet
+from frog_enemy import FrogEnemy
 
 
 class ScrollModeTests(unittest.TestCase):
@@ -29,8 +30,12 @@ class ScrollModeTests(unittest.TestCase):
     def event(self, key):
         return SimpleNamespace(type=pico2d.SDL_KEYDOWN, key=key)
 
-    def test_map_initially_contains_only_player_and_continuous_floor(self):
-        self.assertEqual(game_world.objects(game_world.ACTORS), (scroll_mode.player,))
+    def test_map_initially_contains_player_hidden_frogs_and_continuous_floor(self):
+        actors = game_world.objects(game_world.ACTORS)
+        self.assertIs(actors[0], scroll_mode.player)
+        self.assertEqual(len(actors), 4)
+        self.assertTrue(all(isinstance(obj, FrogEnemy) and obj.state == 'hidden'
+                            for obj in actors[1:]))
         self.assertFalse(game_world.objects(game_world.TERRAIN))
         self.assertFalse(game_world.objects(game_world.PROJECTILES))
         self.assertEqual(scroll_mode.player.world_width, 3600)

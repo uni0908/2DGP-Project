@@ -45,7 +45,8 @@ class Bullet:
                    if isinstance(obj, Doodle)]
         targets.extend(obj for obj in game_world.objects(game_world.ACTORS)
                        if getattr(obj, 'team', None) not in (None, self.team)
-                       and getattr(obj, 'hp', 0) > 0)
+                       and getattr(obj, 'hp', 0) > 0
+                       and getattr(obj, 'bullet_vulnerable', True))
         for obj in targets:
             left, bottom, right, top = obj.get_bb()
             if (self.parry_reward is not None and getattr(obj, 'parry_timer', 0) > 0
