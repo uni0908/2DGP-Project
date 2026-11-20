@@ -2,6 +2,7 @@
 
 import pico2d
 import game_world
+from doodle import overlaps
 
 
 class FrogEnemy:
@@ -13,6 +14,14 @@ class FrogEnemy:
     JUMP_SPEED = 300.0
     GRAVITY = 1200.0
     HOP_PAUSE = 0.4
+    ATTACK_DISTANCE = 180
+    WINDUP_TIME = 0.4
+    TONGUE_TIME = 0.3
+    RECOVER_TIME = 0.45
+    ATTACK_COOLDOWN = 1.4
+    TONGUE_LENGTH = 160
+    TONGUE_HEIGHT = 8
+    MOUTH_HEIGHT = 34
     team = 'enemy'
 
     def __init__(self, patrol_left, patrol_right, player, ground_y):
@@ -26,6 +35,8 @@ class FrogEnemy:
         self.velocity_y = 0.0
         self.state = 'hidden'
         self.state_time = 0.0
+        self.attack_direction = self.direction
+        self.attack_cooldown = 0.7
 
     @property
     def bullet_vulnerable(self):
@@ -46,6 +57,20 @@ class FrogEnemy:
     def set_state(self, state):
         self.state, self.state_time = state, 0.0
 
+    def tongue_bb(self):
+        if self.hp <= 0 or self.state != 'tongue':
+            return None
+        progress = self.state_time / self.TONGUE_TIME
+        # 처음 1/3은 뻗기, 가운데는 유지, 마지막 1/3은 회수한다.
+        length = self.TONGUE_LENGTH * max(0, min(1, progress * 3, (1 - progress) * 3))
+        if length <= 0:
+            return None
+        mouth_x = self.x + self.attack_direction * self.WIDTH / 2
+        end_x = mouth_x + self.attack_direction * length
+        mouth_y = self.bottom + self.MOUTH_HEIGHT
+        return (min(mouth_x, end_x), mouth_y - self.TONGUE_HEIGHT / 2,
+                max(mouth_x, end_x), mouth_y + self.TONGUE_HEIGHT / 2)
+
     def update(self, dt):
         if self.hp <= 0 or self.player.hp <= 0:
             return
@@ -58,7 +83,24 @@ class FrogEnemy:
 
     def update_step(self, dt):
         nearby = abs(self.player.x - self.x) <= self.ACTIVE_DISTANCE
+        self.attack_cooldown = max(0, self.attack_cooldown - dt)
         self.state_time += dt
+        if self.state == 'windup':
+            if self.state_time >= self.WINDUP_TIME:
+                self.set_state('tongue')
+            return
+        if self.state == 'tongue':
+            bounds = self.tongue_bb()
+            if bounds is not None and overlaps(bounds, self.player.get_bb()):
+                self.player.take_damage(1)
+            if self.state_time >= self.TONGUE_TIME:
+                self.set_state('recover')
+            return
+        if self.state == 'recover':
+            if self.state_time >= self.RECOVER_TIME:
+                self.attack_cooldown = self.ATTACK_COOLDOWN
+                self.set_state('idle' if nearby else 'hidden')
+            return
         if self.state == 'hop':
             self.x += self.direction * self.MOVE_SPEED * dt
             if self.x <= self.patrol_left:
@@ -75,6 +117,10 @@ class FrogEnemy:
             self.set_state('hidden')
         elif self.state == 'hidden':
             self.set_state('idle')
+        elif (abs(self.player.x - self.x) <= self.ATTACK_DISTANCE
+              and self.attack_cooldown <= 0):
+            self.attack_direction = 1 if self.player.x > self.x else -1
+            self.set_state('windup')
         elif self.state_time >= self.HOP_PAUSE:
             self.velocity_y = self.JUMP_SPEED
             self.set_state('hop')
@@ -82,7 +128,17 @@ class FrogEnemy:
     def draw(self):
         left, bottom, right, top = game_world.screen_bb(self.get_bb())
         color = (75, 115, 70) if self.state == 'hidden' else (75, 175, 85)
+        if self.state == 'windup':
+            color = (195, 155, 50)
         pico2d.draw_rectangle(left, bottom, right, top, *color, filled=True)
         # 몸의 낮은 모양과 올라온 눈으로 잠복/활성 상태를 구분한다.
         for x in (left + 5, right - 11):
             pico2d.draw_rectangle(x, top - 8, x + 6, top - 2, 25, 40, 25, filled=True)
+        bounds = self.tongue_bb()
+        if bounds is not None:
+            pico2d.draw_rectangle(*game_world.screen_bb(bounds), 220, 80, 120, filled=True)
+        elif self.state == 'windup':
+            mouth_x = game_world.screen_x(self.x + self.attack_direction * self.WIDTH / 2)
+            mouth_y = self.bottom + self.MOUTH_HEIGHT
+            pico2d.draw_rectangle(mouth_x - 3, mouth_y - 4, mouth_x + 3, mouth_y + 4,
+                                  220, 80, 120, filled=True)

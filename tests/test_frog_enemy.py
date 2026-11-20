@@ -1,7 +1,9 @@
 """개구리 잠복·접근·왕복 점프와 실제 총격·접촉 검사."""
 
 import unittest
+from unittest.mock import patch
 
+import pico2d
 import game_world
 import scroll_mode
 from bullet import Bullet
@@ -46,6 +48,15 @@ class FrogTests(unittest.TestCase):
         self.assertEqual(self.frog.hp, 0)
         self.assertNotIn(self.frog, game_world.objects(game_world.ACTORS))
 
+    def test_actual_standing_player_shot_can_hit_awake_frog(self):
+        self.player.x = self.frog.x - 180
+        self.frog.update(.01)
+        self.player.pressed_keys.add(pico2d.SDLK_a)
+        self.player.update(.01)
+        shot = game_world.objects(game_world.PROJECTILES)[0]
+        shot.update(.3)
+        self.assertEqual(self.frog.hp, 0)
+
     def test_hops_stay_in_patrol_reverse_at_edges_and_return_to_ground(self):
         self.player.x = self.frog.x
         directions, max_bottom = set(), 144
@@ -86,3 +97,67 @@ class FrogTests(unittest.TestCase):
                              for obj in game_world.objects(game_world.ACTORS)), 3)
         scroll_mode.exit()
         self.assertFalse(game_world.objects(game_world.ACTORS))
+
+    def prepare_attack(self, direction=-1):
+        self.player.x = self.frog.x + direction * 120
+        self.frog.update(.01)
+        self.frog.attack_cooldown = 0
+        self.frog.update(.01)
+        self.assertEqual(self.frog.state, 'windup')
+
+    def test_tongue_warns_then_hits_both_directions_and_respects_invincibility(self):
+        for direction in (-1, 1):
+            with self.subTest(direction=direction):
+                self.player.hp = 5
+                self.player.invincibility_timer = 0
+                self.frog.state = 'hidden'
+                self.prepare_attack(direction)
+                self.frog.update(.39)
+                self.assertEqual(self.player.hp, 5)
+                self.assertIsNone(self.frog.tongue_bb())
+                self.frog.update(.16)
+                self.assertEqual(self.player.hp, 4)
+                self.frog.update(.05)
+                self.assertEqual(self.player.hp, 4)
+                self.frog.update(.5)
+                self.assertEqual(self.frog.state, 'recover')
+                self.assertIsNone(self.frog.tongue_bb())
+
+    def test_tongue_direction_locks_and_jump_or_crouch_avoids_it(self):
+        self.prepare_attack(-1)
+        self.player.y += 100
+        self.frog.update(.55)
+        self.assertEqual(self.player.hp, 5)
+        self.assertEqual(self.frog.attack_direction, -1)
+        self.player.x = self.frog.x + 120
+        self.player.y = 144 + self.player.HEIGHT / 2
+        self.frog.update(.05)
+        self.assertEqual(self.player.hp, 5)
+        self.player.x = self.frog.x - 120
+        self.player.height = self.player.CROUCH_HEIGHT
+        self.player.y = 144 + self.player.height / 2
+        self.frog.update(.02)
+        self.assertEqual(self.player.hp, 5)
+
+    def test_tongue_retracts_and_dying_cancels_attack(self):
+        self.prepare_attack()
+        self.frog.update(.55)
+        bounds = self.frog.tongue_bb()
+        self.assertIsNotNone(bounds)
+        self.assertAlmostEqual(bounds[2] - bounds[0], self.frog.TONGUE_LENGTH)
+        self.frog.update(.12)
+        shorter = self.frog.tongue_bb()
+        self.assertLess(shorter[2] - shorter[0], self.frog.TONGUE_LENGTH)
+        self.frog.take_damage(1)
+        self.assertIsNone(self.frog.tongue_bb())
+        hp = self.player.hp
+        self.frog.update(2)
+        self.assertEqual(self.player.hp, hp)
+
+    def test_tongue_draw_uses_world_to_screen_conversion(self):
+        self.prepare_attack()
+        self.frog.update(.55)
+        game_world.camera_x = 400
+        with patch('pico2d.draw_rectangle') as draw:
+            self.frog.draw()
+        self.assertEqual(draw.call_args.args[:4], game_world.screen_bb(self.frog.tongue_bb()))
