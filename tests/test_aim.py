@@ -3,9 +3,9 @@ import unittest
 
 import pico2d
 from core import game_world
-from bullet import Bullet
-from doodle import Doodle
-from player import Player
+from projectiles.bullet import Bullet
+from items.doodle import Doodle
+from actors.player import Player
 
 
 class AimTests(unittest.TestCase):

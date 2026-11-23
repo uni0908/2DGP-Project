@@ -5,10 +5,10 @@ from pathlib import Path
 import pico2d
 from core.paths import PROJECT_ROOT
 from core import game_world
-from player import Player
-import player_actions
-from boss1 import Boss1
-from player_hud import PlayerHealthBar
+from actors.player import Player
+from actors import player_actions
+from actors.boss1 import Boss1
+from graphics.player_hud import PlayerHealthBar
 
 health_bar = PlayerHealthBar()
 

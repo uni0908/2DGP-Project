@@ -2,9 +2,9 @@ import unittest
 from unittest.mock import Mock, patch
 
 from core import game_world
-from boss1 import Boss1
-from boss_sprite import DATA, BossDeath, animation_for, animation_frame, rest_pose
-from doodle import Doodle
+from actors.boss1 import Boss1
+from graphics.boss_sprite import DATA, BossDeath, animation_for, animation_frame, rest_pose
+from items.doodle import Doodle
 
 
 class BossSpriteTests(unittest.TestCase):

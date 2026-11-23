@@ -5,9 +5,9 @@ from types import SimpleNamespace
 
 import pico2d
 from core import game_world
-from player import Player
-from doodle import Doodle
-from bullet import Bullet
+from actors.player import Player
+from items.doodle import Doodle
+from projectiles.bullet import Bullet
 
 
 class CrouchTests(unittest.TestCase):

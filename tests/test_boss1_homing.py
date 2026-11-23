@@ -5,10 +5,10 @@ from types import SimpleNamespace
 
 import pico2d
 from core import game_world
-from boss1 import Boss1
-from player import Player
-from bullet import Bullet
-from homing_missile import HomingMissile
+from actors.boss1 import Boss1
+from actors.player import Player
+from projectiles.bullet import Bullet
+from projectiles.homing_missile import HomingMissile
 
 
 class Boss1HomingTests(unittest.TestCase):

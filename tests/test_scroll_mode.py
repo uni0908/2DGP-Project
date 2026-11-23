@@ -7,12 +7,12 @@ from unittest.mock import Mock, patch
 import pico2d
 from core import game_framework
 from core import game_world
-import scroll_mode
-import play_mode
-from doodle import Doodle
-from bullet import Bullet
-from frog_enemy import FrogEnemy
-from cat_robot import CatRobot
+from modes import scroll_mode
+from modes import play_mode
+from items.doodle import Doodle
+from projectiles.bullet import Bullet
+from actors.frog_enemy import FrogEnemy
+from actors.cat_robot import CatRobot
 
 
 class ScrollModeTests(unittest.TestCase):

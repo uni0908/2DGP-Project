@@ -5,7 +5,7 @@ from types import SimpleNamespace
 
 import pico2d
 from core import game_world
-from player import Player
+from actors.player import Player
 
 
 class VariableJumpTests(unittest.TestCase):

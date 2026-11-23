@@ -3,9 +3,9 @@
 import unittest
 
 from core import game_world
-from doodle import Doodle
-from player import Player
-from sweep_laser import SweepLaser
+from items.doodle import Doodle
+from actors.player import Player
+from projectiles.sweep_laser import SweepLaser
 
 
 class SweepLaserTests(unittest.TestCase):
@@ -80,7 +80,7 @@ class SweepLaserTests(unittest.TestCase):
         self.assertEqual(platform.hp, 20)
 
     def test_down_eraser_drop_can_gain_space_from_descending_laser(self):
-        from eraser import Eraser
+        from items.eraser import Eraser
         import pico2d
         platform = Doodle(300, 250)
         game_world.add_object(platform, game_world.TERRAIN)

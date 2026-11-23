@@ -2,7 +2,7 @@
 
 import pico2d
 from core import game_world
-from bullet import Bullet
+from projectiles.bullet import Bullet
 
 
 class TestEnemy:

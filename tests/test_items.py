@@ -3,9 +3,9 @@
 import unittest
 
 from core import game_world
-import play_mode
-from doodle import Doodle
-from eraser import Eraser
+from modes import play_mode
+from items.doodle import Doodle
+from items.eraser import Eraser
 
 
 class ItemTests(unittest.TestCase):

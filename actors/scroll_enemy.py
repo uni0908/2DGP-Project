@@ -4,7 +4,7 @@ import random
 
 import pico2d
 from core import game_world
-from octopus_sprite import OctopusSprite, OctopusDeath, DISPLAY_HEIGHT
+from graphics.octopus_sprite import OctopusSprite, OctopusDeath, DISPLAY_HEIGHT
 
 
 class OctopusEnemy:

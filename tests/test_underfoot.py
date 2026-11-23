@@ -4,8 +4,8 @@ import unittest
 
 import pico2d
 from core import game_world
-import play_mode
-from doodle import Doodle
+from modes import play_mode
+from items.doodle import Doodle
 
 
 class UnderfootTests(unittest.TestCase):

@@ -2,7 +2,7 @@
 
 import pico2d
 from core import game_world
-from doodle import overlaps
+from items.doodle import overlaps
 
 
 class BombExplosion:

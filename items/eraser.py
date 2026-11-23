@@ -2,7 +2,7 @@
 
 import pico2d
 from core import game_world
-from doodle import Doodle
+from items.doodle import Doodle
 
 
 class Eraser:

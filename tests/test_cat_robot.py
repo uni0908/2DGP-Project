@@ -4,12 +4,12 @@ import unittest
 from unittest.mock import patch
 
 from core import game_world
-import scroll_mode
-from player import Player
-from bullet import Bullet
-from cat_robot import CatRobot
-from enemy_bomb import ArcBomb, BombExplosion
-from cat_robot_sprite import CatRobotDeath, FIRE_DURATION
+from modes import scroll_mode
+from actors.player import Player
+from projectiles.bullet import Bullet
+from actors.cat_robot import CatRobot
+from projectiles.enemy_bomb import ArcBomb, BombExplosion
+from graphics.cat_robot_sprite import CatRobotDeath, FIRE_DURATION
 
 
 class CatRobotTests(unittest.TestCase):

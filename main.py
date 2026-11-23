@@ -2,8 +2,8 @@
 
 import pico2d
 from core import game_framework
-import play_mode
-import scroll_mode
+from modes import play_mode
+from modes import scroll_mode
 
 
 def main():

@@ -2,8 +2,8 @@
 
 import pico2d
 from core import game_world
-from doodle import Doodle, overlaps
-from eraser import Eraser
+from items.doodle import Doodle, overlaps
+from items.eraser import Eraser
 
 
 def spawn_doodle(player, world_width, world_height, ground_y):

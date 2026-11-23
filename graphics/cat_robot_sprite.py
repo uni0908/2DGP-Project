@@ -4,7 +4,7 @@
 import pico2d
 from core.paths import PROJECT_ROOT
 from core import game_world
-from sprite_effects import white_silhouette
+from graphics.sprite_effects import white_silhouette
 
 
 IMAGE_PATH = PROJECT_ROOT / 'output' / 'basic-enemy' / 'outputs' / 'robotcat-animationsheet.png'

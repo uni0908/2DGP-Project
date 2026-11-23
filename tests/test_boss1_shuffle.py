@@ -4,9 +4,9 @@ import random
 import unittest
 
 from core import game_world
-import play_mode
-from boss1 import Boss1
-from bullet import Bullet
+from modes import play_mode
+from actors.boss1 import Boss1
+from projectiles.bullet import Bullet
 
 
 class Boss1ShuffleTests(unittest.TestCase):

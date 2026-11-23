@@ -44,7 +44,7 @@ def update(dt):
         for obj in tuple(layer):
             obj.update(dt)
     # 모든 적의 몸 접촉은 기존 플레이어 피격 무적 시간을 공유한다.
-    from doodle import overlaps
+    from items.doodle import overlaps
     actors = objects(ACTORS)
     players = [obj for obj in actors if getattr(obj, 'team', None) == 'player'
                and getattr(obj, 'hp', 0) > 0]

@@ -6,12 +6,12 @@ from unittest.mock import patch
 
 from core import game_world
 from core import game_framework
-import scroll_mode
-from player import Player
-from enemy import TestEnemy
-from bullet import Bullet
-from scroll_enemy import OctopusEnemy, OctopusSpawner
-from octopus_sprite import OctopusDeath, OctopusSprite, DEATH_DURATION, SCALE, frame_bounds
+from modes import scroll_mode
+from actors.player import Player
+from actors.enemy import TestEnemy
+from projectiles.bullet import Bullet
+from actors.scroll_enemy import OctopusEnemy, OctopusSpawner
+from graphics.octopus_sprite import OctopusDeath, OctopusSprite, DEATH_DURATION, SCALE, frame_bounds
 
 
 class OctopusTests(unittest.TestCase):
@@ -149,7 +149,7 @@ class OctopusTests(unittest.TestCase):
 
     def test_white_texture_reused_with_same_frame_and_death_uses_original(self):
         sprite = OctopusSprite()
-        with patch('pico2d.load_image') as load, patch('octopus_sprite.white_silhouette') as white:
+        with patch('pico2d.load_image') as load, patch('graphics.octopus_sprite.white_silhouette') as white:
             sprite.draw(500, 144, .13)
             normal_args = load.return_value.clip_draw.call_args.args
             sprite.draw(500, 144, .13, flash=True)

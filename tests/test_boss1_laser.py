@@ -3,9 +3,9 @@
 import unittest
 
 from core import game_world
-from boss1 import Boss1
-from doodle import Doodle
-from sweep_laser import SweepLaser
+from actors.boss1 import Boss1
+from items.doodle import Doodle
+from projectiles.sweep_laser import SweepLaser
 
 
 class Boss1LaserTests(unittest.TestCase):

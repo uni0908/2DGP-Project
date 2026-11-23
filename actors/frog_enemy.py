@@ -3,8 +3,8 @@
 import math
 
 from core import game_world
-from doodle import overlaps
-from frog_sprite import FrogSprite, FrogDeath
+from items.doodle import overlaps
+from graphics.frog_sprite import FrogSprite, FrogDeath
 
 
 class FrogEnemy:

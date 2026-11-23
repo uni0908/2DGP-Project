@@ -4,10 +4,10 @@ import unittest
 import random
 
 from core import game_world
-from boss import Boss
-from bullet import Bullet
-from doodle import Doodle
-from eraser import Eraser
+from actors.boss import Boss
+from projectiles.bullet import Bullet
+from items.doodle import Doodle
+from items.eraser import Eraser
 
 
 class BossTests(unittest.TestCase):
@@ -53,7 +53,7 @@ class BossTests(unittest.TestCase):
         self.assertGreater(len({round(shot.y) for shot in shots}), 4)
 
     def test_upper_rest_bullets_miss_floor_but_hit_platform_height(self):
-        from player import Player
+        from actors.player import Player
         for center_y, expected_hp in ((108, 5), (152, 4), (216, 4)):
             with self.subTest(center_y=center_y):
                 game_world.clear()
@@ -152,7 +152,7 @@ class BossTests(unittest.TestCase):
         self.assertTrue(all(bullet.parry_reward is None for bullet in bullets))
 
     def test_one_layer_leaks_but_two_layers_protect_standing_player(self):
-        from player import Player
+        from actors.player import Player
         for layers, expected_hp in ((1, 4), (2, 5)):
             with self.subTest(layers=layers):
                 game_world.clear()
@@ -166,7 +166,7 @@ class BossTests(unittest.TestCase):
                 self.assertEqual(player.hp, expected_hp)
 
     def test_three_layers_protect_player_at_raised_height(self):
-        from player import Player
+        from actors.player import Player
         for layers, expected_hp in ((2, 4), (3, 5)):
             game_world.clear()
             player = Player(120, 80, 960)

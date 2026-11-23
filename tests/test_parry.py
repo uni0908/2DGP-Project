@@ -3,9 +3,9 @@ from types import SimpleNamespace
 
 import pico2d
 from core import game_world
-from player import Player
-from bullet import Bullet
-from doodle import Doodle
+from actors.player import Player
+from projectiles.bullet import Bullet
+from items.doodle import Doodle
 
 
 class ParryTests(unittest.TestCase):

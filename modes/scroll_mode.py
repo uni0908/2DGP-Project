@@ -6,13 +6,13 @@ import pico2d
 from core.paths import PROJECT_ROOT
 from core import game_framework
 from core import game_world
-import play_mode
+from modes import play_mode
 from core.camera import Camera
-from player import Player
-from player_hud import PlayerHealthBar
-from scroll_enemy import OctopusSpawner
-from frog_enemy import FrogEnemy
-from cat_robot import CatRobot
+from actors.player import Player
+from graphics.player_hud import PlayerHealthBar
+from actors.scroll_enemy import OctopusSpawner
+from actors.frog_enemy import FrogEnemy
+from actors.cat_robot import CatRobot
 
 health_bar = PlayerHealthBar()
 

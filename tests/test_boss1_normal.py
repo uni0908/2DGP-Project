@@ -3,8 +3,8 @@
 import unittest
 
 from core import game_world
-from boss1 import Boss1
-from bullet import Bullet
+from actors.boss1 import Boss1
+from projectiles.bullet import Bullet
 
 
 class Boss1NormalTests(unittest.TestCase):

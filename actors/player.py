@@ -2,9 +2,9 @@
 
 import pico2d
 from core import game_world
-from bullet import Bullet
-from doodle import overlaps
-from player_sprite import PlayerSprite
+from projectiles.bullet import Bullet
+from items.doodle import overlaps
+from graphics.player_sprite import PlayerSprite
 
 
 class Player:

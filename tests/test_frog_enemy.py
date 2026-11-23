@@ -5,10 +5,10 @@ from unittest.mock import patch
 
 import pico2d
 from core import game_world
-import scroll_mode
-from bullet import Bullet
-from player import Player
-from frog_enemy import FrogEnemy
+from modes import scroll_mode
+from projectiles.bullet import Bullet
+from actors.player import Player
+from actors.frog_enemy import FrogEnemy
 
 
 class FrogTests(unittest.TestCase):

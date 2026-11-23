@@ -4,11 +4,11 @@ import random
 
 import pico2d
 from core import game_world
-from bullet import Bullet
-from enemy import TestEnemy
-from homing_missile import HomingMissile
-from sweep_laser import SweepLaser
-from boss_sprite import BossSprite, BossDeath, animation_for, rest_pose
+from projectiles.bullet import Bullet
+from actors.enemy import TestEnemy
+from projectiles.homing_missile import HomingMissile
+from projectiles.sweep_laser import SweepLaser
+from graphics.boss_sprite import BossSprite, BossDeath, animation_for, rest_pose
 
 
 class Boss1(TestEnemy):

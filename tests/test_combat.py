@@ -4,11 +4,11 @@ import unittest
 
 import pico2d
 from core import game_world
-from bullet import Bullet
-from doodle import Doodle
-from player import Player
-from enemy import TestEnemy
-from eraser import Eraser
+from projectiles.bullet import Bullet
+from items.doodle import Doodle
+from actors.player import Player
+from actors.enemy import TestEnemy
+from items.eraser import Eraser
 
 
 class CombatTests(unittest.TestCase):
@@ -128,7 +128,7 @@ class CombatTests(unittest.TestCase):
         self.assertNotIn(enemy, game_world.objects(game_world.ACTORS))
 
     def test_game_over_freezes_world_and_restart_resets_state(self):
-        import play_mode
+        from modes import play_mode
         from types import SimpleNamespace
         from unittest.mock import patch
         play_mode.enter()

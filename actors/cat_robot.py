@@ -2,8 +2,8 @@
 
 import pico2d
 from core import game_world
-from enemy_bomb import ArcBomb
-from cat_robot_sprite import CatRobotSprite, CatRobotDeath, FIRE_DURATION
+from projectiles.enemy_bomb import ArcBomb
+from graphics.cat_robot_sprite import CatRobotSprite, CatRobotDeath, FIRE_DURATION
 
 
 class CatRobot:

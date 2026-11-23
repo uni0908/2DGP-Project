@@ -4,9 +4,9 @@ import math
 
 import pico2d
 from core import game_world
-from bullet import Bullet
-from doodle import Doodle
-from boss_sprite import BossEffect
+from projectiles.bullet import Bullet
+from items.doodle import Doodle
+from graphics.boss_sprite import BossEffect
 
 
 def segment_box_entry(x, y, dx, dy, bounds):

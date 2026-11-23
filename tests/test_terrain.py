@@ -5,9 +5,9 @@ from types import SimpleNamespace
 
 import pico2d
 from core import game_world
-import play_mode
-from doodle import Doodle
-from player import Player
+from modes import play_mode
+from items.doodle import Doodle
+from actors.player import Player
 
 
 class TerrainTests(unittest.TestCase):

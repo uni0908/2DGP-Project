@@ -4,7 +4,7 @@ import unittest
 from unittest.mock import Mock, patch
 
 from core import game_world
-from cat_robot_sprite import (CatRobotSprite, CatRobotDeath, frame_for,
+from graphics.cat_robot_sprite import (CatRobotSprite, CatRobotDeath, frame_for,
                               IDLE_BOUNDS, FIRE_BOUNDS, DEATH_BOUNDS, DEATH_TOTAL_DURATION, SCALE)
 
 
@@ -58,7 +58,7 @@ class RobotSpriteTests(unittest.TestCase):
 
     def test_hit_draws_original_with_twenty_percent_white_overlay(self):
         sprite = CatRobotSprite()
-        with patch('pico2d.load_image') as load, patch('cat_robot_sprite.white_silhouette') as white:
+        with patch('pico2d.load_image') as load, patch('graphics.cat_robot_sprite.white_silhouette') as white:
             sprite.draw('idle', 0, 3420, 144, -1, flash=True)
             load.return_value.clip_composite_draw.assert_called_once()
             self.assertEqual(white.return_value.clip_composite_draw.call_args,
