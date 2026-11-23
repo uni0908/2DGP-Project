@@ -1,7 +1,7 @@
 """발사 순간의 플레이어 위치로 날아가는 적 폭탄과 짧은 폭발."""
 
 import pico2d
-import game_world
+from core import game_world
 from doodle import overlaps
 
 

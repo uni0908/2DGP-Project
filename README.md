@@ -7,13 +7,14 @@ pico2d로 개발하는 2D 액션 슈팅 게임입니다.
 ## 기본 구조
 
 - `main.py`: 게임 실행 시작점
-- `game_framework.py`: 장면 전환과 게임 루프
+- `core/game_framework.py`: 장면 전환과 게임 루프
 - `scroll_mode.py`: 다섯 레이어 숲 배경과 자동 보스 진입
-- `camera.py`: 맵 경계를 지키는 가로 추적 카메라
+- `core/camera.py`: 맵 경계를 지키는 가로 추적 카메라
+- `core/paths.py`: 실행 위치와 관계없는 프로젝트 루트 경로
 - `player_actions.py`: 두 화면이 공유하는 낙서·지우개 조작
 - `play_mode.py`: 보스전 화면의 입력, 업데이트, 그리기
 - `player.py`: 플레이어 이동, 점프, 총격
-- `game_world.py`: 지형·플레이어의 레이어별 관리
+- `core/game_world.py`: 지형·플레이어의 레이어별 관리
 - `doodle.py`: 고정 낙서 지형
 - `eraser.py`: 지우개 투척과 낙서 제거
 - `bullet.py`: 플레이어·적의 탄환과 피해 처리

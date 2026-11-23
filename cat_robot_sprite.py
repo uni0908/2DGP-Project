@@ -1,13 +1,13 @@
 """고양이 로봇 시트의 1·2·4행만 사용한다. 3행은 미적용이다."""
 
-from pathlib import Path
 
 import pico2d
-import game_world
+from core.paths import PROJECT_ROOT
+from core import game_world
 from sprite_effects import white_silhouette
 
 
-IMAGE_PATH = Path(__file__).resolve().parent / 'output' / 'basic-enemy' / 'outputs' / 'robotcat-animationsheet.png'
+IMAGE_PATH = PROJECT_ROOT / 'output' / 'basic-enemy' / 'outputs' / 'robotcat-animationsheet.png'
 SHEET_HEIGHT = 887
 DISPLAY_HEIGHT = 112.0
 SCALE = DISPLAY_HEIGHT / 172

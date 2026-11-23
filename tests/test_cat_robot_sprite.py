@@ -3,7 +3,7 @@
 import unittest
 from unittest.mock import Mock, patch
 
-import game_world
+from core import game_world
 from cat_robot_sprite import (CatRobotSprite, CatRobotDeath, frame_for,
                               IDLE_BOUNDS, FIRE_BOUNDS, DEATH_BOUNDS, DEATH_TOTAL_DURATION, SCALE)
 

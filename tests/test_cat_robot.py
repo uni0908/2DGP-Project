@@ -3,7 +3,7 @@
 import unittest
 from unittest.mock import patch
 
-import game_world
+from core import game_world
 import scroll_mode
 from player import Player
 from bullet import Bullet

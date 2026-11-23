@@ -1,9 +1,7 @@
 """낙서를 보존하며 통과하고 플레이어에게만 피해를 주는 왕복 레이저."""
 
 import pico2d
-import game_world
-
-
+from core import game_world
 class SweepLaser:
     THICKNESS = 16
     SPEED = 180.0

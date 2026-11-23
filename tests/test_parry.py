@@ -2,7 +2,7 @@ import unittest
 from types import SimpleNamespace
 
 import pico2d
-import game_world
+from core import game_world
 from player import Player
 from bullet import Bullet
 from doodle import Doodle

@@ -1,7 +1,7 @@
 """횡스크롤과 보스 화면에서 공통으로 사용하는 낙서·지우개 조작."""
 
 import pico2d
-import game_world
+from core import game_world
 from doodle import Doodle, overlaps
 from eraser import Eraser
 

@@ -1,7 +1,7 @@
 """수평 또는 아래로 날아가 처음 닿은 낙서 하나만 제거하는 지우개."""
 
 import pico2d
-import game_world
+from core import game_world
 from doodle import Doodle
 
 

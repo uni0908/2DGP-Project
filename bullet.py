@@ -3,7 +3,7 @@
 import math
 
 import pico2d
-import game_world
+from core import game_world
 from doodle import Doodle
 
 

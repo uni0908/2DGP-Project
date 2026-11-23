@@ -5,8 +5,8 @@ from types import SimpleNamespace
 from unittest.mock import patch
 
 import pico2d
-import game_framework
-from camera import Camera
+from core import game_framework
+from core.camera import Camera
 
 
 class FrameworkTests(unittest.TestCase):

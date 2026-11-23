@@ -1,13 +1,11 @@
 """Frame selection and rendering for the generated player asset pack."""
 
 import json
-from pathlib import Path
 
 import pico2d
-import game_world
-
-
-ASSET_DIR = Path(__file__).resolve().parent / 'output' / 'player-sprites-v5'
+from core.paths import PROJECT_ROOT
+from core import game_world
+ASSET_DIR = PROJECT_ROOT / 'output' / 'player-sprites-v5'
 DATA = json.loads((ASSET_DIR / 'player-sprites.json').read_text(encoding='utf-8-sig'))
 DISPLAY_HEIGHT = 80.0
 RENDER_SCALE = DISPLAY_HEIGHT / DATA['render_reference']['standing_source_height']

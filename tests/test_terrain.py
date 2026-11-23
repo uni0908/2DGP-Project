@@ -4,7 +4,7 @@ import unittest
 from types import SimpleNamespace
 
 import pico2d
-import game_world
+from core import game_world
 import play_mode
 from doodle import Doodle
 from player import Player

@@ -2,7 +2,7 @@
 
 import unittest
 
-import game_world
+from core import game_world
 from doodle import Doodle
 from player import Player
 from sweep_laser import SweepLaser

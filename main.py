@@ -1,7 +1,7 @@
 """pico2d 실행 시작점."""
 
 import pico2d
-import game_framework
+from core import game_framework
 import play_mode
 import scroll_mode
 

@@ -5,8 +5,8 @@ from types import SimpleNamespace
 from unittest.mock import Mock, patch
 
 import pico2d
-import game_framework
-import game_world
+from core import game_framework
+from core import game_world
 import scroll_mode
 import play_mode
 from doodle import Doodle

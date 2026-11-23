@@ -4,8 +4,8 @@ import random
 import unittest
 from unittest.mock import patch
 
-import game_world
-import game_framework
+from core import game_world
+from core import game_framework
 import scroll_mode
 from player import Player
 from enemy import TestEnemy

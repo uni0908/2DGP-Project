@@ -3,7 +3,7 @@
 import random
 
 import pico2d
-import game_world
+from core import game_world
 from bullet import Bullet
 from enemy import TestEnemy
 from homing_missile import HomingMissile

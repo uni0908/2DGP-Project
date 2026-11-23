@@ -1,7 +1,7 @@
 """패링 연습을 위해 위치를 고정한 테스트 적."""
 
 import pico2d
-import game_world
+from core import game_world
 from bullet import Bullet
 
 

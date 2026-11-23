@@ -4,7 +4,7 @@ import unittest
 from unittest.mock import patch
 
 import pico2d
-import game_world
+from core import game_world
 import scroll_mode
 from bullet import Bullet
 from player import Player

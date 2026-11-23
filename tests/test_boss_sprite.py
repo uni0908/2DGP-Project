@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import Mock, patch
 
-import game_world
+from core import game_world
 from boss1 import Boss1
 from boss_sprite import DATA, BossDeath, animation_for, animation_frame, rest_pose
 from doodle import Doodle

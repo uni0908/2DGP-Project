@@ -3,7 +3,7 @@
 import random
 import unittest
 
-import game_world
+from core import game_world
 import play_mode
 from boss1 import Boss1
 from bullet import Bullet

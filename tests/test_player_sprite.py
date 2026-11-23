@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import Mock, patch
 
 import pico2d
-import game_world
+from core import game_world
 import play_mode
 from player import Player
 from player_sprite import DATA, PlayerSprite

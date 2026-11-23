@@ -1,13 +1,11 @@
 """생성 위치에 고정되는 낙서 지형. 현재 그림은 임시 선 표현이다."""
 
-from pathlib import Path
 
 import pico2d
-import game_world
-
-
+from core.paths import PROJECT_ROOT
+from core import game_world
 class Doodle:
-    IMAGE_PATH = Path(__file__).resolve().parent / 'assets' / 'images' / 'items' / 'doodle.png'
+    IMAGE_PATH = PROJECT_ROOT / 'assets' / 'images' / 'items' / 'doodle.png'
     image = None
     WIDTH = 88
     HEIGHT = 32

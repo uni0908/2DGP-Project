@@ -1,13 +1,11 @@
 """사용자 문어 v2 시트의 이동·죽기 프레임. 원본 픽셀은 변경하지 않는다."""
 
-from pathlib import Path
 import ctypes
 
 import pico2d
-import game_world
-
-
-IMAGE_PATH = Path(__file__).resolve().parent / 'output' / 'basic-enemy' / 'outputs' / 'octopus_v2.png'
+from core.paths import PROJECT_ROOT
+from core import game_world
+IMAGE_PATH = PROJECT_ROOT / 'output' / 'basic-enemy' / 'outputs' / 'octopus_v2.png'
 SHEET_HEIGHT = 724
 DISPLAY_HEIGHT = 96.0
 SCALE = DISPLAY_HEIGHT / 329

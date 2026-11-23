@@ -3,7 +3,8 @@
 from pathlib import Path
 
 import pico2d
-import game_world
+from core.paths import PROJECT_ROOT
+from core import game_world
 from player import Player
 import player_actions
 from boss1 import Boss1
@@ -14,7 +15,7 @@ health_bar = PlayerHealthBar()
 WINDOW_WIDTH = 960
 WINDOW_HEIGHT = 540
 GROUND_Y = 144
-IMAGE_DIR = Path(__file__).resolve().parent / 'assets' / 'images'
+IMAGE_DIR = PROJECT_ROOT / 'assets' / 'images'
 BACKGROUND_LAYERS = (
     IMAGE_DIR / 'forest-scroll' / 'paper_background.png',
     IMAGE_DIR / 'forest-scroll' / 'background.png',

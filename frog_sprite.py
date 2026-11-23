@@ -1,12 +1,10 @@
 """사용자 개구리 시트를 현재 행동·발 위치·혀 판정에 맞춰 표시한다."""
 
-from pathlib import Path
 
 import pico2d
-import game_world
-
-
-IMAGE_PATH = Path(__file__).resolve().parent / 'output' / 'basic-enemy' / 'outputs' / 'frog-animationsheet.png'
+from core.paths import PROJECT_ROOT
+from core import game_world
+IMAGE_PATH = PROJECT_ROOT / 'output' / 'basic-enemy' / 'outputs' / 'frog-animationsheet.png'
 SHEET_HEIGHT = 836
 DISPLAY_HEIGHT = 56.0
 SCALE = DISPLAY_HEIGHT / 154

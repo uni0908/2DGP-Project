@@ -4,7 +4,7 @@ import unittest
 from types import SimpleNamespace
 from unittest.mock import Mock, patch
 
-import game_world
+from core import game_world
 from frog_sprite import (FrogSprite, FrogDeath, pose_for, SCALE, HIDDEN_BOUNDS,
                          HOP_BOUNDS, DEATH_BOUNDS, DEATH_DURATION)
 

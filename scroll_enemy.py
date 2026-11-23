@@ -3,7 +3,7 @@
 import random
 
 import pico2d
-import game_world
+from core import game_world
 from octopus_sprite import OctopusSprite, OctopusDeath, DISPLAY_HEIGHT
 
 

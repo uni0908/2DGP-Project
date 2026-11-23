@@ -2,7 +2,7 @@
 
 import unittest
 
-import game_world
+from core import game_world
 from boss1 import Boss1
 from bullet import Bullet
 

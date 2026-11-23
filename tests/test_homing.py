@@ -5,7 +5,7 @@ import unittest
 from types import SimpleNamespace
 
 import pico2d
-import game_world
+from core import game_world
 from player import Player
 from doodle import Doodle
 from homing_missile import HomingMissile, segment_box_entry

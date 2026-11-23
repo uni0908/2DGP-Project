@@ -1,12 +1,12 @@
 """Player health artwork clipped to the number of remaining hearts."""
 
-from pathlib import Path
 
 import pico2d
+from core.paths import PROJECT_ROOT
 
 
 class PlayerHealthBar:
-    IMAGE_PATH = Path(__file__).resolve().parent / 'assets' / 'images' / 'items' / 'player-hp.png'
+    IMAGE_PATH = PROJECT_ROOT / 'assets' / 'images' / 'items' / 'player-hp.png'
     # Each boundary falls in the transparent gap following the face or a heart.
     RIGHT_EDGES = (784, 1030, 1283, 1535, 1784, 2035)
     SCALE = .11

@@ -1,7 +1,7 @@
 """맵 끝에 고정 배치하는 고양이 폭탄 로봇 프로토타입."""
 
 import pico2d
-import game_world
+from core import game_world
 from enemy_bomb import ArcBomb
 from cat_robot_sprite import CatRobotSprite, CatRobotDeath, FIRE_DURATION
 

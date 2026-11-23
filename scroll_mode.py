@@ -3,10 +3,11 @@
 from pathlib import Path
 
 import pico2d
-import game_framework
-import game_world
+from core.paths import PROJECT_ROOT
+from core import game_framework
+from core import game_world
 import play_mode
-from camera import Camera
+from core.camera import Camera
 from player import Player
 from player_hud import PlayerHealthBar
 from scroll_enemy import OctopusSpawner
@@ -21,7 +22,7 @@ GROUND_Y = 144
 PLAYER_START_X = WINDOW_WIDTH * 0.4
 FROG_PATROLS = ((680, 960), (1580, 1860), (2600, 2880))
 ROBOT_X = WORLD_WIDTH - 180
-MAP_DIR = Path(__file__).resolve().parent / 'assets' / 'images' / 'forest-scroll'
+MAP_DIR = PROJECT_ROOT / 'assets' / 'images' / 'forest-scroll'
 MAP_LAYERS = ('paper_background.png', 'background.png', 'midground.png',
               'terrain.png', 'foreground.png')
 map_images = None

@@ -2,7 +2,7 @@
 
 import math
 
-import game_world
+from core import game_world
 from doodle import overlaps
 from frog_sprite import FrogSprite, FrogDeath
 

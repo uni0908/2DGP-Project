@@ -1,13 +1,11 @@
 """Animation selection and rendering for the boss1 asset package."""
 
 import json
-from pathlib import Path
 
 import pico2d
-import game_world
-
-
-ASSET_DIR = Path(__file__).resolve().parent / 'output' / 'boss1-sprites-v2'
+from core.paths import PROJECT_ROOT
+from core import game_world
+ASSET_DIR = PROJECT_ROOT / 'output' / 'boss1-sprites-v2'
 DATA = json.loads((ASSET_DIR / 'boss1-animations.json').read_text(encoding='utf-8-sig'))
 
 

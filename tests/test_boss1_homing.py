@@ -4,7 +4,7 @@ import unittest
 from types import SimpleNamespace
 
 import pico2d
-import game_world
+from core import game_world
 from boss1 import Boss1
 from player import Player
 from bullet import Bullet

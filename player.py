@@ -1,7 +1,7 @@
 """플레이어의 위치와 이동을 관리한다."""
 
 import pico2d
-import game_world
+from core import game_world
 from bullet import Bullet
 from doodle import overlaps
 from player_sprite import PlayerSprite

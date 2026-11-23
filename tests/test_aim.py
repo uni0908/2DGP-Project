@@ -2,7 +2,7 @@ import math
 import unittest
 
 import pico2d
-import game_world
+from core import game_world
 from bullet import Bullet
 from doodle import Doodle
 from player import Player

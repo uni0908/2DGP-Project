@@ -2,7 +2,7 @@
 
 import unittest
 
-import game_world
+from core import game_world
 import play_mode
 from doodle import Doodle
 from eraser import Eraser
